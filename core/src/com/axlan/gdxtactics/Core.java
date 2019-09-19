@@ -33,28 +33,34 @@ public class Core extends ApplicationAdapter implements InputProcessor {
   public void create () {
     VisUI.load();
     stage = new Stage(new ScreenViewport());
-    table = new Table();
-    table.setWidth(stage.getWidth());
-    table.align(Align.center | Align.top);
 
-    table.setPosition(0,Gdx.graphics.getHeight());
-    startButton = new VisTextButton("New Game");
-    quitButton = new VisTextButton("Quit Game");
+//
+//    table = new Table();
+//    table.setWidth(stage.getWidth());
+//    table.align(Align.center | Align.top);
+//
+//    table.setPosition(0,Gdx.graphics.getHeight());
+//    startButton = new VisTextButton("New Game");
+//    quitButton = new VisTextButton("Quit Game");
+//
+//    startButton.addListener(new ClickListener() {
+//      @Override
+//      public void clicked(InputEvent event, float x, float y) {
+//        Gdx.app.log("Clicked button","Yep, you did");
+//        event.stop();
+//      }
+//    });
+//
+//    table.padTop(30);
+//
+//    table.add(startButton).padBottom(30);
+//
+//    table.row();
+//    table.add(quitButton);
 
-    startButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        Gdx.app.log("Clicked button","Yep, you did");
-        event.stop();
-      }
-    });
+    LevelData levelData = LevelData.loadFromJson("levels/demo.json");
 
-    table.padTop(30);
-
-    table.add(startButton).padBottom(30);
-
-    table.row();
-    table.add(quitButton);
+    table = BriefingView.MakeBriefingView(levelData);
 
     stage.addActor(table);
 

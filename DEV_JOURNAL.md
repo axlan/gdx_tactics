@@ -6,18 +6,24 @@ First I'll take the level loading logic. I played around with the JSON to Java o
 
 With that done, I went back to https://www.gamefromscratch.com/post/2015/02/03/LibGDX-Video-Tutorial-Scene2D-UI-Widgets-Layout-and-Skins.aspx and got it working with VisUI.
 
+From there I started working on the briefing view. It looks like I have all the tools I need to put it together, just figuring out the formatting.
+https://github.com/libgdx/libgdx/wiki/Table gives the details I need to do the layout.
+
+#9/19 Experiment with LML and starting game 
+
 Following the recommendation of one of the tutorials I decided to take a look at https://github.com/czyzby/gdx-lml . I spent a good amount of time learning the ins and outs of the markdown language. 
 
 After some problems with attributes I realized a list of tags and attributes is in: 
 
 https://github.com/czyzby/gdx-lml/blob/master/lml/src/main/java/com/github/czyzby/lml/parser/impl/DefaultLmlSyntax.java 
-
 and 
-
 https://github.com/czyzby/gdx-lml/blob/master/lml-vis/src/main/java/com/github/czyzby/lml/vis/parser/impl/VisLmlSyntax.java 
+After some poking I was able to size objects too. 
 
-After some poking I was able to size objects too. However, it looks like it's just not worth the additional obfuscation of the code.  http://czyzby.github.io/gdx-lml/lml-vis/ is still useful for looking at the available layout. VisUI https://github.com/kotcrab/vis-ui still looks useful enough to use as the base skin for development. See also https://vis.kotcrab.com/demo/ui/ 
+However, it looks like it's just not worth the additional obfuscation of the code.  http://czyzby.github.io/gdx-lml/lml-vis/ is still useful for looking at the available layout. 
 
+VisUI https://github.com/kotcrab/vis-ui still looks useful enough to use as the base skin for development. See also https://vis.kotcrab.com/demo/ui/ 
+ 
 # 9/18 Learning to do basic UI
 
 Went down a HUGE rabbit hole. I spent basically 9 hours figuring out how to style the UI in libGDX 
