@@ -13,6 +13,7 @@ public class Core extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		LevelData test = LevelData.loadFromJson("levels/demo.json");
 		img = new Texture("badlogic.jpg");
 	}
 
