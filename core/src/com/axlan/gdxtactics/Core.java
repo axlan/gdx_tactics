@@ -8,38 +8,58 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisTextButton;
 
 public class Core extends ApplicationAdapter implements InputProcessor {
-  private Skin skin;
   private Stage stage;
-
-  private Table table;
-  private VisTextButton startButton;
-  private VisTextButton quitButton;
 
   private SpriteBatch batch;
   private Sprite sprite;
+
+  private StoreView storeView;
+  private BriefingView briefingView;
+
+  private void showStore(LevelData levelData) {
+    this.storeView.setData(levelData, new PlayerResources());
+    stage.clear();
+    stage.addActor(storeView.rootTable);
+  }
+
+  private void showBriefing(LevelData levelData) {
+    this.briefingView.setLevelData(levelData);
+    stage.clear();
+    stage.addActor(briefingView.rootTable);
+  }
 
   @Override
   public void create () {
     VisUI.load();
     stage = new Stage(new ScreenViewport());
 
-    LevelData levelData = LevelData.loadFromJson("levels/demo.json");
+    final LevelData levelData = LevelData.loadFromJson("levels/demo.json");
 
-    BriefingView brief = new BriefingView(levelData);
-    table = brief.MakeBriefingView();
+    CompletionObserver observer = new CompletionObserver() {
+      @Override
+      public void onDone() {
+        showStore(levelData);
+      }
+    };
+    this.briefingView = new BriefingView(observer);
 
-    stage.addActor(table);
+    observer = new CompletionObserver() {
+      @Override
+      public void onDone() {
+        stage.clear();
+      }
+    };
+    this.storeView = new StoreView(observer);
+
+
+    this.showBriefing(levelData);
 
     batch = new SpriteBatch();
     sprite = new Sprite(new Texture(Gdx.files.internal("badlogic.jpg")));
