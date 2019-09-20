@@ -3,11 +3,11 @@
     "briefPages": [
         {
             "speaker": "Comander",
-            "dialogue": "If it isn\"t the chief intelligence officer?\nGuess you finally made it."
+            "dialogue": "If it isn't the chief intelligence officer?\nGuess you finally made it."
         },
         {
             "speaker": "Comander",
-            "dialogue": "As you\"ll soon see, we have the situation well in hand.\nYou might as well see what information you can add,\nbut I reckon we could line up like dominos and still capture this position"
+            "dialogue": "As you'll soon see, we have the situation well in hand.\nYou might as well see what information you can add,\nbut I reckon we could line up like dominos and still capture this position"
         }
     ],
     "shopItems": [
@@ -31,7 +31,7 @@
             "unitType": "scout",
             "relativePosition": {"x": 0, "y": 0},
             "behavior": { "behaviorType": "MOVE", "args": {
-                "target": "{\"x\": 12, \"y\": 5}"
+                "target": "{'x': 12, 'y': 5}"
             }}
         }]
     }]

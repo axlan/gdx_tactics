@@ -1,3 +1,11 @@
+# 9/20 Briefing View
+
+I created a class to layout and control the briefing dialogue. Following the table guide, I was mostly able to reproduce the layout without issue.
+
+The one strangeness I hit was when I wanted a button to be on top of a label. Initially I tried a stack, but the button would will the space allocated to the stack covering up the label. Nothing I did seem to affect this. Next I tried a WidgetGroup. I still don't really understand how these work, but it got the layout I wanted by default.
+
+Since I wouldn't actually want the text to overlap, I ended up going back to just using a table, but still shows I don't fully understand the advanced layout behaviors.
+
 # 9/19 Starting Actual Project
 
 Going to start porting the code from https://github.com/axlan/Conqueror-of-Empires/tree/fog_war
