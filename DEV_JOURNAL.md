@@ -1,3 +1,21 @@
+# 9/21 Starting Map Scree
+
+Started by trying to find other projects I could use code from.
+
+Best I found was https://github.com/yairm210/UnCiv which is in Kotlin and https://github.com/pixdad/Tactical-Battle-System which is basically just a Tiled demo.
+
+From there I started looking at https://github.com/libgdx/libgdx/wiki/Tile-maps which got me to download Tiled map editor.
+
+Since neither of the examples I found seemed sufficient, I decided to look for a sprite pack. https://itch.io/game-assets/free/tag-tilemap seemed like the best set of resources.
+
+https://www.spriters-resource.com/ is also good for published game sheets.
+
+The first decision is what sort of geometry to use, orthogonal, isometric, or hex. I decided to go with the simplest Ortho projection for now. On top of that the Advanced Wars spritesheet seems like a good mock up for now.
+
+I was able to get a decent initial implementation by taking https://github.com/pixdad/Tactical-Battle-System and cleaning up the interfaces a bit. 
+
+Next I started using my own advanced wars map. This led me to play with the scaling on work on the tile to pixel transforms.
+
 # 9/20 Implementing Menus
 
 I created a class to layout and control the briefing dialogue. Following the table guide, I was mostly able to reproduce the layout without issue.

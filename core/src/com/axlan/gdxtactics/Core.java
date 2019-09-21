@@ -3,28 +3,23 @@ package com.axlan.gdxtactics;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
 
-public class Core extends ApplicationAdapter implements InputProcessor {
+public class Core extends ApplicationAdapter {
   private Stage stage;
 
-  private SpriteBatch batch;
-  private Sprite sprite;
+  private ApplicationAdapter renderer;
+
 
   private StoreView storeView;
   private BriefingView briefingView;
+  private BattleMap battleMap;
 
-  private void showStore(LevelData levelData) {
-    this.storeView.setData(levelData, new PlayerResources());
+  private void showStore(LevelData levelData, PlayerResources playerResources) {
+    this.storeView.setData(levelData, playerResources);
     stage.clear();
     stage.addActor(storeView.rootTable);
   }
@@ -35,17 +30,27 @@ public class Core extends ApplicationAdapter implements InputProcessor {
     stage.addActor(briefingView.rootTable);
   }
 
+  private void showBattleMap(LevelData levelData, PlayerResources playerResources) {
+    stage.clear();
+    stage.addActor(battleMap.rootTable);
+    renderer = battleMap;
+    InputMultiplexer im = new InputMultiplexer(stage, battleMap);
+    Gdx.input.setInputProcessor(im);
+  }
+
   @Override
   public void create () {
     VisUI.load();
     stage = new Stage(new ScreenViewport());
+
+    final PlayerResources playerResources = new PlayerResources();
 
     final LevelData levelData = LevelData.loadFromJson("levels/demo.json");
 
     CompletionObserver observer = new CompletionObserver() {
       @Override
       public void onDone() {
-        showStore(levelData);
+        showStore(levelData, playerResources);
       }
     };
     this.briefingView = new BriefingView(observer);
@@ -53,7 +58,7 @@ public class Core extends ApplicationAdapter implements InputProcessor {
     observer = new CompletionObserver() {
       @Override
       public void onDone() {
-        stage.clear();
+        showBattleMap(levelData, playerResources);
       }
     };
     this.storeView = new StoreView(observer);
@@ -61,20 +66,8 @@ public class Core extends ApplicationAdapter implements InputProcessor {
 
     this.showBriefing(levelData);
 
-    batch = new SpriteBatch();
-    sprite = new Sprite(new Texture(Gdx.files.internal("badlogic.jpg")));
-    sprite.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-
-    Timer.schedule(new Timer.Task() {
-      @Override
-      public void run() {
-        sprite.setFlip(false,!sprite.isFlipY());
-      }
-    },10,10,10000);
-
-
     // ORDER IS IMPORTANT!
-    InputMultiplexer im = new InputMultiplexer(stage,this);
+    InputMultiplexer im = new InputMultiplexer(stage);
     Gdx.input.setInputProcessor(im);
   }
 
@@ -83,53 +76,13 @@ public class Core extends ApplicationAdapter implements InputProcessor {
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    batch.begin();
-    sprite.draw(batch);
-    batch.end();
+    if (renderer != null) {
+      renderer.render();
+    }
 
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
   }
 
 
-  @Override
-  public boolean keyDown(int keycode) {
-    return false;
-  }
-
-  @Override
-  public boolean keyUp(int keycode) {
-    return false;
-  }
-
-  @Override
-  public boolean keyTyped(char character) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    sprite.setFlip(!sprite.isFlipX(),sprite.isFlipY());
-    return true;
-  }
-
-  @Override
-  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDragged(int screenX, int screenY, int pointer) {
-    return false;
-  }
-
-  @Override
-  public boolean mouseMoved(int screenX, int screenY) {
-    return false;
-  }
-
-  @Override
-  public boolean scrolled(int amount) {
-    return false;
-  }
 }
