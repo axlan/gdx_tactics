@@ -2,10 +2,8 @@ package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import Game.Screen.TestScreen;
+import com.axlan.gdxtactics.screens.BattleMapView;
 
 import java.util.ArrayList;
 
@@ -15,7 +13,7 @@ public class BattleMapDemo extends Game {
 
   @Override
   public void create() {
-    this.addScreen(new TestScreen());
+    this.addScreen(new BattleMapView());
   }
 
   @Override

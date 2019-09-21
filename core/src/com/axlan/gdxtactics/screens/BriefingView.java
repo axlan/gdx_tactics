@@ -1,5 +1,6 @@
-package com.axlan.gdxtactics;
+package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.models.LevelData;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,18 +14,18 @@ import com.kotcrab.vis.ui.widget.VisImage;
 import com.kotcrab.vis.ui.VisUI;
 import com.badlogic.gdx.utils.Align;
 
-class BriefingView extends ClickListener {
+public class BriefingView extends ClickListener {
 
   private LevelData levelData;
   private int curPage;
   private final VisLabel dialogue;
   private final VisLabel avatarLabel;
-  final VisTable rootTable;
+  public final VisTable rootTable;
   private final VisImage avatar;
   private final VisLabel settingLabel;
   private final CompletionObserver observer;
 
-  BriefingView(CompletionObserver observer) {
+  public BriefingView(CompletionObserver observer) {
     this.observer = observer;
     this.dialogue = new VisLabel();
     this.avatarLabel = new VisLabel();
@@ -38,7 +39,7 @@ class BriefingView extends ClickListener {
     return this.levelData == null || this.curPage >= this.levelData.briefPages.length - 1;
   }
 
-  void setLevelData(LevelData levelData) {
+  public void setLevelData(LevelData levelData) {
     this.levelData = levelData;
     this.settingLabel.setText(levelData.briefSetting);
     this.updatePage(0);

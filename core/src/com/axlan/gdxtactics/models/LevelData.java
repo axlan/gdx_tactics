@@ -1,4 +1,4 @@
-package com.axlan.gdxtactics;
+package com.axlan.gdxtactics.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
@@ -17,31 +17,31 @@ public class LevelData {
   }
 
   /** Description of a page of briefing dialogue */
-  static class BriefPage {
+  public static class BriefPage {
     /** The identification for the speaker */
     public String speaker;
     /** The page of dialogue */
     public String dialogue;
   }
 
-  static class ShopItem {
+  public static class ShopItem {
     public String name;
     public int cost;
     public String description;
   }
 
-  static class UnitBehavior {
+  public static class UnitBehavior {
     public UnitBehaviorType behaviorType;
     public Map<String, String> args;
   }
 
-  static class UnitStart {
+  public static class UnitStart {
     public String unitType;
     public GridPoint2 relativePosition;
     public UnitBehavior behavior;
   }
 
-  static class Formation {
+  public static class Formation {
     public GridPoint2[] spawnPoints;
     public UnitStart[] units;
   }
@@ -62,7 +62,7 @@ public class LevelData {
    * @throws JsonIOException if there was a problem reading from the Reader
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
-  static LevelData loadFromJson(String projectPath) {
+  public static LevelData loadFromJson(String projectPath) {
     Gson gson = new Gson();
     Reader reader = Gdx.files.internal(projectPath).reader();
     return gson.fromJson(reader, LevelData.class);

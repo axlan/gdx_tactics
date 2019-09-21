@@ -1,24 +1,22 @@
-package Game.Screen;
+package com.axlan.gdxtactics.screens;
 
-import com.axlan.gdxtactics.BattleMapDemo;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 
 /**
  * Created by David on 16/10/2016.
  */
-public class TestScreen extends TiledScreen {
+public class BattleMapView extends TiledScreen {
 
     private Texture img;
     private GridPoint2 playerPos = new GridPoint2(0, 10);
 
-    public TestScreen() {
+    public BattleMapView() {
         super("maps/advanced1.tmx");
         img = new Texture("images/units/pika.png");
     }

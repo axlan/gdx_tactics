@@ -1,4 +1,4 @@
-package com.axlan.gdxtactics;
+package com.axlan.gdxtactics.screens;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -8,7 +8,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 
 public class BattleMap extends ApplicationAdapter implements InputProcessor {
 
-  final VisTable rootTable = new VisTable();
+  public final VisTable rootTable = new VisTable();
   private boolean active = false;
 
   BattleMap() {

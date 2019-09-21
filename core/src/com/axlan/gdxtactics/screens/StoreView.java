@@ -1,36 +1,30 @@
-package com.axlan.gdxtactics;
+package com.axlan.gdxtactics.screens;
 
-import com.axlan.gdxtactics.LevelData.ShopItem;
-import com.badlogic.gdx.Gdx;
+import com.axlan.gdxtactics.models.LevelData;
+import com.axlan.gdxtactics.models.LevelData.ShopItem;
+import com.axlan.gdxtactics.models.PlayerResources;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
-import com.kotcrab.vis.ui.widget.VisList;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisImage;
 import com.kotcrab.vis.ui.VisUI;
 import com.badlogic.gdx.utils.Align;
-import com.kotcrab.vis.ui.widget.VisWindow;
-import java.util.Vector;
 
-class StoreView extends ClickListener {
+public class StoreView extends ClickListener {
   private LevelData levelData;
   private PlayerResources playerResources;
-  final VisTable rootTable;
+  public final VisTable rootTable;
   private final CompletionObserver observer;
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
 
-  StoreView(CompletionObserver observer) {
+  public StoreView(CompletionObserver observer) {
     this.observer = observer;
     this.rootTable = this.makeStoreView();
   }
@@ -43,7 +37,7 @@ class StoreView extends ClickListener {
     }
   }
 
-  void setData(LevelData levelData, final PlayerResources playerResources) {
+  public void setData(LevelData levelData, final PlayerResources playerResources) {
     this.playerResources = playerResources;
     this.levelData = levelData;
 
