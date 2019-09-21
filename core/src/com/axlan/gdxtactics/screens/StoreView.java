@@ -9,24 +9,25 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.VisUI;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
-public class StoreView extends ClickListener {
+public class StoreView extends StageBasedScreen {
   private LevelData levelData;
   private PlayerResources playerResources;
-  public final VisTable rootTable;
   private final CompletionObserver observer;
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
 
-  public StoreView(CompletionObserver observer) {
+  public StoreView(
+      CompletionObserver observer, LevelData levelData, PlayerResources playerResources) {
     this.observer = observer;
-    this.rootTable = this.makeStoreView();
+    this.stage.addActor(this.makeStoreView());
+    setData(levelData, playerResources);
   }
 
   private void updateMoney() {
@@ -37,7 +38,7 @@ public class StoreView extends ClickListener {
     }
   }
 
-  public void setData(LevelData levelData, final PlayerResources playerResources) {
+  private void setData(LevelData levelData, final PlayerResources playerResources) {
     this.playerResources = playerResources;
     this.levelData = levelData;
 
@@ -89,12 +90,6 @@ public class StoreView extends ClickListener {
     updateMoney();
   }
 
-  @Override
-  public void clicked(InputEvent event, float x, float y) {
-    observer.onDone();
-    event.stop();
-  }
-
   private VisTable makeStoreView() {
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
@@ -113,9 +108,14 @@ public class StoreView extends ClickListener {
     this.description.setAlignment(Align.topLeft);
 
     VisTextButton doneButton = new VisTextButton("Done");
-    doneButton.addListener(this);
     doneButton.setColor(Color.BLUE);
-    doneButton.addListener(this);
+    doneButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            observer.onDone();
+          }
+        });
 
     VisLabel padding1 = new VisLabel();
     padding1.setStyle(labelStyle);

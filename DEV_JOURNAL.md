@@ -1,4 +1,11 @@
-# 9/21 Starting Map Scree
+# 9/21 Clean up Scene / Screen Switching
+
+I'm not totally clear on the logical orginaztion of the objects like game / scene / screen. It seems
+like I can clean up my views by making them extend screen. I need to figure out how to control between them.
+
+Basically followed the example https://libgdx.info/basic_screen/ , but used callbacks to allow the core to activate new screens.
+
+# 9/21 Starting Map Screen
 
 Started by trying to find other projects I could use code from.
 

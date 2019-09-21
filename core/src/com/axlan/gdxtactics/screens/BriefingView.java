@@ -4,56 +4,40 @@ import com.axlan.gdxtactics.models.LevelData;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisImage;
-import com.kotcrab.vis.ui.VisUI;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisImage;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
-public class BriefingView extends ClickListener {
+public class BriefingView extends StageBasedScreen {
 
   private LevelData levelData;
   private int curPage;
   private final VisLabel dialogue;
   private final VisLabel avatarLabel;
-  public final VisTable rootTable;
   private final VisImage avatar;
   private final VisLabel settingLabel;
-  private final CompletionObserver observer;
+  private CompletionObserver completionObserver;
 
-  public BriefingView(CompletionObserver observer) {
-    this.observer = observer;
+  public BriefingView(CompletionObserver observer, LevelData levelData) {
+    this.completionObserver = observer;
     this.dialogue = new VisLabel();
     this.avatarLabel = new VisLabel();
     this.avatar = new VisImage();
     this.settingLabel = new VisLabel();
-    this.levelData = null;
-    this.rootTable = this.makeBriefingView();
+    this.levelData = levelData;
+    this.settingLabel.setText(levelData.briefSetting);
+    this.stage.addActor(this.makeBriefingView());
+    this.updatePage(0);
   }
 
   private boolean isDone() {
     return this.levelData == null || this.curPage >= this.levelData.briefPages.length - 1;
-  }
-
-  public void setLevelData(LevelData levelData) {
-    this.levelData = levelData;
-    this.settingLabel.setText(levelData.briefSetting);
-    this.updatePage(0);
-  }
-
-  @Override
-  public void clicked(InputEvent event, float x, float y) {
-    super.clicked(event, x, y);
-    if (this.isDone()) {
-      observer.onDone();
-    } else {
-      this.updatePage(this.curPage + 1);
-    }
-    event.stop();
   }
 
   private void updatePage(int newPage) {
@@ -82,7 +66,18 @@ public class BriefingView extends ClickListener {
 
     VisTextButton nextButton = new VisTextButton("Next");
     nextButton.setColor(Color.BLUE);
-    nextButton.addListener(this);
+    nextButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            if (isDone()) {
+              completionObserver.onDone();
+            } else {
+              updatePage(curPage + 1);
+            }
+            event.stop();
+          }
+        });
 
     VisLabel padding = new VisLabel();
     padding.setStyle(labelStyle);
