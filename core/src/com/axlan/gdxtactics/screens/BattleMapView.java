@@ -2,8 +2,9 @@ package com.axlan.gdxtactics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,12 +16,15 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
  */
 public class BattleMapView extends TiledScreen {
 
-    private final Texture img;
+    private final Sprite img;
     private GridPoint2 playerPos = new GridPoint2(0, 10);
 
     public BattleMapView() {
         super("maps/advanced1.tmx");
-        img = new Texture("images/units/pika.png");
+        TextureAtlas tankAtlas = new TextureAtlas("images/units/tank.atlas");
+        //img = tankAtlas.createSprite("tank00").getTexture();
+        img = tankAtlas.createSprite("tank00");
+        img.scale(0.5f / getCameraZoom());
 
         VisTextButton test = new VisTextButton("Test");
         test.addListener(
@@ -37,8 +41,9 @@ public class BattleMapView extends TiledScreen {
     public void renderScreen(float delta, SpriteBatch batch) {
 
         Vector2 screenpos = tileToScreen(playerPos);
+        img.setPosition(screenpos.x + tileSize.x / 2, screenpos.y + tileSize.y / 2);
         batch.begin();
-        batch.draw(img, screenpos.x, screenpos.y);
+        img.draw(batch);
         batch.end();
         // this.camera.position.x = pos_row;
         // this.camera.position.y = pos_col;

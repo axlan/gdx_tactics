@@ -31,14 +31,14 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private OrthographicCamera camera;
   private ArrayList<TiledMapTileLayer> layers = new ArrayList<>();
   private Vector2 screenSize;
-  private Vector2 tileSize;
+  Vector2 tileSize;
   private float[] cameraBounds = new float[4];
   private Vector3 cameraPosition;
 
   /* Methods */
 
   TiledScreen(String levelTmxFilename) {
-    float cameraZoom = .25f;
+    float cameraZoom = .5f;
     this.batch = new SpriteBatch();
     map = new TmxMapLoader().load(levelTmxFilename);
 
@@ -55,8 +55,11 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     // Boundaries for the camera : left, top, right, bottom
     float horizontalMargin =
-        (screenSize.x - worldSize.x > 0) ? (screenSize.x - worldSize.x) / 2 : 0;
-    float verticalMargin = (screenSize.y - worldSize.y > 0) ? (screenSize.y - worldSize.y) / 2 : 0;
+        (screenSize.x * cameraZoom > worldSize.x) ? (screenSize.x * cameraZoom - worldSize.x) / 2
+            : 0;
+    float verticalMargin =
+        (screenSize.y * cameraZoom > worldSize.y) ? (screenSize.y * cameraZoom - worldSize.y) / 2
+            : 0;
     cameraBounds[0] = (screenSize.x / 2 - horizontalMargin) * cameraZoom;
     cameraBounds[1] = worldSize.y - screenSize.y / 2 * cameraZoom + verticalMargin;
     cameraBounds[2] = worldSize.x - screenSize.x / 2 * cameraZoom + horizontalMargin;
@@ -86,6 +89,10 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   public abstract void renderScreen(float delta, SpriteBatch batch);
 
   public abstract void updateScreen(float delta);
+
+  float getCameraZoom() {
+    return camera.zoom;
+  }
 
   /* Utils methods */
 

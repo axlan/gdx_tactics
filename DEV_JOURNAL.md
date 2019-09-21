@@ -1,3 +1,7 @@
+# 9/21 Start Laying Out BattleMap for Game
+
+
+
 # 9/21 Clean up Scene / Screen Switching
 
 I'm not totally clear on the logical orginaztion of the objects like game / scene / screen. It seems
@@ -22,6 +26,8 @@ The first decision is what sort of geometry to use, orthogonal, isometric, or he
 I was able to get a decent initial implementation by taking https://github.com/pixdad/Tactical-Battle-System and cleaning up the interfaces a bit. 
 
 Next I started using my own advanced wars map. This led me to play with the scaling on work on the tile to pixel transforms.
+
+Turns out https://github.com/pixdad/Tactical-Battle-System was just a copy of https://www.gamefromscratch.com/post/2014/05/01/LibGDX-Tutorial-11-Tiled-Maps-Part-2-Adding-a-character-sprite.aspx
 
 # 9/20 Implementing Menus
 
