@@ -4,87 +4,87 @@ size: 512,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-tank00
-  rotate: false
-  xy: 236, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-tank01
-  rotate: false
-  xy: 254, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-tank02
-  rotate: false
-  xy: 272, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-tank03
-  rotate: false
-  xy: 54, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-tank04
-  rotate: false
-  xy: 80, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-tank05
-  rotate: false
-  xy: 106, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-tank06
-  rotate: false
-  xy: 132, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-tank07
+tank_down
   rotate: false
   xy: 158, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: -1
-tank08
+  index: 0
+tank_down
   rotate: false
   xy: 184, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: -1
-tank09
+  index: 1
+tank_down
   rotate: false
   xy: 210, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: -1
-tank10
+  index: 2
+tank_idle
+  rotate: false
+  xy: 236, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+tank_idle
+  rotate: false
+  xy: 254, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+tank_idle
+  rotate: false
+  xy: 272, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+tank_left
+  rotate: false
+  xy: 80, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 0
+tank_left
+  rotate: false
+  xy: 106, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+tank_left
+  rotate: false
+  xy: 132, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+tank_up
   rotate: false
   xy: 2, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: -1
-tank11
+  index: 0
+tank_up
   rotate: false
   xy: 28, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: -1
+  index: 1
+tank_up
+  rotate: false
+  xy: 54, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2

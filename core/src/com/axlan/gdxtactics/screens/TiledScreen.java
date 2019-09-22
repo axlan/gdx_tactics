@@ -189,7 +189,9 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     /* Update & Render entities between layers */
     renderer.render(backgroundLayers);
     updateScreen(delta);
+    this.batch.begin();
     renderScreen(delta, this.batch);
+    this.batch.end();
     renderer.render(foregroundLayers);
 
     stage.act(delta);

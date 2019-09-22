@@ -1,6 +1,12 @@
+# 9/22 Playing Around with Graphics
+
+I spent some time getting a little particle effects demo working.
+
+Next I looked into getting an animation. Once I got the animation working, I extended the sprite class to be able to apply its transforms to make manipulating an animated sprite easier.
+
 # 9/21 Start Laying Out BattleMap for Game
 
-
+Cleaned up the map. Added atlas with tank sprites and got a decent pattern for breaking out individual files.
 
 # 9/21 Clean up Scene / Screen Switching
 
