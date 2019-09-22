@@ -16,6 +16,9 @@ public class LevelData {
     ATTACK
   }
 
+  //TODO Add ally formations
+  public GridPoint2 cameraCenter;
+
   /** Description of a page of briefing dialogue */
   public static class BriefPage {
     /** The identification for the speaker */
@@ -24,11 +27,7 @@ public class LevelData {
     public String dialogue;
   }
 
-  public static class ShopItem {
-    public String name;
-    public int cost;
-    public String description;
-  }
+  public UnitAllotment[] playerUnits;
 
   public static class UnitBehavior {
     public UnitBehaviorType behaviorType;
@@ -46,11 +45,32 @@ public class LevelData {
     public UnitStart[] units;
   }
 
+  public static class Intel {
+
+    //TODO Add reported and actual accuracy values, misidentification, false positive, etc.
+    //TODO Allow items to persist between levels.
+    public int formationSpottedIdx;
+    public int numberOfUnits;
+  }
+
   public String briefSetting;
   public BriefPage[] briefPages;
   public ShopItem[] shopItems;
-  public GridPoint2 cameraCenter;
+
+  public static class ShopItem {
+
+    public String name;
+    public int cost;
+    public String description;
+    public Intel[] effects;
+  }
   public GridPoint2[] playerSpawnPoints;
+
+  public static class UnitAllotment {
+
+    public String type;
+    public int count;
+  }
   public Formation[] enemyFormations;
   public String mapName;
 

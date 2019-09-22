@@ -14,7 +14,13 @@
         {
             "name": "Farmer",
             "cost": 10,
-            "description": "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible."
+            "description": "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible.",
+            "effects": [
+                {
+                    "formationSpottedIdx": 0,
+                    "numberOfUnits": 1
+                }
+            ]
         },
         {
             "name": "Spy Sat",
@@ -22,9 +28,36 @@
             "description": "Top of the line spy sattelite.\nCapable of 10m resolution imaging"
         }
     ],
-    "mapName": "demo1",
+    "mapName": "advanced1",
     "cameraCenter": {"x": 8, "y": 4},
-    "playerSpawnPoints": [{"x": 8, "y": 5}],
+    "playerSpawnPoints": [
+        {
+            "x": 3,
+            "y": 6
+        },
+        {
+            "x": 4,
+            "y": 6
+        },
+        {
+            "x": 8,
+            "y": 6
+        },
+        {
+            "x": 12,
+            "y": 6
+        },
+        {
+            "x": 13,
+            "y": 6
+        }
+    ],
+    "playerUnits": [
+        {
+            "type": "tank",
+            "count": 2
+        }
+    ],
     "enemyFormations": [{
         "spawnPoints": [{"x": 12, "y": 5}, {"x": 12, "y": 10}],
         "units": [{

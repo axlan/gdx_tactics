@@ -91,6 +91,7 @@ public class StoreView extends StageBasedScreen {
   }
 
   private VisTable makeStoreView() {
+    //TODO Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);

@@ -2,9 +2,9 @@ package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.PlayerResources;
-import com.axlan.gdxtactics.screens.BattleMapView;
 import com.axlan.gdxtactics.screens.BriefingView;
 import com.axlan.gdxtactics.screens.CompletionObserver;
+import com.axlan.gdxtactics.screens.DeployView;
 import com.axlan.gdxtactics.screens.StoreView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
@@ -39,7 +39,7 @@ public class Core extends Game {
   }
 
   private void showBattleMap() {
-    this.setScreen(new BattleMapView());
+    this.setScreen(new DeployView(levelData, playerResources));
   }
 
   @Override

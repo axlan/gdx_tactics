@@ -6,19 +6,18 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 
-/**
- * Created by David on 17/11/2016. Abscract com.axlan.gdxtactics.Game.Screen class for tiled
- * screens. Render entities between layers
- */
+
 public abstract class TiledScreen extends StageBasedScreen implements InputProcessor {
 
   boolean moveCameraToLeft = false;
@@ -26,9 +25,10 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   boolean moveCameraToRight = false;
   boolean moveCameraToBottom = false;
   private SpriteBatch batch;
+  OrthographicCamera camera;
   private TiledMap map;
   private OrthogonalTiledMapRenderer renderer;
-  private OrthographicCamera camera;
+  private ShapeRenderer shapeRenderer;
   private ArrayList<TiledMapTileLayer> layers = new ArrayList<>();
   private Vector2 screenSize;
   Vector2 tileSize;
@@ -40,6 +40,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   TiledScreen(String levelTmxFilename) {
     float cameraZoom = .5f;
     this.batch = new SpriteBatch();
+    this.shapeRenderer = new ShapeRenderer();
     map = new TmxMapLoader().load(levelTmxFilename);
 
     /* Layers from the map : 0 - under entities / 1+ - above entities */
@@ -86,22 +87,18 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   /**
    * Meant to be overrided : render & update entities between layers
    */
-  public abstract void renderScreen(float delta, SpriteBatch batch);
+  public abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   public abstract void updateScreen(float delta);
 
-  float getCameraZoom() {
-    return camera.zoom;
-  }
-
   /* Utils methods */
 
-  private Vector2 screenToWorld(Vector2 screenCoord) {
+  Vector2 screenToWorld(Vector2 screenCoord) {
     Vector3 proj = camera.unproject(new Vector3(screenCoord, 0));
     return new Vector2(proj.x, proj.y);
   }
 
-  private Vector2 worldToScreen(Vector2 worldCoord) {
+  Vector2 worldToScreen(Vector2 worldCoord) {
     Vector3 proj = camera.project(new Vector3(worldCoord, 0));
     return new Vector2(proj.x, proj.y);
   }
@@ -111,6 +108,10 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     int tileX = (int) (worldCoord.x / tileSize.x);
     int tileY = (int) (worldCoord.y / tileSize.y);
     return new GridPoint2(tileX, tileY);
+  }
+
+  Vector2 tileToWorld(GridPoint2 tileCoord) {
+    return new Vector2(tileCoord.x, tileCoord.y).scl(tileSize);
   }
 
   Vector2 tileToScreen(GridPoint2 tileCoord) {
@@ -176,6 +177,13 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   @Override
   public void render(float delta) {
+//    Gdx.gl.glEnable(GL20.GL_BLEND);
+//    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+//    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+//    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);   // <<< this line here makes the magic we're after
+
+
     // Camera rendering
     renderCamera(delta);
 
@@ -189,13 +197,23 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     /* Update & Render entities between layers */
     renderer.render(backgroundLayers);
     updateScreen(delta);
-    this.batch.begin();
-    renderScreen(delta, this.batch);
-    this.batch.end();
+    Gdx.gl.glEnable(GL20.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
+        GL20.GL_ONE_MINUS_SRC_ALPHA);   // <<< this line here makes the magic we're after
+
+    this.batch.setProjectionMatrix(camera.combined);
+    this.shapeRenderer.setProjectionMatrix(camera.combined);
+
+    renderScreen(delta, this.batch, this.shapeRenderer);
     renderer.render(foregroundLayers);
 
     stage.act(delta);
     stage.draw();
+  }
+
+  public Rectangle getTileRect(GridPoint2 point) {
+    Vector2 worldPoint = tileToWorld(point);
+    return new Rectangle(worldPoint.x, worldPoint.y, tileSize.x, tileSize.y);
   }
 
   @Override

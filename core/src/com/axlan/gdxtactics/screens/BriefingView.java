@@ -45,11 +45,13 @@ public class BriefingView extends StageBasedScreen {
     if (this.levelData != null && this.curPage < this.levelData.briefPages.length) {
       this.dialogue.setText(this.levelData.briefPages[this.curPage].dialogue);
       this.avatarLabel.setText(this.levelData.briefPages[this.curPage].speaker);
+      //TODO load speaker font and avatar based on name from map
       this.avatar.setDrawable(new Texture(Gdx.files.internal("images/avatars/img_avatar.png")));
     }
   }
 
   private VisTable makeBriefingView() {
+    //TODO Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);

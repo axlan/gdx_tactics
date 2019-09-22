@@ -1,8 +1,20 @@
+# 9/22 Starting Map Logic
+
+First I thought about how to move troops around and realized I would need path finding. I remembered writing a Java A* algorithm back in college https://en.wikipedia.org/wiki/A*_search_algorithm .
+
+Next I started adding the additional data and logic to create a view for deploying troops and viewing intel.
+
+Hit two weird issues when trying to add transparent shapes. First it seems like the tilemap renderer changes the GL settings.
+
+I was hitting this issue: https://stackoverflow.com/questions/14700577/drawing-transparent-shaperenderer-in-libgdx , but I had to change the blend mode after the tilemap renders.
+
+The second issue I hit was the ShapeRenderer and SpriteBatch can't have their begin and end sections overlap. The sprite batch was failing when I did this.
+
 # 9/22 Playing Around with Graphics
 
 I spent some time getting a little particle effects demo working.
 
-Next I looked into getting an animation. Once I got the animation working, I extended the sprite class to be able to apply its transforms to make manipulating an animated sprite easier.
+Next I looked into getting an animation https://github.com/libgdx/libgdx/wiki/2D-Animation . Once I got the animation working, I extended the sprite class to be able to apply its transforms to make manipulating an animated sprite easier.
 
 # 9/21 Start Laying Out BattleMap for Game
 
