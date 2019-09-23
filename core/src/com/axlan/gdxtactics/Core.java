@@ -7,19 +7,24 @@ import com.axlan.gdxtactics.screens.CompletionObserver;
 import com.axlan.gdxtactics.screens.DeployView;
 import com.axlan.gdxtactics.screens.StoreView;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.math.GridPoint2;
 import com.kotcrab.vis.ui.VisUI;
+import java.util.HashMap;
 
 public class Core extends Game {
 
   private final PlayerResources playerResources = new PlayerResources();
   private LevelData levelData;
+  private int[] enemySpawnSelections;
+  private HashMap<GridPoint2, String> placements;
+  private DeployView deployView;
 
   private void showStore() {
     CompletionObserver observer =
         new CompletionObserver() {
           @Override
           public void onDone() {
-            showBattleMap();
+            showDeployMap();
           }
         };
     StoreView storeView = new StoreView(observer, levelData, playerResources);
@@ -38,8 +43,22 @@ public class Core extends Game {
     this.setScreen(briefingView);
   }
 
+  private void showDeployMap() {
+    CompletionObserver observer =
+        new CompletionObserver() {
+          @Override
+          public void onDone() {
+            showBattleMap();
+          }
+        };
+    deployView = new DeployView(observer, levelData, playerResources);
+    this.setScreen(deployView);
+  }
+
   private void showBattleMap() {
-    this.setScreen(new DeployView(levelData, playerResources));
+    //deployView.enemySpawnSelections
+    //deployView.placements
+    //this.setScreen(new DeployView(levelData, playerResources));
   }
 
   @Override

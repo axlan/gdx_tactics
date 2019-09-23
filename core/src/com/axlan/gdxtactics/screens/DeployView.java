@@ -12,7 +12,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -46,23 +45,26 @@ public class DeployView extends TiledScreen {
       Color.BLACK,
       Color.WHITE
   };
-  final int[] enemySpawnSelections;
+  public final int[] enemySpawnSelections;
   private final VisLabel[] remainingLabels;
   private final VisCheckBox[] intelCheckBoxes;
   //TODO allow for determinism
   private final Random rand = new Random();
-  private final HashMap<GridPoint2, String> placements = new HashMap<>();
+  public final HashMap<GridPoint2, String> placements = new HashMap<>();
   private final LevelData levelData;
   private final PlayerResources playerResources;
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
   private String selectedUnit;
   private float elapsedTime = 0;
+  private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
+  private final CompletionObserver observer;
 
-  public DeployView(LevelData levelData, PlayerResources playerResources) {
+  public DeployView(CompletionObserver observer, LevelData levelData,
+      PlayerResources playerResources) {
     super("maps/" + levelData.mapName + ".tmx");
     this.levelData = levelData;
+    this.observer = observer;
     this.playerResources = playerResources;
-    TextureAtlas tankAtlas = new TextureAtlas("images/units/tank.atlas");
     enemySpawnSelections = new int[levelData.enemyFormations.length];
     for (int i = 0; i < levelData.enemyFormations.length; i++) {
       Formation formation = levelData.enemyFormations[i];
@@ -134,6 +136,16 @@ public class DeployView extends TiledScreen {
       }
     });
     table.add(eraseButton);
+    table.row();
+    doneButton.setDisabled(true);
+    doneButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        observer.onDone();
+      }
+    });
+    table.add(doneButton).colspan(2);
+
     return unitSelection;
   }
 
@@ -199,18 +211,20 @@ public class DeployView extends TiledScreen {
   }
 
   private void updateRemainingLabels() {
+    int totalRemaining = 0;
     for (int i = 0; i < levelData.playerUnits.length; i++) {
       final UnitAllotment unit = levelData.playerUnits[i];
       int remaining = remainingUnits(unit.type);
+      totalRemaining += remaining;
       remainingLabels[i].setText(String.format("%s: %d/%d", unit.type, remaining, unit.count));
     }
+    doneButton.setDisabled(totalRemaining > 0);
   }
 
   @Override
   public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     batch.begin();
     if (selectedUnit != null) {
-      //Vector2 worldPos = tileToWorld(playerPos);
       Vector2 worldPos = screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
       AnimatedSprite<AtlasRegion> img = SpriteLookup.getAnimation(selectedUnit, Poses.IDLE, 0.1f);
       img.setPosition(worldPos.x, worldPos.y);
