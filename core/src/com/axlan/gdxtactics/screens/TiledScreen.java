@@ -89,6 +89,9 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    */
   public abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
+  public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+  }
+
   public abstract void updateScreen(float delta);
 
   /* Utils methods */
@@ -209,6 +212,8 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     stage.act(delta);
     stage.draw();
+
+    renderAboveUI(delta, this.batch, this.shapeRenderer);
   }
 
   public Rectangle getTileRect(GridPoint2 point) {

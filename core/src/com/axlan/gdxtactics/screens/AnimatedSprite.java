@@ -27,8 +27,8 @@ public class AnimatedSprite<T> extends Sprite {
     super.draw(batch);
   }
 
-  public void draw(Batch batch, float delta) {
-    update(delta);
+  public void draw(Batch batch, float elapsedTime) {
+    this.elapsedTime = elapsedTime;
     draw(batch);
   }
 

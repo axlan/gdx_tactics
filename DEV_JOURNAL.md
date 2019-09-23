@@ -1,3 +1,11 @@
+# 9/23 Intel Selection Screen
+
+I finished up the UI for deploying available troops. I ended up adding a layer on top of the UI to make the selected unit more obvious.
+
+Next I added a menu to turn the various intelligence sources on and off. Nothing new with any of this.
+
+The level descriptions are pretty complicated and theirs some unresolved subtly on what I'll want to change to do them for real.
+
 # 9/22 Starting Map Logic
 
 First I thought about how to move troops around and realized I would need path finding. I remembered writing a Java A* algorithm back in college https://en.wikipedia.org/wiki/A*_search_algorithm .

@@ -14,6 +14,7 @@ public class DeployDemo extends Game {
     LevelData levelData = LevelData.loadFromJson("levels/demo.json");
     PlayerResources playerResources = new PlayerResources();
     playerResources.purchases.add(levelData.shopItems[0]);
+    playerResources.purchases.add(levelData.shopItems[1]);
     this.setScreen(new DeployView(levelData, playerResources));
   }
 

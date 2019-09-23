@@ -18,14 +18,22 @@
             "effects": [
                 {
                     "formationSpottedIdx": 0,
-                    "numberOfUnits": 1
+                    "numberOfUnits": 1,
+                    "spotType": "RANDOM"
                 }
             ]
         },
         {
             "name": "Spy Sat",
             "cost": 100000000,
-            "description": "Top of the line spy sattelite.\nCapable of 10m resolution imaging"
+            "description": "Top of the line spy sattelite.\nCapable of 10m resolution imaging",
+            "effects": [
+                {
+                    "formationSpottedIdx": 0,
+                    "numberOfUnits": 1,
+                    "spotType": "RANDOM"
+                }
+            ]
         }
     ],
     "mapName": "advanced1",
@@ -59,9 +67,18 @@
         }
     ],
     "enemyFormations": [{
-        "spawnPoints": [{"x": 12, "y": 5}, {"x": 12, "y": 10}],
+        "spawnPoints": [
+            {
+                "x": 4,
+                "y": 2
+            },
+            {
+                "x": 12,
+                "y": 2
+            }
+        ],
         "units": [{
-            "unitType": "scout",
+            "unitType": "tank",
             "relativePosition": {"x": 0, "y": 0},
             "behavior": { "behaviorType": "MOVE", "args": {
                 "target": "{'x': 12, 'y': 5}"

@@ -10,10 +10,15 @@ import java.util.Map;
 
 public class LevelData {
 
-  enum UnitBehaviorType {
+  public enum UnitBehaviorType {
     MOVE,
     DEFEND,
     ATTACK
+  }
+
+  public enum SpotType {
+    RANDOM,
+    ORDERED
   }
 
   //TODO Add ally formations
@@ -43,6 +48,10 @@ public class LevelData {
   public static class Formation {
     public GridPoint2[] spawnPoints;
     public UnitStart[] units;
+
+    public GridPoint2 getUnitPos(int spawnIdx, int unitIdx) {
+      return spawnPoints[spawnIdx].cpy().add(units[unitIdx].relativePosition);
+    }
   }
 
   public static class Intel {
@@ -51,6 +60,7 @@ public class LevelData {
     //TODO Allow items to persist between levels.
     public int formationSpottedIdx;
     public int numberOfUnits;
+    public SpotType spotType;
   }
 
   public String briefSetting;
