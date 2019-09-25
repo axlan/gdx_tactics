@@ -187,6 +187,11 @@ public class PathSearchDemo extends Game implements InputProcessor {
     }
 
     @Override
+    public int edgeWeight(PathSearchNode neighbor) {
+      return 1;
+    }
+
+    @Override
     public ArrayList<PathSearchNode> getNeighbors() {
       ArrayList<PathSearchNode> tmp = new ArrayList<>();
       for (TileNode neighbor : neighbors) {

@@ -45,9 +45,9 @@ public class PathSearch {
         if (closedSet.contains(neighbor)) {
           continue;
         }
-        // d(current,neighbor) is the weight of the edge from current to neighbor always (1)
+        // d(current,neighbor) is the weight of the edge from current to neighbor always
         // tentative_gScore is the distance from start to the neighbor through current
-        int tentativeGScore = current.gScore + 1;
+        int tentativeGScore = current.gScore + current.obj.edgeWeight(neighbor);
         if (!valueMap.containsKey(neighbor) || tentativeGScore < valueMap.get(neighbor).gScore) {
           // This path to neighbor is better than any previous one. Record it!
           cameFrom.put(neighbor, current.obj);
@@ -66,6 +66,8 @@ public class PathSearch {
   public interface PathSearchNode {
 
     int heuristics();
+
+    int edgeWeight(PathSearchNode neighbor);
 
     ArrayList<PathSearchNode> getNeighbors();
   }
