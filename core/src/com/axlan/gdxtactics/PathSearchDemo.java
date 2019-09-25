@@ -25,7 +25,12 @@ public class PathSearchDemo extends Game implements InputProcessor {
   @Override
   public boolean keyDown(int keycode) {
     if (keycode == Keys.ENTER) {
-      ArrayList<PathSearchNode> path = PathSearch.AStarSearch(start, goal);
+      ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
+      if (path == null) {
+        initializeTileStates();
+        System.out.println("Goal not reachable");
+        return false;
+      }
       for (PathSearchNode node : path) {
         ((TileNode) node).state = TileState.START;
       }

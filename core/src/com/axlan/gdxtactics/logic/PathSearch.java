@@ -18,7 +18,8 @@ public class PathSearch {
   }
 
   // A* finds a path from start to goal.
-  public static ArrayList<PathSearchNode> AStarSearch(PathSearchNode start, PathSearchNode goal) {
+  // Implementation adapted from https://en.wikipedia.org/wiki/A*_search_algorithm
+  public static ArrayList<PathSearchNode> aStarSearch(PathSearchNode start, PathSearchNode goal) {
     // The set of discovered nodes that need to be (re-)expanded.
     // Initially, only the start node is known.
     PriorityQueue<PriorityItem> openSet = new PriorityQueue<>();
@@ -27,7 +28,7 @@ public class PathSearch {
 
     // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
     // For node n, fScore[n] := gScore[n] + h(n).
-    PriorityItem item = new PriorityItem(start, start.heuristics(), 0);
+    PriorityItem item = new PriorityItem(start, 0);
     openSet.add(item);
     valueMap.put(start, item);
 
@@ -50,10 +51,9 @@ public class PathSearch {
         if (!valueMap.containsKey(neighbor) || tentativeGScore < valueMap.get(neighbor).gScore) {
           // This path to neighbor is better than any previous one. Record it!
           cameFrom.put(neighbor, current.obj);
-          item = new PriorityItem(neighbor, tentativeGScore + neighbor.heuristics(),
-              tentativeGScore);
+          item = new PriorityItem(neighbor, tentativeGScore);
           valueMap.put(neighbor, item);
-          if (!openSet.contains(neighbor)) {
+          if (!openSet.contains(item)) {
             openSet.add(item);
           }
         }
@@ -72,13 +72,13 @@ public class PathSearch {
 
   private static class PriorityItem implements Comparable {
 
-    Integer fScore;
-    Integer gScore;
-    PathSearchNode obj;
+    final Integer fScore;
+    final Integer gScore;
+    final PathSearchNode obj;
 
-    PriorityItem(PathSearchNode obj, Integer fScore, Integer gScore) {
+    PriorityItem(PathSearchNode obj, Integer gScore) {
       this.obj = obj;
-      this.fScore = fScore;
+      this.fScore = gScore + obj.heuristics();
       this.gScore = gScore;
     }
 
