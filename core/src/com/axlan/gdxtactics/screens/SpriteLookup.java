@@ -12,7 +12,7 @@ public class SpriteLookup {
 
   static void checkSheet(String sprite) {
     if (!atlases.containsKey(sprite)) {
-      atlases.put(sprite, new TextureAtlas("images/units/" + sprite + ".atlas"));
+      atlases.put(sprite, new TextureAtlas("images/units/tank.atlas"));
     }
   }
 

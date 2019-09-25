@@ -1,89 +1,173 @@
 
 tank.png
-size: 512,32
+size: 1024,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+scout_down
+  rotate: false
+  xy: 392, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 0
+scout_down
+  rotate: false
+  xy: 418, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+scout_down
+  rotate: false
+  xy: 444, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+scout_idle
+  rotate: false
+  xy: 470, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+scout_idle
+  rotate: false
+  xy: 488, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+scout_idle
+  rotate: false
+  xy: 506, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+scout_left
+  rotate: false
+  xy: 2, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+scout_left
+  rotate: false
+  xy: 132, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 0
+scout_left
+  rotate: false
+  xy: 366, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+scout_up
+  rotate: false
+  xy: 106, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+scout_up
+  rotate: false
+  xy: 314, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+scout_up
+  rotate: false
+  xy: 340, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 0
 tank_down
+  rotate: false
+  xy: 236, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 0
+tank_down
+  rotate: false
+  xy: 262, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+tank_down
+  rotate: false
+  xy: 288, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+tank_idle
+  rotate: false
+  xy: 524, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+tank_idle
+  rotate: false
+  xy: 542, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+tank_idle
+  rotate: false
+  xy: 560, 10
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+tank_left
   rotate: false
   xy: 158, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: 0
-tank_down
+tank_left
   rotate: false
   xy: 184, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: 1
-tank_down
+tank_left
   rotate: false
   xy: 210, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: 2
-tank_idle
-  rotate: false
-  xy: 236, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-tank_idle
-  rotate: false
-  xy: 254, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 1
-tank_idle
-  rotate: false
-  xy: 272, 10
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 2
-tank_left
-  rotate: false
-  xy: 80, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: 0
-tank_left
-  rotate: false
-  xy: 106, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: 1
-tank_left
-  rotate: false
-  xy: 132, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: 2
-tank_up
-  rotate: false
-  xy: 2, 2
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: 0
 tank_up
   rotate: false
   xy: 28, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
-  index: 1
+  index: 0
 tank_up
   rotate: false
   xy: 54, 2
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+tank_up
+  rotate: false
+  xy: 80, 2
   size: 24, 24
   orig: 24, 24
   offset: 0, 0

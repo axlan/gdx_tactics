@@ -89,8 +89,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    */
   public abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
-  public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
-  }
+  public abstract void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   public abstract void updateScreen(float delta);
 
@@ -169,6 +168,12 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   public TiledMap getMap() {
     return map;
   }
+
+  boolean isTilePassable(GridPoint2 point) {
+    TiledMapTileLayer tileLayer = (TiledMapTileLayer) getMap().getLayers().get(0);
+    return (boolean) tileLayer.getCell(point.x, point.y).getTile().getProperties().get("passable");
+  }
+
 
   /* Implemented com.axlan.gdxtactics.Game.Screen Methods */
 

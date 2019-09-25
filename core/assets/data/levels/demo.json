@@ -78,7 +78,7 @@
             }
         ],
         "units": [{
-            "unitType": "tank",
+          "unitType": "scout",
             "relativePosition": {"x": 0, "y": 0},
             "behavior": { "behaviorType": "MOVE", "args": {
                 "target": "{'x': 12, 'y': 5}"

@@ -1,5 +1,6 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.models.DeploymentSelection;
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.LevelData.Formation;
 import com.axlan.gdxtactics.models.LevelData.Intel;
@@ -45,12 +46,12 @@ public class DeployView extends TiledScreen {
       Color.BLACK,
       Color.WHITE
   };
-  public final int[] enemySpawnSelections;
+  private final int[] enemySpawnSelections;
   private final VisLabel[] remainingLabels;
   private final VisCheckBox[] intelCheckBoxes;
   //TODO allow for determinism
   private final Random rand = new Random();
-  public final HashMap<GridPoint2, String> placements = new HashMap<>();
+  private final HashMap<GridPoint2, String> placements = new HashMap<>();
   private final LevelData levelData;
   private final PlayerResources playerResources;
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
@@ -219,6 +220,10 @@ public class DeployView extends TiledScreen {
       remainingLabels[i].setText(String.format("%s: %d/%d", unit.type, remaining, unit.count));
     }
     doneButton.setDisabled(totalRemaining > 0);
+  }
+
+  public DeploymentSelection getDeploymentSelections() {
+    return new DeploymentSelection(enemySpawnSelections, placements);
   }
 
   @Override

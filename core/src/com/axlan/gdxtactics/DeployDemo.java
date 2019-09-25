@@ -12,7 +12,7 @@ public class DeployDemo extends Game {
   @Override
   public void create() {
     VisUI.load();
-    LevelData levelData = LevelData.loadFromJson("levels/demo.json");
+    LevelData levelData = LevelData.loadFromJson("data/levels/demo.json");
     PlayerResources playerResources = new PlayerResources();
     playerResources.purchases.add(levelData.shopItems[0]);
     playerResources.purchases.add(levelData.shopItems[1]);

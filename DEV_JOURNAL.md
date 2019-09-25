@@ -1,3 +1,18 @@
+# 9/25 Starting Battle View
+
+I spent some time dawdling since the project is getting large enough that it could use another reorgination.
+The main concern is that the shared data should be more centralized and access limited instead of just passing a bunch of references.
+Also the constants should be centralized as well. For now I decided to plow forward and refactor once I get to the point of adding the concept of multiple levels.
+
+I started adding the basic guts of the battle view and I'm at the point I want to add the pathfinding. It was a little confusing to figure out how to get the properties for the tiles, but evetually got the logic I needed.
+
+I decided to remake my AStar app as a demo.
+
+# 9/24 Added Stats
+
+Added a stats file with the stats for the different types of units. Did a little refactoring to move
+the deployment information to the new BattleView. 
+
 # 9/23 Intel Selection Screen
 
 I finished up the UI for deploying available troops. I ended up adding a layer on top of the UI to make the selected unit more obvious.

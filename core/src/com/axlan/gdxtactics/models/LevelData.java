@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.Reader;
 import java.util.Map;
 
+//TODO Reorganize assets shared across game to make getting / setting clearer without passing around tons of references
 public class LevelData {
 
   public enum UnitBehaviorType {
@@ -26,6 +27,7 @@ public class LevelData {
 
   /** Description of a page of briefing dialogue */
   public static class BriefPage {
+
     /** The identification for the speaker */
     public String speaker;
     /** The page of dialogue */
@@ -35,17 +37,20 @@ public class LevelData {
   public UnitAllotment[] playerUnits;
 
   public static class UnitBehavior {
+
     public UnitBehaviorType behaviorType;
     public Map<String, String> args;
   }
 
   public static class UnitStart {
+
     public String unitType;
     public GridPoint2 relativePosition;
     public UnitBehavior behavior;
   }
 
   public static class Formation {
+
     public GridPoint2[] spawnPoints;
     public UnitStart[] units;
 
@@ -74,6 +79,7 @@ public class LevelData {
     public String description;
     public Intel[] effects;
   }
+
   public GridPoint2[] playerSpawnPoints;
 
   public static class UnitAllotment {
@@ -81,6 +87,7 @@ public class LevelData {
     public String type;
     public int count;
   }
+
   public Formation[] enemyFormations;
   public String mapName;
 

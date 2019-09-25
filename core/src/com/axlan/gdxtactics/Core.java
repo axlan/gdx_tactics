@@ -2,6 +2,8 @@ package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.PlayerResources;
+import com.axlan.gdxtactics.models.UnitStats;
+import com.axlan.gdxtactics.screens.BattleView;
 import com.axlan.gdxtactics.screens.BriefingView;
 import com.axlan.gdxtactics.screens.CompletionObserver;
 import com.axlan.gdxtactics.screens.DeployView;
@@ -18,6 +20,7 @@ public class Core extends Game {
   private int[] enemySpawnSelections;
   private HashMap<GridPoint2, String> placements;
   private DeployView deployView;
+  private HashMap<String, UnitStats> unitStats;
 
   private void showStore() {
     CompletionObserver observer =
@@ -56,16 +59,17 @@ public class Core extends Game {
   }
 
   private void showBattleMap() {
-    //deployView.enemySpawnSelections
-    //deployView.placements
-    //this.setScreen(new DeployView(levelData, playerResources));
+    this.setScreen(new BattleView(levelData, unitStats, playerResources,
+        deployView.getDeploymentSelections()));
+    deployView = null;
   }
 
   @Override
   public void create() {
     VisUI.load();
 
-    levelData = LevelData.loadFromJson("levels/demo.json");
+    this.levelData = LevelData.loadFromJson("data/levels/demo.json");
+    this.unitStats = UnitStats.loadFromJson("data/units/stats.json");
 
     this.showBriefing();
   }

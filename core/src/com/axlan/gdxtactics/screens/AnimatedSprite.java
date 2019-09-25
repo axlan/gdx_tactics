@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Array;
 
 public class AnimatedSprite<T> extends Sprite {
@@ -30,6 +31,10 @@ public class AnimatedSprite<T> extends Sprite {
   public void draw(Batch batch, float elapsedTime) {
     this.elapsedTime = elapsedTime;
     draw(batch);
+  }
+
+  public void setTilePosition(GridPoint2 tilePoint) {
+    this.setPosition(tilePoint.x * this.getWidth(), tilePoint.y * this.getHeight());
   }
 
 }
