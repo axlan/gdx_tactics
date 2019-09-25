@@ -1,5 +1,7 @@
 package com.axlan.gdxtactics;
 
+import com.axlan.gdxtactics.logic.PathSearch;
+import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -10,20 +12,45 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.GridPoint2;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class PathSearchDemo extends Game implements InputProcessor {
 
-  ShapeRenderer shapeRenderer;
-  GridPoint2 tileSize = new GridPoint2(10, 10);
-  TileState[][] tiles;
+  private static TileNode goal;
+  private static TileNode start;
+  private ShapeRenderer shapeRenderer;
+  private GridPoint2 tileSize = new GridPoint2(10, 10);
+  private TileNode[][] tiles;
 
   @Override
   public boolean keyDown(int keycode) {
     if (keycode == Keys.ENTER) {
+      ArrayList<PathSearchNode> path = PathSearch.AStarSearch(start, goal);
+      for (PathSearchNode node : path) {
+        ((TileNode) node).state = TileState.START;
+      }
 
+    } else if (keycode == Keys.R) {
+      initializeTileStates();
     }
     return false;
+  }
+
+  private void touchHelper(int screenX, int screenY, boolean clear) {
+    int posX = screenX / tileSize.x;
+    int posY = screenY / tileSize.y;
+    if (posX < 0 || posX >= tiles.length || posY < 0 || posY >= tiles[0].length) {
+      return;
+    }
+    if (!clear) {
+      if (tiles[posX][posY].state == TileState.OPEN) {
+        tiles[posX][posY].state = TileState.BLOCKED;
+      }
+    } else {
+      if (tiles[posX][posY].state == TileState.BLOCKED) {
+        tiles[posX][posY].state = TileState.OPEN;
+      }
+    }
   }
 
   @Override
@@ -38,21 +65,13 @@ public class PathSearchDemo extends Game implements InputProcessor {
 
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    int posX = screenX / tileSize.x;
-    int posY = screenY / tileSize.y;
-    if (posX < 0 || posX >= tiles.length || posY < 0 || posY >= tiles[0].length) {
-      return false;
-    }
-    if (button == Input.Buttons.LEFT) {
-      if (tiles[posX][posY] == TileState.OPEN) {
-        tiles[posX][posY] = TileState.BLOCKED;
-      }
-    } else {
-      if (tiles[posX][posY] == TileState.BLOCKED) {
-        tiles[posX][posY] = TileState.OPEN;
-      }
-    }
+    touchHelper(screenX, screenY, button != Input.Buttons.LEFT);
+    return false;
+  }
 
+  @Override
+  public boolean touchDragged(int screenX, int screenY, int pointer) {
+    touchHelper(screenX, screenY, !Gdx.input.isButtonPressed(Input.Buttons.LEFT));
     return false;
   }
 
@@ -61,24 +80,15 @@ public class PathSearchDemo extends Game implements InputProcessor {
     return false;
   }
 
-  @Override
-  public boolean touchDragged(int screenX, int screenY, int pointer) {
-    int posX = screenX / tileSize.x;
-    int posY = screenY / tileSize.y;
-    if (posX < 0 || posX >= tiles.length || posY < 0 || posY >= tiles[0].length) {
-      return false;
-    }
+  private void initializeTileStates() {
 
-    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-      if (tiles[posX][posY] == TileState.OPEN) {
-        tiles[posX][posY] = TileState.BLOCKED;
-      }
-    } else {
-      if (tiles[posX][posY] == TileState.BLOCKED) {
-        tiles[posX][posY] = TileState.OPEN;
+    for (TileNode[] row : tiles) {
+      for (TileNode tile : row) {
+        tile.state = TileState.OPEN;
       }
     }
-    return false;
+    tiles[10][10].state = TileState.START;
+    tiles[40][40].state = TileState.END;
   }
 
   @Override
@@ -96,12 +106,35 @@ public class PathSearchDemo extends Game implements InputProcessor {
     shapeRenderer = new ShapeRenderer();
     int tileWidth = Gdx.graphics.getWidth() / tileSize.x;
     int tileHeight = Gdx.graphics.getHeight() / tileSize.y;
-    tiles = new TileState[tileWidth][tileHeight];
-    for (TileState[] row : tiles) {
-      Arrays.fill(row, TileState.OPEN);
+    tiles = new TileNode[tileWidth][tileHeight];
+    for (int r = 0; r < tiles.length; r++) {
+      for (int c = 0; c < tiles[r].length; c++) {
+        tiles[r][c] = new TileNode();
+      }
     }
-    tiles[10][10] = TileState.START;
-    tiles[40][40] = TileState.END;
+
+    for (int r = 0; r < tiles.length; r++) {
+      for (int c = 0; c < tiles[r].length; c++) {
+        TileNode tile = tiles[r][c];
+        tile.pos = new GridPoint2(r, c);
+        if (r < tileWidth - 1) {
+          tile.neighbors.add(tiles[r + 1][c]);
+        }
+        if (r > 0) {
+          tile.neighbors.add(tiles[r - 1][c]);
+        }
+        if (c < tileHeight - 1) {
+          tile.neighbors.add(tiles[r][c + 1]);
+        }
+        if (c > 0) {
+          tile.neighbors.add(tiles[r][c - 1]);
+        }
+      }
+    }
+    tiles[10][10].state = TileState.START;
+    tiles[40][40].state = TileState.END;
+    goal = tiles[40][40];
+    start = tiles[10][10];
     Gdx.input.setInputProcessor(this);
   }
 
@@ -113,7 +146,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
     shapeRenderer.begin(ShapeType.Filled);
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
-        switch (tiles[r][c]) {
+        switch (tiles[r][c].state) {
           case OPEN:
             shapeRenderer.setColor(Color.WHITE);
             break;
@@ -135,6 +168,29 @@ public class PathSearchDemo extends Game implements InputProcessor {
       }
     }
     shapeRenderer.end();
+  }
+
+  static class TileNode implements PathSearchNode {
+
+    GridPoint2 pos;
+    ArrayList<TileNode> neighbors = new ArrayList<>();
+    TileState state = TileState.OPEN;
+
+    @Override
+    public int heuristics() {
+      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
+    }
+
+    @Override
+    public ArrayList<PathSearchNode> getNeighbors() {
+      ArrayList<PathSearchNode> tmp = new ArrayList<>();
+      for (TileNode neighbor : neighbors) {
+        if (neighbor.state != TileState.BLOCKED) {
+          tmp.add(neighbor);
+        }
+      }
+      return tmp;
+    }
   }
 
   enum TileState {
