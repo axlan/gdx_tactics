@@ -66,7 +66,6 @@ public class PathSearch {
   public interface PathSearchNode {
 
     int heuristics();
-
     int edgeWeight(PathSearchNode neighbor);
 
     ArrayList<PathSearchNode> getNeighbors();

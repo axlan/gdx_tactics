@@ -2,6 +2,7 @@ package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.screens.PathVisualizer;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.GridPoint2;
@@ -19,8 +21,13 @@ public class PathSearchDemo extends Game implements InputProcessor {
   private static TileNode goal;
   private static TileNode start;
   private ShapeRenderer shapeRenderer;
-  private GridPoint2 tileSize = new GridPoint2(10, 10);
+  private SpriteBatch spriteBatch;
+  private GridPoint2 tileSize = new GridPoint2(32, 32);
   private TileNode[][] tiles;
+  private ArrayList<GridPoint2> foundPath;
+  private PathVisualizer pathVisualizer = new PathVisualizer(tileSize);
+  private GridPoint2 startPoint = new GridPoint2(1, 1);
+  private GridPoint2 goalPoint = new GridPoint2(5, 5);
 
   @Override
   public boolean keyDown(int keycode) {
@@ -31,10 +38,11 @@ public class PathSearchDemo extends Game implements InputProcessor {
         System.out.println("Goal not reachable");
         return false;
       }
+      foundPath = new ArrayList<>();
       for (PathSearchNode node : path) {
-        ((TileNode) node).state = TileState.START;
+        foundPath.add(((TileNode) node).pos);
       }
-
+      pathVisualizer.startAnimation("tank", foundPath, 10, 0.1f);
     } else if (keycode == Keys.R) {
       initializeTileStates();
     }
@@ -43,7 +51,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
 
   private void touchHelper(int screenX, int screenY, boolean clear) {
     int posX = screenX / tileSize.x;
-    int posY = screenY / tileSize.y;
+    int posY = tiles[0].length - screenY / tileSize.y - 1;
     if (posX < 0 || posX >= tiles.length || posY < 0 || posY >= tiles[0].length) {
       return;
     }
@@ -92,8 +100,9 @@ public class PathSearchDemo extends Game implements InputProcessor {
         tile.state = TileState.OPEN;
       }
     }
-    tiles[10][10].state = TileState.START;
-    tiles[40][40].state = TileState.END;
+    tiles[startPoint.x][startPoint.y].state = TileState.START;
+    tiles[goalPoint.x][goalPoint.y].state = TileState.END;
+    foundPath = null;
   }
 
   @Override
@@ -109,6 +118,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
   @Override
   public void create() {
     shapeRenderer = new ShapeRenderer();
+    spriteBatch = new SpriteBatch();
     int tileWidth = Gdx.graphics.getWidth() / tileSize.x;
     int tileHeight = Gdx.graphics.getHeight() / tileSize.y;
     tiles = new TileNode[tileWidth][tileHeight];
@@ -136,16 +146,18 @@ public class PathSearchDemo extends Game implements InputProcessor {
         }
       }
     }
-    tiles[10][10].state = TileState.START;
-    tiles[40][40].state = TileState.END;
-    goal = tiles[40][40];
-    start = tiles[10][10];
+    tiles[startPoint.x][startPoint.y].state = TileState.START;
+    tiles[goalPoint.x][goalPoint.y].state = TileState.END;
+    goal = tiles[goalPoint.x][goalPoint.y];
+    start = tiles[startPoint.x][startPoint.y];
     Gdx.input.setInputProcessor(this);
   }
 
   @Override
   public void render() {
     super.render();
+
+    float delta = Gdx.graphics.getDeltaTime();
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     shapeRenderer.begin(ShapeType.Filled);
@@ -166,13 +178,20 @@ public class PathSearchDemo extends Game implements InputProcessor {
             break;
         }
         int x = r * tileSize.x;
-        int y = Gdx.graphics.getHeight() - (c + 1) * tileSize.y;
+        int y = c * tileSize.y;
 
         shapeRenderer.rect(x, y, tileSize.x, tileSize.y);
+
+        if (foundPath != null) {
+          pathVisualizer.drawArrow(shapeRenderer, foundPath);
+        }
 
       }
     }
     shapeRenderer.end();
+    spriteBatch.begin();
+    pathVisualizer.drawAnimatedSpritePath(delta, spriteBatch);
+    spriteBatch.end();
   }
 
   static class TileNode implements PathSearchNode {

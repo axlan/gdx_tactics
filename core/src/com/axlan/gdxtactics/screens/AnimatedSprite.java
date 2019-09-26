@@ -24,7 +24,10 @@ public class AnimatedSprite<T> extends Sprite {
   @Override
   public void draw(Batch batch) {
     T currentFrame = animation.getKeyFrame(elapsedTime, true);
+    boolean flipX = isFlipX();
+    boolean flipY = isFlipY();
     this.setRegion((TextureRegion) currentFrame);
+    this.flip(flipX, flipY);
     super.draw(batch);
   }
 

@@ -1,6 +1,14 @@
+# 9/26 Add Path Visualization
+
+Building on the AStar demo, I worked on adding visual overlays to show the path, then animate the unit movement.
+
+While there was some fiddling to get the positioning right, the first problem I hit was flipping the animated sprite.
+The sheet only has a left facing version, so I was using the flip transform to make it face the other direction.
+However, this transform was having no effect. I realized the setting the region to the frame of the animation was clearing the flip transform. I just needed to cache the state, and reapply it if necessary.
+
 # 9/25 Starting Battle View
 
-I spent some time dawdling since the project is getting large enough that it could use another reorgination.
+I spent some time dawdling since the project is getting large enough that it could use another reorganisation.
 The main concern is that the shared data should be more centralized and access limited instead of just passing a bunch of references.
 Also the constants should be centralized as well. For now I decided to plow forward and refactor once I get to the point of adding the concept of multiple levels.
 
