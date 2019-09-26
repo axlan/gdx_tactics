@@ -3,6 +3,8 @@ package com.axlan.gdxtactics;
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.screens.PathVisualizer;
+import com.axlan.gdxtactics.screens.TiledScreen.TileNode;
+import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -100,8 +102,6 @@ public class PathSearchDemo extends Game implements InputProcessor {
         tile.state = TileState.OPEN;
       }
     }
-    tiles[startPoint.x][startPoint.y].state = TileState.START;
-    tiles[goalPoint.x][goalPoint.y].state = TileState.END;
     foundPath = null;
   }
 
@@ -146,10 +146,11 @@ public class PathSearchDemo extends Game implements InputProcessor {
         }
       }
     }
-    tiles[startPoint.x][startPoint.y].state = TileState.START;
-    tiles[goalPoint.x][goalPoint.y].state = TileState.END;
-    goal = tiles[goalPoint.x][goalPoint.y];
     start = tiles[startPoint.x][startPoint.y];
+    start.state = TileState.START;
+    goal = tiles[goalPoint.x][goalPoint.y];
+    goal.setGoal();
+
     Gdx.input.setInputProcessor(this);
   }
 
@@ -194,38 +195,4 @@ public class PathSearchDemo extends Game implements InputProcessor {
     spriteBatch.end();
   }
 
-  static class TileNode implements PathSearchNode {
-
-    GridPoint2 pos;
-    ArrayList<TileNode> neighbors = new ArrayList<>();
-    TileState state = TileState.OPEN;
-
-    @Override
-    public int heuristics() {
-      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
-    }
-
-    @Override
-    public int edgeWeight(PathSearchNode neighbor) {
-      return 1;
-    }
-
-    @Override
-    public ArrayList<PathSearchNode> getNeighbors() {
-      ArrayList<PathSearchNode> tmp = new ArrayList<>();
-      for (TileNode neighbor : neighbors) {
-        if (neighbor.state != TileState.BLOCKED) {
-          tmp.add(neighbor);
-        }
-      }
-      return tmp;
-    }
-  }
-
-  enum TileState {
-    OPEN,
-    BLOCKED,
-    START,
-    END
-  }
 }

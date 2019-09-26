@@ -16,6 +16,7 @@ public class FieldedUnit {
 
   enum State {
     IDLE,
+    SELECTED,
     MOVING,
     DONE
   }

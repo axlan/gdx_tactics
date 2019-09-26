@@ -10,30 +10,30 @@ import java.util.ArrayList;
 
 public class PathVisualizer {
 
-  GridPoint2 tileSize;
-  int lineWith;
-  float elapsedTime;
-  int curTileCount;
-  int curTileIdx;
-  int stepsPerTile;
-  float frameDuration;
-  String spriteName;
-  ArrayList<GridPoint2> animationPath;
+  private GridPoint2 tileSize;
+  private int lineWith;
+  private float elapsedTime;
+  private int curTileCount;
+  private int curTileIdx;
+  private int stepsPerTile;
+  private float frameDuration;
+  private String spriteName;
+  private ArrayList<GridPoint2> animationPath;
 
   public PathVisualizer(GridPoint2 tileSize) {
     this.tileSize = tileSize;
     lineWith = tileSize.x / 3;
   }
 
-  GridPoint2 scl(GridPoint2 point, int val) {
+  private GridPoint2 scl(GridPoint2 point, int val) {
     return new GridPoint2(point.x * val, point.y * val);
   }
 
-  GridPoint2 scl(GridPoint2 point1, GridPoint2 point2) {
+  private GridPoint2 scl(GridPoint2 point1, GridPoint2 point2) {
     return new GridPoint2(point1.x * point2.x, point1.y * point2.y);
   }
 
-  GridPoint2 center(GridPoint2 point) {
+  private GridPoint2 center(GridPoint2 point) {
     return new GridPoint2(point.x + tileSize.x / 2, point.y + tileSize.y / 2);
   }
 
@@ -76,7 +76,6 @@ public class PathVisualizer {
       sprite = SpriteLookup.getAnimation(this.spriteName, Poses.UP, this.frameDuration);
       sprite.setPosition(x, y + tileSize.y * this.curTileCount / this.stepsPerTile);
     }
-    sprite.scale(2);
     sprite.draw(batch, elapsedTime);
 
     this.curTileCount++;

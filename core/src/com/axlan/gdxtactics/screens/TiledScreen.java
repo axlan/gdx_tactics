@@ -1,5 +1,7 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -32,6 +34,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private ArrayList<TiledMapTileLayer> layers = new ArrayList<>();
   private Vector2 screenSize;
   Vector2 tileSize;
+  GridPoint2 numTiles;
   private float[] cameraBounds = new float[4];
   private Vector3 cameraPosition;
 
@@ -49,6 +52,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     }
 
     Vector2 worldSize = new Vector2(layers.get(0).getWidth(), layers.get(0).getHeight());
+    numTiles = new GridPoint2((int) worldSize.x, (int) worldSize.y);
     screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     tileSize = new Vector2(layers.get(0).getTileWidth(), layers.get(0).getTileWidth());
 
@@ -92,6 +96,48 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   public abstract void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   public abstract void updateScreen(float delta);
+
+  TileNode[][] getTileNodes() {
+    int tileWidth = numTiles.x;
+    int tileHeight = numTiles.y;
+    TileNode[][] tiles = new TileNode[tileWidth][tileHeight];
+    for (int r = 0; r < tiles.length; r++) {
+      for (int c = 0; c < tiles[r].length; c++) {
+        tiles[r][c] = new TileNode();
+      }
+    }
+
+    for (int r = 0; r < tiles.length; r++) {
+      for (int c = 0; c < tiles[r].length; c++) {
+        TileNode tile = tiles[r][c];
+        tile.pos = new GridPoint2(r, c);
+        if (!isTilePassable(tile.pos)) {
+          tile.state = TileState.BLOCKED;
+        }
+        if (r < tileWidth - 1) {
+          tile.neighbors.add(tiles[r + 1][c]);
+        }
+        if (r > 0) {
+          tile.neighbors.add(tiles[r - 1][c]);
+        }
+        if (c < tileHeight - 1) {
+          tile.neighbors.add(tiles[r][c + 1]);
+        }
+        if (c > 0) {
+          tile.neighbors.add(tiles[r][c - 1]);
+        }
+      }
+    }
+    return tiles;
+  }
+
+  boolean isTilePassable(GridPoint2 point) {
+    if (point.x < 0 || point.x >= numTiles.x || point.y < 0 || point.y >= numTiles.y) {
+      return false;
+    }
+    TiledMapTileLayer tileLayer = (TiledMapTileLayer) getMap().getLayers().get(0);
+    return (boolean) tileLayer.getCell(point.x, point.y).getTile().getProperties().get("passable");
+  }
 
   /* Utils methods */
 
@@ -169,9 +215,45 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return map;
   }
 
-  boolean isTilePassable(GridPoint2 point) {
-    TiledMapTileLayer tileLayer = (TiledMapTileLayer) getMap().getLayers().get(0);
-    return (boolean) tileLayer.getCell(point.x, point.y).getTile().getProperties().get("passable");
+  public static class TileNode implements PathSearchNode {
+
+    private static TileNode goal;
+    public GridPoint2 pos;
+    public ArrayList<TileNode> neighbors = new ArrayList<>();
+    public TileState state = TileState.OPEN;
+
+    public void setGoal() {
+      TileNode.goal = this;
+      this.state = TileState.END;
+    }
+
+    @Override
+    public int heuristics() {
+      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
+    }
+
+    @Override
+    public int edgeWeight(PathSearchNode neighbor) {
+      return 1;
+    }
+
+    @Override
+    public ArrayList<PathSearchNode> getNeighbors() {
+      ArrayList<PathSearchNode> tmp = new ArrayList<>();
+      for (TileNode neighbor : neighbors) {
+        if (neighbor.state != TileState.BLOCKED) {
+          tmp.add(neighbor);
+        }
+      }
+      return tmp;
+    }
+
+    public enum TileState {
+      OPEN,
+      BLOCKED,
+      START,
+      END
+    }
   }
 
 
