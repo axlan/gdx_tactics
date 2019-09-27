@@ -10,7 +10,7 @@ public class FieldedUnit {
 
   public FieldedUnit(UnitStats stats) {
     this.stats = stats;
-    this.currentHealth = stats.getMaxHealth();
+    this.currentHealth = stats.maxHealth;
     state = State.IDLE;
   }
 

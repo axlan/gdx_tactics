@@ -1,16 +1,16 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.GridPoint2;
 import java.util.ArrayList;
 
 public class PathVisualizer {
 
-  private GridPoint2 tileSize;
+  private TilePoint tileSize;
   private int lineWith;
   private float elapsedTime;
   private int curTileCount;
@@ -18,26 +18,26 @@ public class PathVisualizer {
   private int stepsPerTile;
   private float frameDuration;
   private String spriteName;
-  private ArrayList<GridPoint2> animationPath;
+  private ArrayList<TilePoint> animationPath;
 
-  public PathVisualizer(GridPoint2 tileSize) {
+  public PathVisualizer(TilePoint tileSize) {
     this.tileSize = tileSize;
     lineWith = tileSize.x / 3;
   }
 
-  private GridPoint2 scl(GridPoint2 point, int val) {
-    return new GridPoint2(point.x * val, point.y * val);
+  private TilePoint scl(TilePoint point, int val) {
+    return new TilePoint(point.x * val, point.y * val);
   }
 
-  private GridPoint2 scl(GridPoint2 point1, GridPoint2 point2) {
-    return new GridPoint2(point1.x * point2.x, point1.y * point2.y);
+  private TilePoint scl(TilePoint point1, TilePoint point2) {
+    return new TilePoint(point1.x * point2.x, point1.y * point2.y);
   }
 
-  private GridPoint2 center(GridPoint2 point) {
-    return new GridPoint2(point.x + tileSize.x / 2, point.y + tileSize.y / 2);
+  private TilePoint center(TilePoint point) {
+    return new TilePoint(point.x + tileSize.x / 2, point.y + tileSize.y / 2);
   }
 
-  public void startAnimation(String spriteName, ArrayList<GridPoint2> points, int stepsPerTile,
+  public void startAnimation(String spriteName, ArrayList<TilePoint> points, int stepsPerTile,
       float frameDuration) {
     if (points.size() < 2) {
       return;
@@ -56,8 +56,8 @@ public class PathVisualizer {
       return true;
     }
 
-    GridPoint2 curPoint = this.animationPath.get(curTileIdx);
-    GridPoint2 nextPoint = this.animationPath.get(curTileIdx + 1);
+    TilePoint curPoint = this.animationPath.get(curTileIdx);
+    TilePoint nextPoint = this.animationPath.get(curTileIdx + 1);
     int x = curPoint.x * tileSize.x;
     int y = curPoint.y * tileSize.y;
     AnimatedSprite<AtlasRegion> sprite;
@@ -92,14 +92,14 @@ public class PathVisualizer {
   }
 
 
-  public void drawArrow(ShapeRenderer shapeRenderer, ArrayList<GridPoint2> points) {
+  public void drawArrow(ShapeRenderer shapeRenderer, ArrayList<TilePoint> points) {
     if (points.size() < 2) {
       return;
     }
     shapeRenderer.setColor(Color.BLUE);
-    GridPoint2 lastPoint = center(scl(points.get(0), tileSize));
+    TilePoint lastPoint = center(scl(points.get(0), tileSize));
     Boolean goingX = null;
-    for (GridPoint2 nextPoint : points.subList(1, points.size())) {
+    for (TilePoint nextPoint : points.subList(1, points.size())) {
       nextPoint = center(scl(nextPoint, tileSize));
       Boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (goingX != null && nextGoingX != goingX) {

@@ -37,14 +37,14 @@ public class BriefingView extends StageBasedScreen {
   }
 
   private boolean isDone() {
-    return this.levelData == null || this.curPage >= this.levelData.briefPages.length - 1;
+    return this.levelData == null || this.curPage >= this.levelData.briefPages.size() - 1;
   }
 
   private void updatePage(int newPage) {
     this.curPage = newPage;
-    if (this.levelData != null && this.curPage < this.levelData.briefPages.length) {
-      this.dialogue.setText(this.levelData.briefPages[this.curPage].dialogue);
-      this.avatarLabel.setText(this.levelData.briefPages[this.curPage].speaker);
+    if (this.levelData != null && this.curPage < this.levelData.briefPages.size()) {
+      this.dialogue.setText(this.levelData.briefPages.get(this.curPage).dialogue);
+      this.avatarLabel.setText(this.levelData.briefPages.get(this.curPage).speaker);
       //TODO load speaker font and avatar based on name from map
       this.avatar.setDrawable(new Texture(Gdx.files.internal("images/avatars/img_avatar.png")));
     }

@@ -5,6 +5,7 @@ import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.models.DeploymentSelection;
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.PlayerResources;
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.models.UnitStats;
 import com.axlan.gdxtactics.screens.FieldedUnit.State;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
@@ -15,26 +16,26 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class BattleView extends TiledScreen {
 
-  private HashMap<String, UnitStats> unitStats;
-  private HashMap<GridPoint2, FieldedUnit> playerUnits = new HashMap<>();
-  private GridPoint2 selected = null;
-  private GridPoint2 moving = null;
+  private Map<String, UnitStats> unitStats;
+  private HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
+  private TilePoint selected = null;
+  private TilePoint moving = null;
   private float elapsedTime = 0;
   private PathVisualizer pathVisualizer;
 
-  public BattleView(LevelData levelData, HashMap<String, UnitStats> unitStats,
+  public BattleView(LevelData levelData, Map<String, UnitStats> unitStats,
       PlayerResources playerResources, DeploymentSelection deploymentSelection) {
     super("maps/" + levelData.mapName + ".tmx");
     this.unitStats = unitStats;
-    pathVisualizer = new PathVisualizer(new GridPoint2((int) tileSize.x, (int) tileSize.y));
-    for (GridPoint2 point : deploymentSelection.playerUnitPlacements.keySet()) {
+    pathVisualizer = new PathVisualizer(new TilePoint((int) tileSize.x, (int) tileSize.y));
+    for (TilePoint point : deploymentSelection.playerUnitPlacements.keySet()) {
       String unitType = deploymentSelection.playerUnitPlacements.get(point);
       playerUnits.put(point, new FieldedUnit(unitStats.get(unitType)));
     }
@@ -44,14 +45,14 @@ public class BattleView extends TiledScreen {
   @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     batch.begin();
-    for (GridPoint2 point : playerUnits.keySet()) {
+    for (TilePoint point : playerUnits.keySet()) {
       FieldedUnit unit = playerUnits.get(point);
       AnimatedSprite<AtlasRegion> sprite = null;
       if (unit.state == State.SELECTED) {
-        sprite = SpriteLookup.getAnimation(unit.stats.getType(),
+        sprite = SpriteLookup.getAnimation(unit.stats.type,
             Poses.LEFT, 0.1f);
       } else if (unit.state == State.IDLE || unit.state == State.DONE) {
-        sprite = SpriteLookup.getAnimation(unit.stats.getType(),
+        sprite = SpriteLookup.getAnimation(unit.stats.type,
             Poses.IDLE, 0.1f);
       }
       if (sprite != null) {
@@ -73,7 +74,7 @@ public class BattleView extends TiledScreen {
     batch.end();
     shapeRenderer.begin(ShapeType.Filled);
     if (selected != null) {
-      GridPoint2 playerPos = screenToTile(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+      TilePoint playerPos = screenToTile(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
       if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
         //TODO Make enemy units not passable
         //TODO Cache steps from these calculations
@@ -83,7 +84,7 @@ public class BattleView extends TiledScreen {
         start.state = TileState.START;
         goal.setGoal();
         ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
-        ArrayList<GridPoint2> points = new ArrayList<>();
+        ArrayList<TilePoint> points = new ArrayList<>();
         for (PathSearchNode node : path) {
           points.add(((TileNode) node).pos);
         }
@@ -106,7 +107,7 @@ public class BattleView extends TiledScreen {
 
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    GridPoint2 playerPos = screenToTile(new Vector2(screenX, screenY));
+    TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
 
     if (selected != null) {
       if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
@@ -123,11 +124,11 @@ public class BattleView extends TiledScreen {
         start.state = TileState.START;
         goal.setGoal();
         ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
-        ArrayList<GridPoint2> points = new ArrayList<>();
+        ArrayList<TilePoint> points = new ArrayList<>();
         for (PathSearchNode node : path) {
           points.add(((TileNode) node).pos);
         }
-        pathVisualizer.startAnimation(unit.stats.getType(), points, 10, 0.1f);
+        pathVisualizer.startAnimation(unit.stats.type, points, 10, 0.1f);
       } else {
         playerUnits.get(selected).state = State.IDLE;
       }

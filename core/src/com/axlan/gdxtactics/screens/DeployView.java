@@ -8,6 +8,7 @@ import com.axlan.gdxtactics.models.LevelData.ShopItem;
 import com.axlan.gdxtactics.models.LevelData.SpotType;
 import com.axlan.gdxtactics.models.LevelData.UnitAllotment;
 import com.axlan.gdxtactics.models.PlayerResources;
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -51,7 +51,7 @@ public class DeployView extends TiledScreen {
   private final VisCheckBox[] intelCheckBoxes;
   //TODO allow for determinism
   private final Random rand = new Random();
-  private final HashMap<GridPoint2, String> placements = new HashMap<>();
+  private final HashMap<TilePoint, String> placements = new HashMap<>();
   private final LevelData levelData;
   private final PlayerResources playerResources;
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
@@ -66,14 +66,14 @@ public class DeployView extends TiledScreen {
     this.levelData = levelData;
     this.observer = observer;
     this.playerResources = playerResources;
-    enemySpawnSelections = new int[levelData.enemyFormations.length];
-    for (int i = 0; i < levelData.enemyFormations.length; i++) {
-      Formation formation = levelData.enemyFormations[i];
-      int selection = rand.nextInt(formation.spawnPoints.length);
+    enemySpawnSelections = new int[levelData.enemyFormations.size()];
+    for (int i = 0; i < levelData.enemyFormations.size(); i++) {
+      Formation formation = levelData.enemyFormations.get(i);
+      int selection = rand.nextInt(formation.spawnPoints.size());
       enemySpawnSelections[i] = selection;
     }
 
-    remainingLabels = new VisLabel[levelData.playerUnits.length];
+    remainingLabels = new VisLabel[levelData.playerUnits.size()];
     stage.addActor(createUnitSelectWindow());
     updateRemainingLabels();
 
@@ -111,8 +111,8 @@ public class DeployView extends TiledScreen {
     //table.setDebug(true);
     unitSelection.add(table).fill().expand();
 
-    for (int i = 0; i < levelData.playerUnits.length; i++) {
-      final UnitAllotment unit = levelData.playerUnits[i];
+    for (int i = 0; i < levelData.playerUnits.size(); i++) {
+      final UnitAllotment unit = levelData.playerUnits.get(i);
       //TODO Make button react to hover, press
       Button button = new Button(SpriteLookup.getTextureRegionDrawable(unit.type, Poses.IDLE));
       button.addListener(
@@ -167,20 +167,20 @@ public class DeployView extends TiledScreen {
       table.row();
 
       for (Intel intel : resource.effects) {
-        Formation formation = levelData.enemyFormations[intel.formationSpottedIdx];
+        Formation formation = levelData.enemyFormations.get(intel.formationSpottedIdx);
         int spawnSelection = enemySpawnSelections[intel.formationSpottedIdx];
 
-        int numSpotted = Math.min(formation.units.length, intel.numberOfUnits);
+        int numSpotted = Math.min(formation.units.size(), intel.numberOfUnits);
         Array<Integer> unitIds;
         if (intel.spotType == SpotType.RANDOM) {
-          unitIds = getNElements(numSpotted, formation.units.length);
+          unitIds = getNElements(numSpotted, formation.units.size());
         } else {
           unitIds = getIntRange(0, numSpotted, 1);
         }
         for (int unitId : unitIds) {
           //TODO set sprite based on unit type
-          String spottedType = formation.units[unitId].unitType;
-          GridPoint2 spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
+          String spottedType = formation.units.get(unitId).unitType;
+          TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
           AnimatedSprite<AtlasRegion> sprite = SpriteLookup
               .getAnimation(spottedType, Poses.IDLE, 0.1f);
           sprite.setColor(INTEL_COLORS[i]);
@@ -213,8 +213,8 @@ public class DeployView extends TiledScreen {
 
   private void updateRemainingLabels() {
     int totalRemaining = 0;
-    for (int i = 0; i < levelData.playerUnits.length; i++) {
-      final UnitAllotment unit = levelData.playerUnits[i];
+    for (int i = 0; i < levelData.playerUnits.size(); i++) {
+      final UnitAllotment unit = levelData.playerUnits.get(i);
       int remaining = remainingUnits(unit.type);
       totalRemaining += remaining;
       remainingLabels[i].setText(String.format("%s: %d/%d", unit.type, remaining, unit.count));
@@ -245,7 +245,7 @@ public class DeployView extends TiledScreen {
     spawnColor.a = 0.75f;
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(spawnColor);
-    for (GridPoint2 point : levelData.playerSpawnPoints) {
+    for (TilePoint point : levelData.playerSpawnPoints) {
       Rectangle tileRect = getTileRect(point);
       shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
     }
@@ -253,7 +253,7 @@ public class DeployView extends TiledScreen {
 
     batch.begin();
 
-    for (GridPoint2 point : placements.keySet()) {
+    for (TilePoint point : placements.keySet()) {
       Vector2 worldPos = tileToWorld(point);
       AnimatedSprite<AtlasRegion> img = SpriteLookup
           .getAnimation(placements.get(point), Poses.IDLE, 0.1f);
@@ -285,9 +285,9 @@ public class DeployView extends TiledScreen {
 
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    GridPoint2 playerPos = screenToTile(new Vector2(screenX, screenY));
+    TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
 
-    for (GridPoint2 point : levelData.playerSpawnPoints) {
+    for (TilePoint point : levelData.playerSpawnPoints) {
       if (playerPos.equals(point)) {
         placements.remove(point);
         if (selectedUnit != null) {

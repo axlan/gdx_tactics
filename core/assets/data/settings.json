@@ -1,0 +1,9 @@
+{
+  "levelDataFile": "data/levels/demo.json",
+  "unitStatsDataFile": "data/units/stats.json",
+  "sprites": {
+    "spriteAtlasFile": "images/units/tank.atlas",
+    "spriteFrameDuration": 0.1,
+    "spriteMovementFramesPerTile": 10
+  }
+}

@@ -1,6 +1,7 @@
 package com.axlan.gdxtactics.screens;
 
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -13,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -34,7 +34,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private ArrayList<TiledMapTileLayer> layers = new ArrayList<>();
   private Vector2 screenSize;
   Vector2 tileSize;
-  GridPoint2 numTiles;
+  TilePoint numTiles;
   private float[] cameraBounds = new float[4];
   private Vector3 cameraPosition;
 
@@ -52,7 +52,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     }
 
     Vector2 worldSize = new Vector2(layers.get(0).getWidth(), layers.get(0).getHeight());
-    numTiles = new GridPoint2((int) worldSize.x, (int) worldSize.y);
+    numTiles = new TilePoint((int) worldSize.x, (int) worldSize.y);
     screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     tileSize = new Vector2(layers.get(0).getTileWidth(), layers.get(0).getTileWidth());
 
@@ -110,7 +110,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
         TileNode tile = tiles[r][c];
-        tile.pos = new GridPoint2(r, c);
+        tile.pos = new TilePoint(r, c);
         if (!isTilePassable(tile.pos)) {
           tile.state = TileState.BLOCKED;
         }
@@ -131,7 +131,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return tiles;
   }
 
-  boolean isTilePassable(GridPoint2 point) {
+  boolean isTilePassable(TilePoint point) {
     if (point.x < 0 || point.x >= numTiles.x || point.y < 0 || point.y >= numTiles.y) {
       return false;
     }
@@ -151,18 +151,18 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return new Vector2(proj.x, proj.y);
   }
 
-  GridPoint2 screenToTile(Vector2 screenCoord) {
+  TilePoint screenToTile(Vector2 screenCoord) {
     Vector2 worldCoord = screenToWorld(screenCoord);
     int tileX = (int) (worldCoord.x / tileSize.x);
     int tileY = (int) (worldCoord.y / tileSize.y);
-    return new GridPoint2(tileX, tileY);
+    return new TilePoint(tileX, tileY);
   }
 
-  Vector2 tileToWorld(GridPoint2 tileCoord) {
+  Vector2 tileToWorld(TilePoint tileCoord) {
     return new Vector2(tileCoord.x, tileCoord.y).scl(tileSize);
   }
 
-  Vector2 tileToScreen(GridPoint2 tileCoord) {
+  Vector2 tileToScreen(TilePoint tileCoord) {
     Vector2 worldCoord = new Vector2(tileCoord.x, tileCoord.y).scl(tileSize);
     return worldToScreen(worldCoord);
   }
@@ -215,45 +215,9 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return map;
   }
 
-  public static class TileNode implements PathSearchNode {
-
-    private static TileNode goal;
-    public GridPoint2 pos;
-    public ArrayList<TileNode> neighbors = new ArrayList<>();
-    public TileState state = TileState.OPEN;
-
-    public void setGoal() {
-      TileNode.goal = this;
-      this.state = TileState.END;
-    }
-
-    @Override
-    public int heuristics() {
-      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
-    }
-
-    @Override
-    public int edgeWeight(PathSearchNode neighbor) {
-      return 1;
-    }
-
-    @Override
-    public ArrayList<PathSearchNode> getNeighbors() {
-      ArrayList<PathSearchNode> tmp = new ArrayList<>();
-      for (TileNode neighbor : neighbors) {
-        if (neighbor.state != TileState.BLOCKED) {
-          tmp.add(neighbor);
-        }
-      }
-      return tmp;
-    }
-
-    public enum TileState {
-      OPEN,
-      BLOCKED,
-      START,
-      END
-    }
+  public Rectangle getTileRect(TilePoint point) {
+    Vector2 worldPoint = tileToWorld(point);
+    return new Rectangle(worldPoint.x, worldPoint.y, tileSize.x, tileSize.y);
   }
 
 
@@ -303,9 +267,45 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     renderAboveUI(delta, this.batch, this.shapeRenderer);
   }
 
-  public Rectangle getTileRect(GridPoint2 point) {
-    Vector2 worldPoint = tileToWorld(point);
-    return new Rectangle(worldPoint.x, worldPoint.y, tileSize.x, tileSize.y);
+  public static class TileNode implements PathSearchNode {
+
+    private static TileNode goal;
+    public TilePoint pos;
+    public ArrayList<TileNode> neighbors = new ArrayList<>();
+    public TileState state = TileState.OPEN;
+
+    public void setGoal() {
+      TileNode.goal = this;
+      this.state = TileState.END;
+    }
+
+    @Override
+    public int heuristics() {
+      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
+    }
+
+    @Override
+    public int edgeWeight(PathSearchNode neighbor) {
+      return 1;
+    }
+
+    @Override
+    public ArrayList<PathSearchNode> getNeighbors() {
+      ArrayList<PathSearchNode> tmp = new ArrayList<>();
+      for (TileNode neighbor : neighbors) {
+        if (neighbor.state != TileState.BLOCKED) {
+          tmp.add(neighbor);
+        }
+      }
+      return tmp;
+    }
+
+    public enum TileState {
+      OPEN,
+      BLOCKED,
+      START,
+      END
+    }
   }
 
   @Override

@@ -1,10 +1,10 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.models.TilePoint;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Array;
 
 public class AnimatedSprite<T> extends Sprite {
@@ -36,7 +36,7 @@ public class AnimatedSprite<T> extends Sprite {
     draw(batch);
   }
 
-  public void setTilePosition(GridPoint2 tilePoint) {
+  public void setTilePosition(TilePoint tilePoint) {
     this.setPosition(tilePoint.x * this.getWidth(), tilePoint.y * this.getHeight());
   }
 

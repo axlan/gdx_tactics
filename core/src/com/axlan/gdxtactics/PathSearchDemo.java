@@ -2,6 +2,7 @@ package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.PathVisualizer;
 import com.axlan.gdxtactics.screens.TiledScreen.TileNode;
 import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
@@ -15,7 +16,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.GridPoint2;
 import java.util.ArrayList;
 
 public class PathSearchDemo extends Game implements InputProcessor {
@@ -24,12 +24,12 @@ public class PathSearchDemo extends Game implements InputProcessor {
   private static TileNode start;
   private ShapeRenderer shapeRenderer;
   private SpriteBatch spriteBatch;
-  private GridPoint2 tileSize = new GridPoint2(32, 32);
+  private TilePoint tileSize = new TilePoint(32, 32);
   private TileNode[][] tiles;
-  private ArrayList<GridPoint2> foundPath;
+  private ArrayList<TilePoint> foundPath;
   private PathVisualizer pathVisualizer = new PathVisualizer(tileSize);
-  private GridPoint2 startPoint = new GridPoint2(1, 1);
-  private GridPoint2 goalPoint = new GridPoint2(5, 5);
+  private TilePoint startPoint = new TilePoint(1, 1);
+  private TilePoint goalPoint = new TilePoint(5, 5);
 
   @Override
   public boolean keyDown(int keycode) {
@@ -131,7 +131,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
         TileNode tile = tiles[r][c];
-        tile.pos = new GridPoint2(r, c);
+        tile.pos = new TilePoint(r, c);
         if (r < tileWidth - 1) {
           tile.neighbors.add(tiles[r + 1][c]);
         }

@@ -32,9 +32,9 @@ public class StoreView extends StageBasedScreen {
 
   private void updateMoney() {
     this.moneyLabel.setText(String.format("Money Available: %d", playerResources.money));
-    for (int i = 0; i < levelData.shopItems.length; i++) {
+    for (int i = 0; i < levelData.shopItems.size(); i++) {
       VisTextButton button = (VisTextButton) itemListWidget.getChild(i);
-      button.setDisabled(playerResources.money < levelData.shopItems[i].cost);
+      button.setDisabled(playerResources.money < levelData.shopItems.get(i).cost);
     }
   }
 
@@ -45,8 +45,8 @@ public class StoreView extends StageBasedScreen {
     this.description.setText("");
 
     this.itemListWidget.clear();
-    for (int i = 0; i < levelData.shopItems.length; i++) {
-      final ShopItem item = levelData.shopItems[i];
+    for (int i = 0; i < levelData.shopItems.size(); i++) {
+      final ShopItem item = levelData.shopItems.get(i);
       String buttonString = String.format("%s: $%d", item.name, item.cost);
       final VisTextButton shopItemButton = new VisTextButton(buttonString);
       shopItemButton.addListener(

@@ -1,26 +1,23 @@
 package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.models.LevelData;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.PlayerResources;
-import com.axlan.gdxtactics.models.UnitStats;
+import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.BattleView;
 import com.axlan.gdxtactics.screens.BriefingView;
 import com.axlan.gdxtactics.screens.CompletionObserver;
 import com.axlan.gdxtactics.screens.DeployView;
 import com.axlan.gdxtactics.screens.StoreView;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.math.GridPoint2;
 import com.kotcrab.vis.ui.VisUI;
 import java.util.HashMap;
 
 public class Core extends Game {
 
   private final PlayerResources playerResources = new PlayerResources();
-  private LevelData levelData;
   private int[] enemySpawnSelections;
-  private HashMap<GridPoint2, String> placements;
+  private HashMap<TilePoint, String> placements;
   private DeployView deployView;
-  private HashMap<String, UnitStats> unitStats;
 
   private void showStore() {
     CompletionObserver observer =
@@ -30,7 +27,7 @@ public class Core extends Game {
             showDeployMap();
           }
         };
-    StoreView storeView = new StoreView(observer, levelData, playerResources);
+    StoreView storeView = new StoreView(observer, LoadedResources.getLevelData(), playerResources);
     this.setScreen(storeView);
   }
 
@@ -42,7 +39,7 @@ public class Core extends Game {
             showStore();
           }
         };
-    BriefingView briefingView = new BriefingView(observer, levelData);
+    BriefingView briefingView = new BriefingView(observer, LoadedResources.getLevelData());
     this.setScreen(briefingView);
   }
 
@@ -54,12 +51,13 @@ public class Core extends Game {
             showBattleMap();
           }
         };
-    deployView = new DeployView(observer, levelData, playerResources);
+    deployView = new DeployView(observer, LoadedResources.getLevelData(), playerResources);
     this.setScreen(deployView);
   }
 
   private void showBattleMap() {
-    this.setScreen(new BattleView(levelData, unitStats, playerResources,
+    this.setScreen(new BattleView(LoadedResources.getLevelData(), LoadedResources.getUnitStats(),
+        playerResources,
         deployView.getDeploymentSelections()));
     deployView = null;
   }
@@ -67,9 +65,8 @@ public class Core extends Game {
   @Override
   public void create() {
     VisUI.load();
-
-    this.levelData = LevelData.loadFromJson("data/levels/demo.json");
-    this.unitStats = UnitStats.loadFromJson("data/units/stats.json");
+    LoadedResources.initializeGlobal();
+    LoadedResources.initializeLevel();
 
     this.showBriefing();
   }

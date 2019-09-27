@@ -1,3 +1,15 @@
+# 9/27 Massive Cleanup
+
+Working on restructuring the code to make it cleaner. There are 3 main changes so far.
+
+First I wanted to consolidate the constants / settings / shared resources. I created new classes to centralize this data.
+
+Second I wanted to replace the GridPoint2 with a custom type that was immutable and fit better into the logic I was using.
+
+Third I wanted to make the global data read into the program immutable, This turned out to be a fairly complex exercise.
+GSON loads values directly into objects without setters or constructors. This meant it would skip immutable wrappers around the Lists.
+To get it to actually create immutable lists, I had to create a TypeAdapterFactory.
+
 # 9/26 Add Path Visualization
 
 Building on the AStar demo, I worked on adding visual overlays to show the path, then animate the unit movement.
