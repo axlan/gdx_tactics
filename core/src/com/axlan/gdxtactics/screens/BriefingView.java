@@ -1,6 +1,7 @@
 package com.axlan.gdxtactics.screens;
 
 import com.axlan.gdxtactics.models.LevelData;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,13 +25,13 @@ public class BriefingView extends StageBasedScreen {
   private final VisLabel settingLabel;
   private CompletionObserver completionObserver;
 
-  public BriefingView(CompletionObserver observer, LevelData levelData) {
+  public BriefingView(CompletionObserver observer) {
     this.completionObserver = observer;
     this.dialogue = new VisLabel();
     this.avatarLabel = new VisLabel();
     this.avatar = new VisImage();
     this.settingLabel = new VisLabel();
-    this.levelData = levelData;
+    this.levelData = LoadedResources.getLevelData();
     this.settingLabel.setText(levelData.briefSetting);
     this.stage.addActor(this.makeBriefingView());
     this.updatePage(0);

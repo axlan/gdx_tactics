@@ -1,12 +1,13 @@
 package com.axlan.gdxtactics.screens;
 
-import com.axlan.gdxtactics.models.DeploymentSelection;
+import com.axlan.gdxtactics.models.GameStateManager;
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.LevelData.Formation;
 import com.axlan.gdxtactics.models.LevelData.Intel;
 import com.axlan.gdxtactics.models.LevelData.ShopItem;
 import com.axlan.gdxtactics.models.LevelData.SpotType;
 import com.axlan.gdxtactics.models.LevelData.UnitAllotment;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.PlayerResources;
 import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
@@ -29,6 +30,7 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
+import com.sun.tools.javac.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -46,7 +48,7 @@ public class DeployView extends TiledScreen {
       Color.BLACK,
       Color.WHITE
   };
-  private final int[] enemySpawnSelections;
+  private final Integer[] enemySpawnSelections;
   private final VisLabel[] remainingLabels;
   private final VisCheckBox[] intelCheckBoxes;
   //TODO allow for determinism
@@ -60,13 +62,12 @@ public class DeployView extends TiledScreen {
   private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
   private final CompletionObserver observer;
 
-  public DeployView(CompletionObserver observer, LevelData levelData,
-      PlayerResources playerResources) {
-    super("maps/" + levelData.mapName + ".tmx");
-    this.levelData = levelData;
+  public DeployView(CompletionObserver observer) {
+    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx");
+    this.levelData = LoadedResources.getLevelData();
     this.observer = observer;
-    this.playerResources = playerResources;
-    enemySpawnSelections = new int[levelData.enemyFormations.size()];
+    this.playerResources = GameStateManager.playerResources;
+    enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
     for (int i = 0; i < levelData.enemyFormations.size(); i++) {
       Formation formation = levelData.enemyFormations.get(i);
       int selection = rand.nextInt(formation.spawnPoints.size());
@@ -77,8 +78,8 @@ public class DeployView extends TiledScreen {
     stage.addActor(createUnitSelectWindow());
     updateRemainingLabels();
 
-    sightings = new Array<>(playerResources.purchases.size());
-    intelCheckBoxes = new VisCheckBox[playerResources.purchases.size()];
+    sightings = new Array<>(playerResources.getPurchases().size());
+    intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
     stage.addActor(createIntelSelectWindow());
   }
 
@@ -105,7 +106,7 @@ public class DeployView extends TiledScreen {
 
   private VisWindow createUnitSelectWindow() {
 
-    VisWindow unitSelection = new VisWindow("Unit Selection");
+    final VisWindow unitSelection = new VisWindow("Unit Selection");
     unitSelection.setPosition(0, 0);
     VisTable table = new VisTable();
     //table.setDebug(true);
@@ -142,6 +143,8 @@ public class DeployView extends TiledScreen {
     doneButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        GameStateManager.deploymentSelection
+            .addDeployments(List.from(enemySpawnSelections), placements);
         observer.onDone();
       }
     });
@@ -156,8 +159,8 @@ public class DeployView extends TiledScreen {
     VisTable table = new VisTable();
     intelSelection.add(table);
     intelSelection.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    for (int i = 0; i < playerResources.purchases.size(); i++) {
-      ShopItem resource = playerResources.purchases.get(i);
+    for (int i = 0; i < playerResources.getPurchases().size(); i++) {
+      ShopItem resource = playerResources.getPurchases().get(i);
       ArrayList<AnimatedSprite<AtlasRegion>> spotted = new ArrayList<>();
       intelCheckBoxes[i] = new VisCheckBox(resource.name, true);
       VisCheckBoxStyle style = new VisCheckBoxStyle(intelCheckBoxes[i].getStyle());
@@ -220,10 +223,6 @@ public class DeployView extends TiledScreen {
       remainingLabels[i].setText(String.format("%s: %d/%d", unit.type, remaining, unit.count));
     }
     doneButton.setDisabled(totalRemaining > 0);
-  }
-
-  public DeploymentSelection getDeploymentSelections() {
-    return new DeploymentSelection(enemySpawnSelections, placements);
   }
 
   @Override

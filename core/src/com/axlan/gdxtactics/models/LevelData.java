@@ -2,15 +2,9 @@ package com.axlan.gdxtactics.models;
 
 import com.badlogic.gdx.Gdx;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -164,20 +158,6 @@ public final class LevelData {
     public UnitAllotment(String type, int count) {
       this.type = type;
       this.count = count;
-    }
-  }
-
-  static class ImmutableListDeserializer implements JsonDeserializer<List<BriefPage>> {
-
-    public List<BriefPage> deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-
-      ArrayList<BriefPage> pages = new ArrayList<>();
-      for (JsonElement item : json.getAsJsonArray()) {
-        pages.add((BriefPage) context.deserialize(item, BriefPage.class));
-      }
-      return Collections.unmodifiableList(pages);
     }
   }
 }

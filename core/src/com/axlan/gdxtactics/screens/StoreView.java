@@ -1,7 +1,9 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.models.GameStateManager;
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.LevelData.ShopItem;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.PlayerResources;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,17 +26,17 @@ public class StoreView extends StageBasedScreen {
   private final VisLabel description = new VisLabel();
 
   public StoreView(
-      CompletionObserver observer, LevelData levelData, PlayerResources playerResources) {
+      CompletionObserver observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
-    setData(levelData, playerResources);
+    setData(LoadedResources.getLevelData(), GameStateManager.playerResources);
   }
 
   private void updateMoney() {
-    this.moneyLabel.setText(String.format("Money Available: %d", playerResources.money));
+    this.moneyLabel.setText(String.format("Money Available: %d", playerResources.getMoney()));
     for (int i = 0; i < levelData.shopItems.size(); i++) {
       VisTextButton button = (VisTextButton) itemListWidget.getChild(i);
-      button.setDisabled(playerResources.money < levelData.shopItems.get(i).cost);
+      button.setDisabled(playerResources.getMoney() < levelData.shopItems.get(i).cost);
     }
   }
 
@@ -75,9 +77,8 @@ public class StoreView extends StageBasedScreen {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              if (playerResources.money >= item.cost) {
-                playerResources.money -= item.cost;
-                playerResources.purchases.add(item);
+              if (playerResources.getMoney() >= item.cost) {
+                playerResources.makePurchase(item);
                 updateMoney();
               }
               shopItemButton.setDisabled(true);

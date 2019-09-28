@@ -3,8 +3,8 @@ package com.axlan.gdxtactics.screens;
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.models.DeploymentSelection;
-import com.axlan.gdxtactics.models.LevelData;
-import com.axlan.gdxtactics.models.PlayerResources;
+import com.axlan.gdxtactics.models.GameStateManager;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.models.UnitStats;
 import com.axlan.gdxtactics.screens.FieldedUnit.State;
@@ -30,13 +30,13 @@ public class BattleView extends TiledScreen {
   private float elapsedTime = 0;
   private PathVisualizer pathVisualizer;
 
-  public BattleView(LevelData levelData, Map<String, UnitStats> unitStats,
-      PlayerResources playerResources, DeploymentSelection deploymentSelection) {
-    super("maps/" + levelData.mapName + ".tmx");
-    this.unitStats = unitStats;
+  public BattleView() {
+    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx");
+    this.unitStats = LoadedResources.getUnitStats();
     pathVisualizer = new PathVisualizer(new TilePoint((int) tileSize.x, (int) tileSize.y));
-    for (TilePoint point : deploymentSelection.playerUnitPlacements.keySet()) {
-      String unitType = deploymentSelection.playerUnitPlacements.get(point);
+    DeploymentSelection deploymentSelection = GameStateManager.deploymentSelection;
+    for (TilePoint point : deploymentSelection.getPlayerUnitPlacements().keySet()) {
+      String unitType = deploymentSelection.getPlayerUnitPlacements().get(point);
       playerUnits.put(point, new FieldedUnit(unitStats.get(unitType)));
     }
 

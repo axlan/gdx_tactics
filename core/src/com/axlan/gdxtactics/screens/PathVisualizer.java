@@ -25,16 +25,8 @@ public class PathVisualizer {
     lineWith = tileSize.x / 3;
   }
 
-  private TilePoint scl(TilePoint point, int val) {
-    return new TilePoint(point.x * val, point.y * val);
-  }
-
-  private TilePoint scl(TilePoint point1, TilePoint point2) {
-    return new TilePoint(point1.x * point2.x, point1.y * point2.y);
-  }
-
   private TilePoint center(TilePoint point) {
-    return new TilePoint(point.x + tileSize.x / 2, point.y + tileSize.y / 2);
+    return point.add(tileSize.divBy(2));
   }
 
   public void startAnimation(String spriteName, ArrayList<TilePoint> points, int stepsPerTile,
@@ -97,10 +89,10 @@ public class PathVisualizer {
       return;
     }
     shapeRenderer.setColor(Color.BLUE);
-    TilePoint lastPoint = center(scl(points.get(0), tileSize));
+    TilePoint lastPoint = center(points.get(0).mult(tileSize));
     Boolean goingX = null;
     for (TilePoint nextPoint : points.subList(1, points.size())) {
-      nextPoint = center(scl(nextPoint, tileSize));
+      nextPoint = center(nextPoint.mult(tileSize));
       Boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (goingX != null && nextGoingX != goingX) {
         shapeRenderer.circle(lastPoint.x, lastPoint.y, lineWith / 2);

@@ -1,15 +1,27 @@
 package com.axlan.gdxtactics.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DeploymentSelection {
 
-  public final int[] enemySpawnSelections;
-  public final HashMap<TilePoint, String> playerUnitPlacements;
+  private final ArrayList<Integer> enemySpawnSelections = new ArrayList<>();
+  private final HashMap<TilePoint, String> playerUnitPlacements = new HashMap<>();
 
-  public DeploymentSelection(int[] enemySpawnSelections,
-      HashMap<TilePoint, String> playerUnitPlacements) {
-    this.enemySpawnSelections = enemySpawnSelections;
-    this.playerUnitPlacements = playerUnitPlacements;
+  public List<Integer> getEnemySpawnSelections() {
+    return Collections.unmodifiableList(enemySpawnSelections);
+  }
+
+  public Map<TilePoint, String> getPlayerUnitPlacements() {
+    return Collections.unmodifiableMap(playerUnitPlacements);
+  }
+
+  public void addDeployments(List<Integer> enemySpawnSelections,
+      Map<TilePoint, String> playerUnitPlacements) {
+    this.enemySpawnSelections.addAll(enemySpawnSelections);
+    this.playerUnitPlacements.putAll(playerUnitPlacements);
   }
 }

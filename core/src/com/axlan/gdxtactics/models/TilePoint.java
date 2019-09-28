@@ -39,7 +39,7 @@ public class TilePoint {
   }
 
   public TilePoint sub(TilePoint other) {
-    return this.add(other.x, other.y);
+    return this.sub(other.x, other.y);
   }
 
   public TilePoint mult(int x, int y) {
@@ -51,7 +51,7 @@ public class TilePoint {
   }
 
   public TilePoint mult(TilePoint other) {
-    return this.add(other.x, other.y);
+    return this.mult(other.x, other.y);
   }
 
   public TilePoint divBy(int x, int y) {
@@ -59,11 +59,11 @@ public class TilePoint {
   }
 
   public TilePoint divBy(int val) {
-    return this.mult(val, val);
+    return this.divBy(val, val);
   }
 
   public TilePoint divBy(TilePoint other) {
-    return this.add(other.x, other.y);
+    return this.divBy(other.x, other.y);
   }
 
   public int absDiff(int x, int y) {

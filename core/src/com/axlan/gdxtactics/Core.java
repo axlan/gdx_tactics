@@ -1,8 +1,6 @@
 package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.PlayerResources;
-import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.BattleView;
 import com.axlan.gdxtactics.screens.BriefingView;
 import com.axlan.gdxtactics.screens.CompletionObserver;
@@ -10,14 +8,8 @@ import com.axlan.gdxtactics.screens.DeployView;
 import com.axlan.gdxtactics.screens.StoreView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
-import java.util.HashMap;
 
 public class Core extends Game {
-
-  private final PlayerResources playerResources = new PlayerResources();
-  private int[] enemySpawnSelections;
-  private HashMap<TilePoint, String> placements;
-  private DeployView deployView;
 
   private void showStore() {
     CompletionObserver observer =
@@ -27,7 +19,7 @@ public class Core extends Game {
             showDeployMap();
           }
         };
-    StoreView storeView = new StoreView(observer, LoadedResources.getLevelData(), playerResources);
+    StoreView storeView = new StoreView(observer);
     this.setScreen(storeView);
   }
 
@@ -39,7 +31,7 @@ public class Core extends Game {
             showStore();
           }
         };
-    BriefingView briefingView = new BriefingView(observer, LoadedResources.getLevelData());
+    BriefingView briefingView = new BriefingView(observer);
     this.setScreen(briefingView);
   }
 
@@ -51,15 +43,12 @@ public class Core extends Game {
             showBattleMap();
           }
         };
-    deployView = new DeployView(observer, LoadedResources.getLevelData(), playerResources);
+    DeployView deployView = new DeployView(observer);
     this.setScreen(deployView);
   }
 
   private void showBattleMap() {
-    this.setScreen(new BattleView(LoadedResources.getLevelData(), LoadedResources.getUnitStats(),
-        playerResources,
-        deployView.getDeploymentSelections()));
-    deployView = null;
+    this.setScreen(new BattleView());
   }
 
   @Override
