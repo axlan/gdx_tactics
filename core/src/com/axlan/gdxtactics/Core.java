@@ -9,8 +9,14 @@ import com.axlan.gdxtactics.screens.StoreView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 
+/**
+ * Main class for game. Supervises switching between the views and handling shared resources.
+ */
 public class Core extends Game {
 
+  /**
+   * Switch the screen to the {@link StoreView}
+   */
   private void showStore() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -23,6 +29,9 @@ public class Core extends Game {
     this.setScreen(storeView);
   }
 
+  /**
+   * Switch the screen to the {@link BriefingView}
+   */
   private void showBriefing() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -35,6 +44,9 @@ public class Core extends Game {
     this.setScreen(briefingView);
   }
 
+  /**
+   * Switch the screen to the {@link DeployView}
+   */
   private void showDeployMap() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -47,6 +59,9 @@ public class Core extends Game {
     this.setScreen(deployView);
   }
 
+  /**
+   * Switch the screen to the {@link BattleView}
+   */
   private void showBattleMap() {
     this.setScreen(new BattleView());
   }
@@ -54,6 +69,7 @@ public class Core extends Game {
   @Override
   public void create() {
     VisUI.load();
+    //TODO-P2 load custom skin
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
 

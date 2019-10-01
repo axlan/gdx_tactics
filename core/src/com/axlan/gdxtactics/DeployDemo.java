@@ -8,6 +8,9 @@ import com.axlan.gdxtactics.screens.DeployView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 
+/**
+ * Class to run a demo of the {@link DeployView}
+ */
 public class DeployDemo extends Game {
 
   @Override

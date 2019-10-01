@@ -6,9 +6,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public abstract class StageBasedScreen implements Screen {
+/**
+ * Class to reduce boilerplate when creating a screen that will have a {@link Stage}
+ */
+abstract class StageBasedScreen implements Screen {
 
-  Stage stage;
+  final Stage stage;
 
   StageBasedScreen() {
     stage = new Stage(new ScreenViewport());

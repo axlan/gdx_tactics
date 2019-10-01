@@ -3,13 +3,13 @@ package com.axlan.gdxtactics.screens;
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.models.DeploymentSelection;
+import com.axlan.gdxtactics.models.FieldedUnit;
+import com.axlan.gdxtactics.models.FieldedUnit.State;
 import com.axlan.gdxtactics.models.GameStateManager;
 import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.models.UnitStats;
-import com.axlan.gdxtactics.screens.FieldedUnit.State;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
-import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,9 +19,21 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BattleView extends TiledScreen {
+
+
+  List<TilePoint> getShortestPath(BattleTileNode start, BattleTileNode goal) {
+    start.goal = goal;
+    ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
+    ArrayList<TilePoint> points = new ArrayList<>();
+    for (PathSearchNode node : path) {
+      points.add(((BattleTileNode) node).pos);
+    }
+    return points;
+  }
 
   private Map<String, UnitStats> unitStats;
   private HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
@@ -50,10 +62,10 @@ public class BattleView extends TiledScreen {
       AnimatedSprite<AtlasRegion> sprite = null;
       if (unit.state == State.SELECTED) {
         sprite = SpriteLookup.getAnimation(unit.stats.type,
-            Poses.LEFT, 0.1f);
+            Poses.LEFT);
       } else if (unit.state == State.IDLE || unit.state == State.DONE) {
         sprite = SpriteLookup.getAnimation(unit.stats.type,
-            Poses.IDLE, 0.1f);
+            Poses.IDLE);
       }
       if (sprite != null) {
         Vector2 worldPos = tileToWorld(point);
@@ -76,34 +88,17 @@ public class BattleView extends TiledScreen {
     if (selected != null) {
       TilePoint playerPos = screenToTile(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
       if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
-        //TODO Make enemy units not passable
-        //TODO Cache steps from these calculations
-        TileNode[][] tileNodes = getTileNodes();
-        TileNode start = tileNodes[selected.x][selected.y];
-        TileNode goal = tileNodes[playerPos.x][playerPos.y];
-        start.state = TileState.START;
-        goal.setGoal();
-        ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
-        ArrayList<TilePoint> points = new ArrayList<>();
-        for (PathSearchNode node : path) {
-          points.add(((TileNode) node).pos);
-        }
+        //TODO-P1 Make enemy units not passable
+        //TODO-P1 Cache steps from these calculations
+        BattleTileNode start = new BattleTileNode(selected);
+        BattleTileNode goal = new BattleTileNode(playerPos);
+        List<TilePoint> points = getShortestPath(start, goal);
+        shapeRenderer.setColor(Color.BLUE);
         pathVisualizer.drawArrow(shapeRenderer, points);
       }
     }
     shapeRenderer.end();
   }
-
-  @Override
-  public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
-
-  }
-
-  @Override
-  public void updateScreen(float delta) {
-    elapsedTime += delta;
-  }
-
 
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -116,19 +111,14 @@ public class BattleView extends TiledScreen {
         playerUnits.remove(selected);
         playerUnits.put(playerPos, unit);
         moving = playerPos;
-        //TODO Make enemy units not passable
-        //TODO Cache steps from these calculations
-        TileNode[][] tileNodes = getTileNodes();
-        TileNode start = tileNodes[selected.x][selected.y];
-        TileNode goal = tileNodes[playerPos.x][playerPos.y];
-        start.state = TileState.START;
-        goal.setGoal();
-        ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
-        ArrayList<TilePoint> points = new ArrayList<>();
-        for (PathSearchNode node : path) {
-          points.add(((TileNode) node).pos);
-        }
-        pathVisualizer.startAnimation(unit.stats.type, points, 10, 0.1f);
+        //TODO-P1 Make enemy units not passable
+        //TODO-P1 Cache steps from these calculations
+        BattleTileNode start = new BattleTileNode(selected);
+        BattleTileNode goal = new BattleTileNode(playerPos);
+        List<TilePoint> points = getShortestPath(start, goal);
+        pathVisualizer.startAnimation(unit.stats.type, points,
+            LoadedResources.getSettings().sprites.movementDurationPerTile,
+            LoadedResources.getSettings().sprites.frameDuration);
       } else {
         playerUnits.get(selected).state = State.IDLE;
       }
@@ -140,5 +130,90 @@ public class BattleView extends TiledScreen {
     }
 
     return super.touchDown(screenX, screenY, pointer, button);
+  }
+
+  @Override
+  public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+  @Override
+  public void updateScreen(float delta) {
+    elapsedTime += delta;
+  }
+
+  /**
+   * class to store description of 2D tile game map to search for shortest movement paths
+   */
+  public class BattleTileNode implements PathSearchNode {
+
+    TilePoint pos;
+    private BattleTileNode goal = null;
+
+    BattleTileNode(TilePoint pos) {
+      this.pos = pos;
+    }
+
+    BattleTileNode(TilePoint pos, BattleTileNode goal) {
+      this.pos = pos;
+      this.goal = goal;
+    }
+
+    @Override
+    public int heuristics() {
+      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
+    }
+
+    @Override
+    public int edgeWeight(PathSearchNode neighbor) {
+      return 1;
+    }
+
+    @Override
+    public List<PathSearchNode> getNeighbors() {
+      ArrayList<PathSearchNode> tmp = new ArrayList<>();
+      if (pos.x < numTiles.x - 1) {
+        TilePoint neighborPos = pos.add(1, 0);
+        if (isTilePassable(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, goal));
+        }
+      }
+      if (pos.x > 0) {
+        TilePoint neighborPos = pos.sub(1, 0);
+        if (isTilePassable(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, goal));
+        }
+      }
+      if (pos.y < numTiles.y - 1) {
+        TilePoint neighborPos = pos.add(0, 1);
+        if (isTilePassable(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, goal));
+        }
+      }
+      if (pos.y > 0) {
+        TilePoint neighborPos = pos.sub(0, 1);
+        if (isTilePassable(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, goal));
+        }
+      }
+      return tmp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || o.getClass() != this.getClass()) {
+        return false;
+      }
+      BattleTileNode g = (BattleTileNode) o;
+      return this.pos.equals(g.pos);
+    }
+
+    @Override
+    public int hashCode() {
+      return pos.hashCode();
+    }
   }
 }

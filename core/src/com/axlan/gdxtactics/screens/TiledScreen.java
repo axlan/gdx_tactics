@@ -1,9 +1,8 @@
 package com.axlan.gdxtactics.screens;
 
-import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,7 +18,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 
-
+/**
+ * Class for drawing and handling input for a 2D {@link TiledMap} with a {@link OrthographicCamera}
+ */
 public abstract class TiledScreen extends StageBasedScreen implements InputProcessor {
 
   boolean moveCameraToLeft = false;
@@ -38,9 +39,12 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private float[] cameraBounds = new float[4];
   private Vector3 cameraPosition;
 
-  /* Methods */
-
+  /**
+   * @param levelTmxFilename Location of TMX map use Assumes map with
+   */
   TiledScreen(String levelTmxFilename) {
+    //TODO-P1 Clean up constants
+    //TODO-P1 Make scale setting a function of screen size
     float cameraZoom = .5f;
     this.batch = new SpriteBatch();
     this.shapeRenderer = new ShapeRenderer();
@@ -86,71 +90,73 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     Gdx.input.setInputProcessor(this);
   }
 
-  /* To-Override Methods */
 
   /**
-   * Meant to be overrided : render & update entities between layers
+   *
+   * Render entities between background and foreground layers
+   * @param delta time since last update
+   * @param batch batch to draw on. Begin must be called before use.
+   * @param shapeRenderer shape render to draw on. Begin must be called before use.
    */
   public abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
+  /**
+   *
+   * Draw on top of all other elements, including any UI added to stage.
+   * @param delta time since last update
+   * @param batch batch to draw on. Begin must be called before use.
+   * @param shapeRenderer shape render to draw on. Begin must be called before use.
+   */
   public abstract void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
+  /**
+   * Update state before drawing
+   * @param delta time since last update
+   */
   public abstract void updateScreen(float delta);
 
-  TileNode[][] getTileNodes() {
-    int tileWidth = numTiles.x;
-    int tileHeight = numTiles.y;
-    TileNode[][] tiles = new TileNode[tileWidth][tileHeight];
-    for (int r = 0; r < tiles.length; r++) {
-      for (int c = 0; c < tiles[r].length; c++) {
-        tiles[r][c] = new TileNode();
-      }
-    }
-
-    for (int r = 0; r < tiles.length; r++) {
-      for (int c = 0; c < tiles[r].length; c++) {
-        TileNode tile = tiles[r][c];
-        tile.pos = new TilePoint(r, c);
-        if (!isTilePassable(tile.pos)) {
-          tile.state = TileState.BLOCKED;
-        }
-        if (r < tileWidth - 1) {
-          tile.neighbors.add(tiles[r + 1][c]);
-        }
-        if (r > 0) {
-          tile.neighbors.add(tiles[r - 1][c]);
-        }
-        if (c < tileHeight - 1) {
-          tile.neighbors.add(tiles[r][c + 1]);
-        }
-        if (c > 0) {
-          tile.neighbors.add(tiles[r][c - 1]);
-        }
-      }
-    }
-    return tiles;
-  }
-
+  /**
+   * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
+   * property or it will throw a  ClassCastException
+   * @param point the 2D index of the tile of interest
+   * @return whether the tile can be passed through
+   */
   boolean isTilePassable(TilePoint point) {
     if (point.x < 0 || point.x >= numTiles.x || point.y < 0 || point.y >= numTiles.y) {
       return false;
     }
     TiledMapTileLayer tileLayer = (TiledMapTileLayer) getMap().getLayers().get(0);
-    return (boolean) tileLayer.getCell(point.x, point.y).getTile().getProperties().get("passable");
+    return tileLayer.getCell(point.x, point.y).getTile().getProperties().get("passable",
+        Boolean.class);
   }
 
   /* Utils methods */
 
+  /**
+   * Coverts from a pixel on the screen to a pixel before the camera transformation
+   * @param screenCoord pixel location on the screen
+   * @return pixel location before the camera transformation
+   */
   Vector2 screenToWorld(Vector2 screenCoord) {
     Vector3 proj = camera.unproject(new Vector3(screenCoord, 0));
     return new Vector2(proj.x, proj.y);
   }
 
+  /**
+   * Coverts from a pixel before the camera transformation to a pixel on the screen
+   * @param worldCoord pixel location before the camera transformation
+   * @return pixel location on the screen
+   */
   Vector2 worldToScreen(Vector2 worldCoord) {
     Vector3 proj = camera.project(new Vector3(worldCoord, 0));
     return new Vector2(proj.x, proj.y);
   }
 
+  /**
+   * Coverts from a pixel on the screen to the tile index it was in
+   * @param screenCoord pixel location on the screen
+   * @return tile index the screen pixel was in
+   */
   TilePoint screenToTile(Vector2 screenCoord) {
     Vector2 worldCoord = screenToWorld(screenCoord);
     int tileX = (int) (worldCoord.x / tileSize.x);
@@ -158,10 +164,20 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return new TilePoint(tileX, tileY);
   }
 
+  /**
+   * Coverts a tile index to a pixel before the camera transformation
+   * @param tileCoord index of a tile in the map
+   * @return pixel location of corner of tile before the camera transformation
+   */
   Vector2 tileToWorld(TilePoint tileCoord) {
     return new Vector2(tileCoord.x, tileCoord.y).scl(tileSize);
   }
 
+  /**
+   * Coverts a tile index to a pixel on screen
+   * @param tileCoord index of a tile in the map
+   * @return pixel location of corner of tile on screen
+   */
   Vector2 tileToScreen(TilePoint tileCoord) {
     Vector2 worldCoord = new Vector2(tileCoord.x, tileCoord.y).scl(tileSize);
     return worldToScreen(worldCoord);
@@ -209,19 +225,19 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     renderer.setView(camera);
   }
 
-  /* Getters & Setters */
-
   public TiledMap getMap() {
     return map;
   }
 
-  public Rectangle getTileRect(TilePoint point) {
+  /**
+   * Get the rectangle of pixels a tile is draw at before the camera transformation
+   * @param point index of tile
+   * @return rectangle covering where the tile is draw before the camera transformation
+   */
+  public Rectangle getTileWorldRect(TilePoint point) {
     Vector2 worldPoint = tileToWorld(point);
     return new Rectangle(worldPoint.x, worldPoint.y, tileSize.x, tileSize.y);
   }
-
-
-  /* Implemented com.axlan.gdxtactics.Game.Screen Methods */
 
   @Override
   public void show() {
@@ -231,12 +247,10 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   @Override
   public void render(float delta) {
-//    Gdx.gl.glEnable(GL20.GL_BLEND);
-//    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-//    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-//    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);   // <<< this line here makes the magic we're after
-
+    moveCameraToLeft = (Gdx.input.isKeyPressed(Input.Keys.LEFT));
+    moveCameraToRight = (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
+    moveCameraToBottom = (Gdx.input.isKeyPressed(Input.Keys.DOWN));
+    moveCameraToTop = (Gdx.input.isKeyPressed(Input.Keys.UP));
 
     // Camera rendering
     renderCamera(delta);
@@ -249,8 +263,8 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     }
 
     /* Update & Render entities between layers */
-    renderer.render(backgroundLayers);
     updateScreen(delta);
+    renderer.render(backgroundLayers);
     Gdx.gl.glEnable(GL20.GL_BLEND);
     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
         GL20.GL_ONE_MINUS_SRC_ALPHA);   // <<< this line here makes the magic we're after
@@ -265,47 +279,6 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     stage.draw();
 
     renderAboveUI(delta, this.batch, this.shapeRenderer);
-  }
-
-  public static class TileNode implements PathSearchNode {
-
-    private static TileNode goal;
-    public TilePoint pos;
-    public ArrayList<TileNode> neighbors = new ArrayList<>();
-    public TileState state = TileState.OPEN;
-
-    public void setGoal() {
-      TileNode.goal = this;
-      this.state = TileState.END;
-    }
-
-    @Override
-    public int heuristics() {
-      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
-    }
-
-    @Override
-    public int edgeWeight(PathSearchNode neighbor) {
-      return 1;
-    }
-
-    @Override
-    public ArrayList<PathSearchNode> getNeighbors() {
-      ArrayList<PathSearchNode> tmp = new ArrayList<>();
-      for (TileNode neighbor : neighbors) {
-        if (neighbor.state != TileState.BLOCKED) {
-          tmp.add(neighbor);
-        }
-      }
-      return tmp;
-    }
-
-    public enum TileState {
-      OPEN,
-      BLOCKED,
-      START,
-      END
-    }
   }
 
   @Override

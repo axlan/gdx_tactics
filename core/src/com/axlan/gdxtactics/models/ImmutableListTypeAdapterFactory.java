@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class for making Lists parsed from JSON unmodifiable
+ *
+ * @see TypeAdapterFactory
+ */
 @SuppressWarnings("unchecked")
-public class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
+class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
 
   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
     Type type = typeToken.getType();
@@ -33,6 +38,7 @@ public class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
   private <E> TypeAdapter<List<E>> newImmutableListAdapter(
       final TypeAdapter<E> elementAdapter) {
     return new TypeAdapter<List<E>>() {
+      @Override
       public void write(JsonWriter out, List<E> value) throws IOException {
         if (value == null) {
           out.nullValue();
@@ -45,6 +51,7 @@ public class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
         out.endArray();
       }
 
+      @Override
       public List<E> read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
           in.nextNull();

@@ -1,3 +1,9 @@
+# 9/28 Commenting code
+
+Mostly finished the actual restructuring. Going back through the code to comment it, fix warnings, and other cleanup.
+
+Learned you could classify TODOs in InelliJ so I added priority levels as I'm going through.
+
 # 9/27 Massive Cleanup
 
 Working on restructuring the code to make it cleaner. There are 3 main changes so far.

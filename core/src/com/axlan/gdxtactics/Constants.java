@@ -7,7 +7,6 @@ package com.axlan.gdxtactics;
  */
 public final class Constants {
 
-  //TODO Add concept of multiple levels
   /**
    * File with level description
    */

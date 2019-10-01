@@ -15,16 +15,23 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
+/**
+ * A screen that gives information about the upcoming mission in the form of dialogue in a mission
+ * briefing.
+ */
 public class BriefingView extends StageBasedScreen {
 
-  private LevelData levelData;
+  private final LevelData levelData;
   private int curPage;
   private final VisLabel dialogue;
   private final VisLabel avatarLabel;
   private final VisImage avatar;
   private final VisLabel settingLabel;
-  private CompletionObserver completionObserver;
+  private final CompletionObserver completionObserver;
 
+  /**
+   * @param observer observer to call when briefing is finished
+   */
   public BriefingView(CompletionObserver observer) {
     this.completionObserver = observer;
     this.dialogue = new VisLabel();
@@ -41,6 +48,10 @@ public class BriefingView extends StageBasedScreen {
     return this.levelData == null || this.curPage >= this.levelData.briefPages.size() - 1;
   }
 
+  /**
+   * Update UI elements with information on new page. No update occurs if page number is invalid.
+   * @param newPage index of new page to show.
+   */
   private void updatePage(int newPage) {
     this.curPage = newPage;
     if (this.levelData != null && this.curPage < this.levelData.briefPages.size()) {
@@ -51,6 +62,10 @@ public class BriefingView extends StageBasedScreen {
     }
   }
 
+  /**
+   * Lay out UI elements
+   * @return Root table for UI
+   */
   private VisTable makeBriefingView() {
     //TODO Reskin and pretty up
     VisTable rootTable = new VisTable();

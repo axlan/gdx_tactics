@@ -2,10 +2,9 @@ package com.axlan.gdxtactics;
 
 import com.axlan.gdxtactics.logic.PathSearch;
 import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.models.LoadedResources;
 import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.PathVisualizer;
-import com.axlan.gdxtactics.screens.TiledScreen.TileNode;
-import com.axlan.gdxtactics.screens.TiledScreen.TileNode.TileState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,19 +16,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Class to run a demo to test the functionality of {@link PathSearch} and {@link PathVisualizer}
+ */
 public class PathSearchDemo extends Game implements InputProcessor {
 
-  private static TileNode goal;
-  private static TileNode start;
+  private static DemoTileNode goal;
+  private static DemoTileNode start;
+  private final TilePoint tileSize = new TilePoint(32, 32);
   private ShapeRenderer shapeRenderer;
   private SpriteBatch spriteBatch;
-  private TilePoint tileSize = new TilePoint(32, 32);
-  private TileNode[][] tiles;
+  private final PathVisualizer pathVisualizer = new PathVisualizer(tileSize);
+  private final TilePoint startPoint = new TilePoint(1, 1);
   private ArrayList<TilePoint> foundPath;
-  private PathVisualizer pathVisualizer = new PathVisualizer(tileSize);
-  private TilePoint startPoint = new TilePoint(1, 1);
-  private TilePoint goalPoint = new TilePoint(5, 5);
+  private final TilePoint goalPoint = new TilePoint(5, 5);
+  private DemoTileNode[][] tiles;
 
   @Override
   public boolean keyDown(int keycode) {
@@ -42,9 +45,11 @@ public class PathSearchDemo extends Game implements InputProcessor {
       }
       foundPath = new ArrayList<>();
       for (PathSearchNode node : path) {
-        foundPath.add(((TileNode) node).pos);
+        foundPath.add(((DemoTileNode) node).pos);
       }
-      pathVisualizer.startAnimation("tank", foundPath, 10, 0.1f);
+      pathVisualizer.startAnimation("tank", foundPath,
+          LoadedResources.getSettings().sprites.movementDurationPerTile,
+          LoadedResources.getSettings().sprites.frameDuration);
     } else if (keycode == Keys.R) {
       initializeTileStates();
     }
@@ -57,15 +62,19 @@ public class PathSearchDemo extends Game implements InputProcessor {
     if (posX < 0 || posX >= tiles.length || posY < 0 || posY >= tiles[0].length) {
       return;
     }
-    if (!clear) {
-      if (tiles[posX][posY].state == TileState.OPEN) {
-        tiles[posX][posY].state = TileState.BLOCKED;
-      }
-    } else {
-      if (tiles[posX][posY].state == TileState.BLOCKED) {
-        tiles[posX][posY].state = TileState.OPEN;
+    if (tiles[posX][posY] != goal && tiles[posX][posY] != start) {
+      tiles[posX][posY].blocked = !clear;
+    }
+  }
+
+  private void initializeTileStates() {
+
+    for (DemoTileNode[] row : tiles) {
+      for (DemoTileNode tile : row) {
+        tile.blocked = false;
       }
     }
+    foundPath = null;
   }
 
   @Override
@@ -95,42 +104,23 @@ public class PathSearchDemo extends Game implements InputProcessor {
     return false;
   }
 
-  private void initializeTileStates() {
-
-    for (TileNode[] row : tiles) {
-      for (TileNode tile : row) {
-        tile.state = TileState.OPEN;
-      }
-    }
-    foundPath = null;
-  }
-
-  @Override
-  public boolean mouseMoved(int screenX, int screenY) {
-    return false;
-  }
-
-  @Override
-  public boolean scrolled(int amount) {
-    return false;
-  }
-
   @Override
   public void create() {
+    LoadedResources.initializeGlobal();
     shapeRenderer = new ShapeRenderer();
     spriteBatch = new SpriteBatch();
     int tileWidth = Gdx.graphics.getWidth() / tileSize.x;
     int tileHeight = Gdx.graphics.getHeight() / tileSize.y;
-    tiles = new TileNode[tileWidth][tileHeight];
+    tiles = new DemoTileNode[tileWidth][tileHeight];
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
-        tiles[r][c] = new TileNode();
+        tiles[r][c] = new DemoTileNode();
       }
     }
 
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
-        TileNode tile = tiles[r][c];
+        DemoTileNode tile = tiles[r][c];
         tile.pos = new TilePoint(r, c);
         if (r < tileWidth - 1) {
           tile.neighbors.add(tiles[r + 1][c]);
@@ -147,11 +137,20 @@ public class PathSearchDemo extends Game implements InputProcessor {
       }
     }
     start = tiles[startPoint.x][startPoint.y];
-    start.state = TileState.START;
     goal = tiles[goalPoint.x][goalPoint.y];
     goal.setGoal();
 
     Gdx.input.setInputProcessor(this);
+  }
+
+  @Override
+  public boolean mouseMoved(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  public boolean scrolled(int amount) {
+    return false;
   }
 
   @Override
@@ -164,19 +163,14 @@ public class PathSearchDemo extends Game implements InputProcessor {
     shapeRenderer.begin(ShapeType.Filled);
     for (int r = 0; r < tiles.length; r++) {
       for (int c = 0; c < tiles[r].length; c++) {
-        switch (tiles[r][c].state) {
-          case OPEN:
-            shapeRenderer.setColor(Color.WHITE);
-            break;
-          case BLOCKED:
-            shapeRenderer.setColor(Color.BLACK);
-            break;
-          case START:
-            shapeRenderer.setColor(Color.GREEN);
-            break;
-          case END:
-            shapeRenderer.setColor(Color.RED);
-            break;
+        if (tiles[r][c] == start) {
+          shapeRenderer.setColor(Color.GREEN);
+        } else if (tiles[r][c] == goal) {
+          shapeRenderer.setColor(Color.RED);
+        } else if (tiles[r][c].blocked) {
+          shapeRenderer.setColor(Color.BLACK);
+        } else {
+          shapeRenderer.setColor(Color.WHITE);
         }
         int x = r * tileSize.x;
         int y = c * tileSize.y;
@@ -184,6 +178,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
         shapeRenderer.rect(x, y, tileSize.x, tileSize.y);
 
         if (foundPath != null) {
+          shapeRenderer.setColor(Color.BLUE);
           pathVisualizer.drawArrow(shapeRenderer, foundPath);
         }
 
@@ -193,6 +188,46 @@ public class PathSearchDemo extends Game implements InputProcessor {
     spriteBatch.begin();
     pathVisualizer.drawAnimatedSpritePath(delta, spriteBatch);
     spriteBatch.end();
+  }
+
+  /**
+   * class to store description of 2D tile game map to search for shortest movement paths
+   */
+  public static class DemoTileNode implements PathSearchNode {
+
+    private static DemoTileNode goal;
+    final ArrayList<DemoTileNode> neighbors = new ArrayList<>();
+    TilePoint pos;
+    boolean blocked = false;
+
+    /**
+     * Sets this Node as the path search goal
+     */
+    void setGoal() {
+      DemoTileNode.goal = this;
+    }
+
+    @Override
+    public int heuristics() {
+      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
+    }
+
+    @Override
+    public int edgeWeight(PathSearchNode neighbor) {
+      return 1;
+    }
+
+    @Override
+    public List<PathSearchNode> getNeighbors() {
+      ArrayList<PathSearchNode> tmp = new ArrayList<>();
+      for (DemoTileNode neighbor : neighbors) {
+        if (!neighbor.blocked) {
+          tmp.add(neighbor);
+        }
+      }
+      return tmp;
+    }
+
   }
 
 }

@@ -7,16 +7,30 @@ import com.google.gson.JsonSyntaxException;
 import java.io.Reader;
 import java.util.HashMap;
 
+/**
+ * Class for loading and storing stats for units from JSON. The structure of the JSON should mimic
+ * the structure of the class.
+ *
+ * <p> All lists loaded are unmodifiable
+ * <p> A static instance is managed by {@link LoadedResources}
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class UnitStats implements Cloneable {
 
+  /**
+   * Identifier for unit
+   */
   public final String type;
+  /** How many tiles of vision range the unit has*/
   public final int visionRange;
+  /** Total health for unit */
   public final int maxHealth;
+  /** Base attack points */
   public final int attack;
+  /** Base tiles of movement range */
   public final int movement;
 
-  public UnitStats(String type, int visionRange, int maxHealth, int attack, int movement) {
+  private UnitStats(String type, int visionRange, int maxHealth, int attack, int movement) {
     this.type = type;
     this.visionRange = visionRange;
     this.maxHealth = maxHealth;

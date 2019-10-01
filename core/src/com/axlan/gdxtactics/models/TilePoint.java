@@ -3,6 +3,10 @@ package com.axlan.gdxtactics.models;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * A point in a 2D grid, with integer x and y coordinates
+ * <p>TilePoint instance are immutable
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class TilePoint {
 
@@ -46,8 +50,8 @@ public class TilePoint {
     return new TilePoint(this.x * x, this.y * y);
   }
 
-  public TilePoint mult(int val) {
-    return this.mult(val, val);
+  public TilePoint mult(float val) {
+    return new TilePoint(Math.round(this.x * val), Math.round(this.y * val));
   }
 
   public TilePoint mult(TilePoint other) {
@@ -58,16 +62,32 @@ public class TilePoint {
     return new TilePoint(this.x / x, this.y / y);
   }
 
-  public TilePoint divBy(int val) {
-    return this.divBy(val, val);
+  public TilePoint divBy(float val) {
+    return new TilePoint(Math.round(this.x / val), Math.round(this.y / val));
   }
 
   public TilePoint divBy(TilePoint other) {
     return this.divBy(other.x, other.y);
   }
 
+  /** Get the distance along the 2D North/South/East/West grid
+   *
+   * @param x x position of other point
+   * @param y y position of other point
+   * @return distance along the 2D North/South/East/West grid
+   */
   public int absDiff(int x, int y) {
     return Math.abs(this.x - x) + Math.abs(this.y - y);
+  }
+
+  /**
+   * Get the distance along the 2D North/South/East/West grid
+   *
+   * @param other point to get the distance to
+   * @return distance along the 2D North/South/East/West grid
+   */
+  public int absDiff(TilePoint other) {
+    return absDiff(other.x, other.y);
   }
 
   public Vector2 toVector2() {

@@ -11,6 +11,9 @@ import com.kotcrab.vis.ui.VisUI;
 import com.sun.tools.javac.util.List;
 import java.util.HashMap;
 
+/**
+ * Class to run a demo of the {@link BattleView}
+ */
 public class BattleDemo extends Game {
 
   @Override
@@ -27,7 +30,7 @@ public class BattleDemo extends Game {
     playerUnitPlacements.put(new TilePoint(3, 6), "tank");
     playerUnitPlacements.put(new TilePoint(4, 6), "tank");
     GameStateManager.deploymentSelection
-        .addDeployments(List.from(new Integer[]{0}), playerUnitPlacements);
+        .setDeployments(List.from(new Integer[]{0}), playerUnitPlacements);
     this.setScreen(new BattleView());
   }
 

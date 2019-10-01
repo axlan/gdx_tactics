@@ -12,7 +12,6 @@ import com.axlan.gdxtactics.models.PlayerResources;
 import com.axlan.gdxtactics.models.TilePoint;
 import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -144,7 +143,7 @@ public class DeployView extends TiledScreen {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         GameStateManager.deploymentSelection
-            .addDeployments(List.from(enemySpawnSelections), placements);
+            .setDeployments(List.from(enemySpawnSelections), placements);
         observer.onDone();
       }
     });
@@ -185,7 +184,7 @@ public class DeployView extends TiledScreen {
           String spottedType = formation.units.get(unitId).unitType;
           TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
           AnimatedSprite<AtlasRegion> sprite = SpriteLookup
-              .getAnimation(spottedType, Poses.IDLE, 0.1f);
+              .getAnimation(spottedType, Poses.IDLE);
           sprite.setColor(INTEL_COLORS[i]);
           sprite.setAlpha(0.5f);
           Vector2 worldPos = tileToWorld(spottedTilePos);
@@ -230,7 +229,7 @@ public class DeployView extends TiledScreen {
     batch.begin();
     if (selectedUnit != null) {
       Vector2 worldPos = screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-      AnimatedSprite<AtlasRegion> img = SpriteLookup.getAnimation(selectedUnit, Poses.IDLE, 0.1f);
+      AnimatedSprite<AtlasRegion> img = SpriteLookup.getAnimation(selectedUnit, Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);
     }
@@ -245,7 +244,7 @@ public class DeployView extends TiledScreen {
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(spawnColor);
     for (TilePoint point : levelData.playerSpawnPoints) {
-      Rectangle tileRect = getTileRect(point);
+      Rectangle tileRect = getTileWorldRect(point);
       shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
     }
     shapeRenderer.end();
@@ -255,7 +254,7 @@ public class DeployView extends TiledScreen {
     for (TilePoint point : placements.keySet()) {
       Vector2 worldPos = tileToWorld(point);
       AnimatedSprite<AtlasRegion> img = SpriteLookup
-          .getAnimation(placements.get(point), Poses.IDLE, 0.1f);
+          .getAnimation(placements.get(point), Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);
     }
@@ -276,10 +275,6 @@ public class DeployView extends TiledScreen {
   @Override
   public void updateScreen(float delta) {
     elapsedTime += delta;
-    moveCameraToLeft = (Gdx.input.isKeyPressed(Input.Keys.LEFT));
-    moveCameraToRight = (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
-    moveCameraToBottom = (Gdx.input.isKeyPressed(Input.Keys.DOWN));
-    moveCameraToTop = (Gdx.input.isKeyPressed(Input.Keys.UP));
   }
 
   @Override
