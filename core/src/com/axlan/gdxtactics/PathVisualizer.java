@@ -1,7 +1,6 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
+import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,13 +18,16 @@ public class PathVisualizer {
   private float frameDuration;
   private String spriteName;
   private List<TilePoint> animationPath;
+  private final SpriteLookup spriteLookup;
 
   /**
    * @param tileSize The height and width of tiles on the map in pixels
+   * @param spriteLookup Resource for looking up sprites
    */
-  public PathVisualizer(TilePoint tileSize) {
+  public PathVisualizer(TilePoint tileSize, SpriteLookup spriteLookup) {
     this.tileSize = tileSize;
     lineWith = tileSize.x / 3;
+    this.spriteLookup = spriteLookup;
   }
 
   /**
@@ -93,14 +95,14 @@ public class PathVisualizer {
         movement.mult(tileSize).mult(curTileProgress));
     AnimatedSprite<AtlasRegion> sprite;
     if (movement.x < 0) {
-      sprite = SpriteLookup.getAnimation(this.spriteName, Poses.LEFT, this.frameDuration, true);
+      sprite = spriteLookup.getAnimation(this.spriteName, Poses.LEFT, this.frameDuration, true);
     } else if (movement.x > 0) {
-      sprite = SpriteLookup.getAnimation(this.spriteName, Poses.LEFT, this.frameDuration, true);
+      sprite = spriteLookup.getAnimation(this.spriteName, Poses.LEFT, this.frameDuration, true);
       sprite.flip(true, false);
     } else if (movement.y < 0) {
-      sprite = SpriteLookup.getAnimation(this.spriteName, Poses.DOWN, this.frameDuration, true);
+      sprite = spriteLookup.getAnimation(this.spriteName, Poses.DOWN, this.frameDuration, true);
     } else {
-      sprite = SpriteLookup.getAnimation(this.spriteName, Poses.UP, this.frameDuration, true);
+      sprite = spriteLookup.getAnimation(this.spriteName, Poses.UP, this.frameDuration, true);
     }
     sprite.setPosition(drawLocation.x, drawLocation.y);
     sprite.draw(batch, elapsedTime);

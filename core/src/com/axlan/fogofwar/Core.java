@@ -1,11 +1,11 @@
-package com.axlan.gdxtactics;
+package com.axlan.fogofwar;
 
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.screens.BattleView;
-import com.axlan.gdxtactics.screens.BriefingView;
-import com.axlan.gdxtactics.screens.CompletionObserver;
-import com.axlan.gdxtactics.screens.DeployView;
-import com.axlan.gdxtactics.screens.StoreView;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.screens.BattleView;
+import com.axlan.fogofwar.screens.BriefingView;
+import com.axlan.fogofwar.screens.CompletionObserver;
+import com.axlan.fogofwar.screens.DeployView;
+import com.axlan.fogofwar.screens.StoreView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 

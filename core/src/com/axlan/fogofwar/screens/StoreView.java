@@ -1,10 +1,11 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.fogofwar.screens;
 
-import com.axlan.gdxtactics.models.GameStateManager;
-import com.axlan.gdxtactics.models.LevelData;
-import com.axlan.gdxtactics.models.LevelData.ShopItem;
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.PlayerResources;
+import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.LevelData.ShopItem;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

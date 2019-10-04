@@ -1,10 +1,10 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
-import com.badlogic.gdx.Gdx;
-import com.google.gson.GsonBuilder;
+import com.axlan.gdxtactics.JsonLoader;
+import com.axlan.gdxtactics.SpriteLookup;
+import com.axlan.gdxtactics.TilePoint;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +64,7 @@ public final class LevelData {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   static LevelData loadFromJson(String projectPath) {
-    GsonBuilder gsonBuilder = new GsonBuilder();
-    gsonBuilder.registerTypeAdapterFactory(new ImmutableListTypeAdapterFactory());
-    Reader reader = Gdx.files.internal(projectPath).reader();
-    return gsonBuilder.create().fromJson(reader, LevelData.class);
+    return JsonLoader.loadFromJson(projectPath, LevelData.class);
   }
 
   /**
@@ -125,7 +122,7 @@ public final class LevelData {
      * Identifier for the unit type. Used to lookup stats and sprites
      *
      * @see UnitStats
-     * @see com.axlan.gdxtactics.screens.SpriteLookup
+     * @see SpriteLookup
      */
     public final String unitType;
     /** Position of unit relative to spawn point of {@link Formation} */
@@ -169,7 +166,7 @@ public final class LevelData {
   /**
    * Class describing how an item will reveal information about the enemy.
    *
-   * <p>This sets what the player will see during the {@link com.axlan.gdxtactics.screens.DeployView} scene
+   * <p>This sets what the player will see during the {@link com.axlan.fogofwar.screens.DeployView} scene
    */
   public static class Intel {
 
@@ -218,7 +215,7 @@ public final class LevelData {
      * Identifier for the unit type. Used to lookup stats and sprites
      *
      * @see UnitStats
-     * @see com.axlan.gdxtactics.screens.SpriteLookup
+     * @see SpriteLookup
      */
     public final String type;
     /** How many of the unit to give the player for placement */

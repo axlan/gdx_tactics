@@ -1,5 +1,6 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
+import com.axlan.gdxtactics.TilePoint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 /**
  * Class for storing the unit deployment selections
  * <p>
- * Selection is made in the {@link com.axlan.gdxtactics.screens.DeployView DeployView} screen and
+ * Selection is made in the {@link com.axlan.fogofwar.screens.DeployView DeployView} screen and
  * used in the subsequent battle.
  *
  * <p>Objects returned in the getters are unmodifiable

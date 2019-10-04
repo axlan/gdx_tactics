@@ -1,9 +1,9 @@
 package com.axlan.gdxtactics.desktop;
 
-import com.axlan.gdxtactics.BattleDemo;
-import com.axlan.gdxtactics.Core;
-import com.axlan.gdxtactics.DeployDemo;
-import com.axlan.gdxtactics.PathSearchDemo;
+import com.axlan.fogofwar.BattleDemo;
+import com.axlan.fogofwar.Core;
+import com.axlan.fogofwar.DeployDemo;
+import com.axlan.fogofwar.PathSearchDemo;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;

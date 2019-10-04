@@ -1,10 +1,10 @@
-package com.axlan.gdxtactics;
+package com.axlan.fogofwar;
 
-import com.axlan.gdxtactics.logic.PathSearch;
-import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.screens.PathVisualizer;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.gdxtactics.PathSearch;
+import com.axlan.gdxtactics.PathSearch.PathSearchNode;
+import com.axlan.gdxtactics.PathVisualizer;
+import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -28,7 +28,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
   private final TilePoint tileSize = new TilePoint(32, 32);
   private ShapeRenderer shapeRenderer;
   private SpriteBatch spriteBatch;
-  private final PathVisualizer pathVisualizer = new PathVisualizer(tileSize);
+  private PathVisualizer pathVisualizer;
   private final TilePoint startPoint = new TilePoint(1, 1);
   private ArrayList<TilePoint> foundPath;
   private final TilePoint goalPoint = new TilePoint(5, 5);
@@ -107,6 +107,7 @@ public class PathSearchDemo extends Game implements InputProcessor {
   @Override
   public void create() {
     LoadedResources.initializeGlobal();
+    pathVisualizer = new PathVisualizer(tileSize, LoadedResources.getSpriteLookup());
     shapeRenderer = new ShapeRenderer();
     spriteBatch = new SpriteBatch();
     int tileWidth = Gdx.graphics.getWidth() / tileSize.x;

@@ -1,10 +1,8 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
-import com.badlogic.gdx.Gdx;
-import com.google.gson.GsonBuilder;
+import com.axlan.gdxtactics.JsonLoader;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import java.io.Reader;
 import java.util.HashMap;
 
 /**
@@ -47,13 +45,9 @@ public class UnitStats implements Cloneable {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   static HashMap<String, UnitStats> loadFromJson(String projectPath) {
-    GsonBuilder gson = new GsonBuilder();
-    gson.registerTypeAdapterFactory(new ImmutableListTypeAdapterFactory());
-    Reader reader = Gdx.files.internal(projectPath).reader();
-    UnitStats[] statArray = gson.create().fromJson(reader, UnitStats[].class);
-
-    HashMap<String, UnitStats> statMap = new HashMap<>(statArray.length);
-    for (UnitStats stat : statArray) {
+    UnitStats[] statsList = JsonLoader.loadFromJson(projectPath, UnitStats[].class);
+    HashMap<String, UnitStats> statMap = new HashMap<>();
+    for (UnitStats stat : statsList) {
       statMap.put(stat.type, stat);
     }
     return statMap;

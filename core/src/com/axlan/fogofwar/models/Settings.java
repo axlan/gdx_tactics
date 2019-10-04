@@ -1,10 +1,8 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
-import com.badlogic.gdx.Gdx;
-import com.google.gson.GsonBuilder;
+import com.axlan.gdxtactics.JsonLoader;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import java.io.Reader;
 
 /**
  * Class for loading and storing settomgs from JSON. The structure of the JSON should mimic the
@@ -59,10 +57,7 @@ public final class Settings {
    */
   @SuppressWarnings("SameParameterValue")
   static Settings loadFromJson(String projectPath) {
-    GsonBuilder gson = new GsonBuilder();
-    gson.registerTypeAdapterFactory(new ImmutableListTypeAdapterFactory());
-    Reader reader = Gdx.files.internal(projectPath).reader();
-    return gson.create().fromJson(reader, Settings.class);
+    return JsonLoader.loadFromJson(projectPath, Settings.class);
   }
 
   /**

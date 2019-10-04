@@ -1,6 +1,6 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.models.LoadedResources;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -8,19 +8,28 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Class for loading from TextureAtlas based on a sprites name and pose
  *
- * @see LoadedResources
  */
 @SuppressWarnings("WeakerAccess")
 public class SpriteLookup {
+
+  private final TextureAtlas textureAtlas;
+
+  /**
+   * @param textureAtlas texture atlas with entries labeled as <type>_<pose>. The indexes of each
+   *                     entry are the frames of the animation.
+   */
+  public SpriteLookup(TextureAtlas textureAtlas) {
+    this.textureAtlas = textureAtlas;
+  }
 
   /**
    * @param sprite name of sprite
    * @param pose   pose of sprite
    * @return Corresponding AtlasRegion
    */
-  static Array<AtlasRegion> getRegions(String sprite, Poses pose) {
+  public Array<AtlasRegion> getRegions(String sprite, Poses pose) {
     String name = String.format("%s_%s", sprite, pose.toString().toLowerCase());
-    return LoadedResources.getTextureAtlas().findRegions(name);
+    return textureAtlas.findRegions(name);
   }
 
   /**
@@ -32,7 +41,7 @@ public class SpriteLookup {
    * @return Corresponding AnimatedSprite
    */
   @SuppressWarnings("SameParameterValue")
-  static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose, float frameDuration,
+  public AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose, float frameDuration,
       boolean reverse) {
     Array<AtlasRegion> regions = getRegions(sprite, pose);
     if (reverse && regions.size > 1) {
@@ -43,31 +52,19 @@ public class SpriteLookup {
     return new AnimatedSprite<>(frameDuration, regions);
   }
 
-  /** Load an AnimatedSprite by name and pose using default setting for frameDuration and reverse
-   *
-   * @param sprite name of sprite
-   * @param pose pose of sprite
-   * @return Corresponding AnimatedSprite
-   */
-  static AnimatedSprite<AtlasRegion> getAnimation(
-      String sprite, Poses pose) {
-    return SpriteLookup
-        .getAnimation(sprite, pose, LoadedResources.getSettings().sprites.frameDuration, true);
-  }
-
   /**
    * @param sprite name of sprite
    * @param pose   pose of sprite
    * @return Corresponding TextureRegionDrawable
    */
   @SuppressWarnings("SameParameterValue")
-  static TextureRegionDrawable getTextureRegionDrawable(String sprite, Poses pose) {
+  public TextureRegionDrawable getTextureRegionDrawable(String sprite, Poses pose) {
     Array<AtlasRegion> regions = getRegions(sprite, pose);
     return new TextureRegionDrawable(regions.first());
   }
 
   /** Poses in sprite set */
-  enum Poses {
+  public enum Poses {
     IDLE,
     LEFT,
     UP,

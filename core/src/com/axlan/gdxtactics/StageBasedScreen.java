@@ -1,4 +1,4 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,11 +9,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 /**
  * Class to reduce boilerplate when creating a screen that will have a {@link Stage}
  */
-abstract class StageBasedScreen implements Screen {
+public abstract class StageBasedScreen implements Screen {
 
-  final Stage stage;
+  protected final Stage stage;
 
-  StageBasedScreen() {
+  protected StageBasedScreen() {
     stage = new Stage(new ScreenViewport());
   }
 

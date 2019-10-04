@@ -1,17 +1,19 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.fogofwar.screens;
 
+import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.LevelData.Formation;
+import com.axlan.fogofwar.models.LevelData.Intel;
+import com.axlan.fogofwar.models.LevelData.ShopItem;
+import com.axlan.fogofwar.models.LevelData.SpotType;
+import com.axlan.fogofwar.models.LevelData.UnitAllotment;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.gdxtactics.AnimatedSprite;
+import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.axlan.gdxtactics.TilePoint;
+import com.axlan.gdxtactics.TiledScreen;
 import com.axlan.gdxtactics.Utilities;
-import com.axlan.gdxtactics.models.GameStateManager;
-import com.axlan.gdxtactics.models.LevelData;
-import com.axlan.gdxtactics.models.LevelData.Formation;
-import com.axlan.gdxtactics.models.LevelData.Intel;
-import com.axlan.gdxtactics.models.LevelData.ShopItem;
-import com.axlan.gdxtactics.models.LevelData.SpotType;
-import com.axlan.gdxtactics.models.LevelData.UnitAllotment;
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.PlayerResources;
-import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -133,7 +135,8 @@ public class DeployView extends TiledScreen {
     for (int i = 0; i < levelData.playerUnits.size(); i++) {
       final UnitAllotment unit = levelData.playerUnits.get(i);
       //TODO Make button react to hover, press
-      Button button = new Button(SpriteLookup.getTextureRegionDrawable(unit.type, Poses.IDLE));
+      Button button = new Button(
+          LoadedResources.getSpriteLookup().getTextureRegionDrawable(unit.type, Poses.IDLE));
       button.addListener(
           new ChangeListener() {
             @Override
@@ -206,7 +209,7 @@ public class DeployView extends TiledScreen {
           //TODO set sprite based on unit type
           String spottedType = formation.units.get(unitId).unitType;
           TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
-          AnimatedSprite<AtlasRegion> sprite = SpriteLookup
+          AnimatedSprite<AtlasRegion> sprite = LoadedResources
               .getAnimation(spottedType, Poses.IDLE);
           sprite.setColor(COLOR_LIST.get(i));
           sprite.setAlpha(0.5f);
@@ -261,7 +264,7 @@ public class DeployView extends TiledScreen {
     batch.begin();
     if (selectedUnit != null) {
       TilePoint worldPos = screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-      AnimatedSprite<AtlasRegion> img = SpriteLookup.getAnimation(selectedUnit, Poses.IDLE);
+      AnimatedSprite<AtlasRegion> img = LoadedResources.getAnimation(selectedUnit, Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);
     }
@@ -285,7 +288,7 @@ public class DeployView extends TiledScreen {
 
     for (TilePoint point : placements.keySet()) {
       TilePoint worldPos = tileToWorld(point);
-      AnimatedSprite<AtlasRegion> img = SpriteLookup
+      AnimatedSprite<AtlasRegion> img = LoadedResources
           .getAnimation(placements.get(point), Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);

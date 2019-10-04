@@ -1,6 +1,5 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.models.TilePoint;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;

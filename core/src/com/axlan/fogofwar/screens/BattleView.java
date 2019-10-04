@@ -1,13 +1,16 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.fogofwar.screens;
 
-import com.axlan.gdxtactics.models.DeploymentSelection;
-import com.axlan.gdxtactics.models.FieldedUnit;
-import com.axlan.gdxtactics.models.FieldedUnit.State;
-import com.axlan.gdxtactics.models.GameStateManager;
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.models.UnitStats;
-import com.axlan.gdxtactics.screens.SpriteLookup.Poses;
+import com.axlan.fogofwar.models.DeploymentSelection;
+import com.axlan.fogofwar.models.FieldedUnit;
+import com.axlan.fogofwar.models.FieldedUnit.State;
+import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.UnitStats;
+import com.axlan.gdxtactics.AnimatedSprite;
+import com.axlan.gdxtactics.PathVisualizer;
+import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.axlan.gdxtactics.TilePoint;
+import com.axlan.gdxtactics.TiledScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,7 +30,7 @@ public class BattleView extends TiledScreen {
   /**
    * Mapping of points on the map, to the players units on that tile.
    */
-  private HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
+  private final HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
   /**
    * Key to {@link #playerUnits} for the unit currently being issued a command
    */
@@ -37,7 +40,7 @@ public class BattleView extends TiledScreen {
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
   /** Used to draw potential paths and movement animations on the map */
-  private PathVisualizer pathVisualizer;
+  private final PathVisualizer pathVisualizer;
 
   public BattleView() {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
@@ -45,7 +48,7 @@ public class BattleView extends TiledScreen {
         LoadedResources.getSettings().cameraSpeed,
         LoadedResources.getSettings().edgeScrollSize);
     Map<String, UnitStats> unitStats = LoadedResources.getUnitStats();
-    pathVisualizer = new PathVisualizer(getTilePixelSize());
+    pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     DeploymentSelection deploymentSelection = GameStateManager.deploymentSelection;
     for (TilePoint point : deploymentSelection.getPlayerUnitPlacements().keySet()) {
       String unitType = deploymentSelection.getPlayerUnitPlacements().get(point);
@@ -61,10 +64,10 @@ public class BattleView extends TiledScreen {
       FieldedUnit unit = playerUnits.get(point);
       AnimatedSprite<AtlasRegion> sprite = null;
       if (unit.state == State.SELECTED) {
-        sprite = SpriteLookup.getAnimation(unit.stats.type,
+        sprite = LoadedResources.getAnimation(unit.stats.type,
             Poses.LEFT);
       } else if (unit.state == State.IDLE || unit.state == State.DONE) {
-        sprite = SpriteLookup.getAnimation(unit.stats.type,
+        sprite = LoadedResources.getAnimation(unit.stats.type,
             Poses.IDLE);
       }
       if (sprite != null) {

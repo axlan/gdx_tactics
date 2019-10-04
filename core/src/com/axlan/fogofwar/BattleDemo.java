@@ -1,11 +1,11 @@
-package com.axlan.gdxtactics;
+package com.axlan.fogofwar;
 
-import com.axlan.gdxtactics.models.GameStateManager;
-import com.axlan.gdxtactics.models.LevelData;
-import com.axlan.gdxtactics.models.LoadedResources;
-import com.axlan.gdxtactics.models.PlayerResources;
-import com.axlan.gdxtactics.models.TilePoint;
-import com.axlan.gdxtactics.screens.BattleView;
+import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.fogofwar.screens.BattleView;
+import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 import com.sun.tools.javac.util.List;

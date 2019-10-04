@@ -1,9 +1,9 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
 /**
  * A unit on the battlefield
  *
- * @see com.axlan.gdxtactics.screens.BattleView
+ * @see com.axlan.fogofwar.screens.BattleView
  */
 public class FieldedUnit {
 

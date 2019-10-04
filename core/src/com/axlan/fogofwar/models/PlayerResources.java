@@ -1,6 +1,6 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.fogofwar.models;
 
-import com.axlan.gdxtactics.models.LevelData.ShopItem;
+import com.axlan.fogofwar.models.LevelData.ShopItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

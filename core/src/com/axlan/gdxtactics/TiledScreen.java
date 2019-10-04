@@ -1,8 +1,6 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.logic.PathSearch;
-import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
-import com.axlan.gdxtactics.models.TilePoint;
+import com.axlan.gdxtactics.PathSearch.PathSearchNode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -40,7 +38,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private boolean keyMoveCameraToBottom = false;
   private boolean mouseMoveCameraToLeft = false;
   private boolean mouseMoveCameraToTop = false;
-  private float[] cameraBounds = new float[4];
+  private final float[] cameraBounds = new float[4];
   private boolean mouseMoveCameraToRight = false;
   private boolean mouseMoveCameraToBottom = false;
   private OrthographicCamera camera;
@@ -56,7 +54,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param edgeScrollSize When the mouse is closer then this many pixels from the edge, scroll the
    *                       map.
    */
-  TiledScreen(String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed,
+  protected TiledScreen(String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed,
       int edgeScrollSize) {
     this.tilesPerScreenWidth = tilesPerScreenWidth;
     this.cameraSpeed = cameraSpeed;
@@ -82,7 +80,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param batch batch to draw on. Begin must be called before use.
    * @param shapeRenderer shape render to draw on. Begin must be called before use.
    */
-  public abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
+  protected abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   /**
    *
@@ -91,13 +89,14 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param batch batch to draw on. Begin must be called before use.
    * @param shapeRenderer shape render to draw on. Begin must be called before use.
    */
-  public abstract void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
+  protected abstract void renderAboveUI(float delta, SpriteBatch batch,
+      ShapeRenderer shapeRenderer);
 
   /**
    * Update state before drawing
    * @param delta time since last update
    */
-  public abstract void updateScreen(float delta);
+  protected abstract void updateScreen(float delta);
 
   /**
    * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
@@ -105,7 +104,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param point the 2D index of the tile of interest
    * @return whether the tile can be passed through
    */
-  boolean isTilePassable(TilePoint point) {
+  protected boolean isTilePassable(TilePoint point) {
     if (point.x < 0 || point.x >= getMapTileSize().x || point.y < 0
         || point.y >= getMapTileSize().y) {
       return false;
@@ -122,7 +121,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param screenCoord pixel location on the screen
    * @return pixel location before the camera transformation
    */
-  TilePoint screenToWorld(Vector2 screenCoord) {
+  protected TilePoint screenToWorld(Vector2 screenCoord) {
     Vector3 proj = camera.unproject(new Vector3(screenCoord, 0));
     return new TilePoint(proj.x, proj.y);
   }
@@ -143,7 +142,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param screenCoord pixel location on the screen
    * @return tile index the screen pixel was in
    */
-  TilePoint screenToTile(Vector2 screenCoord) {
+  protected TilePoint screenToTile(Vector2 screenCoord) {
     TilePoint worldCoord = screenToWorld(screenCoord);
     return worldCoord.divBy(getTilePixelSize());
   }
@@ -153,7 +152,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param tileCoord index of a tile in the map
    * @return pixel location of corner of tile before the camera transformation
    */
-  TilePoint tileToWorld(TilePoint tileCoord) {
+  protected TilePoint tileToWorld(TilePoint tileCoord) {
     return tileCoord.mult(getTilePixelSize());
   }
 
@@ -163,7 +162,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @return pixel location of corner of tile on screen
    */
   @SuppressWarnings("unused")
-  Vector2 tileToScreen(TilePoint tileCoord) {
+  protected Vector2 tileToScreen(TilePoint tileCoord) {
     TilePoint worldCoordTilePoint = tileCoord.mult(getTilePixelSize());
     Vector2 worldCoord = worldCoordTilePoint.toVector2();
     return worldToScreen(worldCoord);
@@ -212,7 +211,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param point index of tile
    * @return rectangle covering where the tile is draw before the camera transformation
    */
-  Rectangle getTileWorldRect(TilePoint point) {
+  protected Rectangle getTileWorldRect(TilePoint point) {
     TilePoint worldPoint = tileToWorld(point);
     return new Rectangle(worldPoint.x, worldPoint.y, getTilePixelSize().x, getTilePixelSize().y);
   }
@@ -221,14 +220,14 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @return The size of the world map in tiles
    */
   @SuppressWarnings("WeakerAccess")
-  TilePoint getMapTileSize() {
+  protected TilePoint getMapTileSize() {
     return new TilePoint(layers.get(0).getWidth(), layers.get(0).getHeight());
   }
 
   /**
    * @return The size of a tile in pixels
    */
-  TilePoint getTilePixelSize() {
+  protected TilePoint getTilePixelSize() {
     return new TilePoint(layers.get(0).getTileWidth(), layers.get(0).getTileWidth());
   }
 
@@ -236,7 +235,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @return The size of the world map in pixels
    */
   @SuppressWarnings("WeakerAccess")
-  TilePoint getMapPixelSize() {
+  protected TilePoint getMapPixelSize() {
     return getMapTileSize().mult(getTilePixelSize());
   }
 
@@ -379,7 +378,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param goalPos  Ending tile index
    * @return The adjacent tiles to move through to go from start to goal
    */
-  List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos) {
+  protected List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos) {
     BattleTileNode start = new BattleTileNode(startPos);
     BattleTileNode goal = new BattleTileNode(goalPos);
     start.goal = goal;
@@ -399,7 +398,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    */
   class BattleTileNode implements PathSearchNode {
 
-    TilePoint pos;
+    final TilePoint pos;
     private BattleTileNode goal = null;
 
     BattleTileNode(TilePoint pos) {

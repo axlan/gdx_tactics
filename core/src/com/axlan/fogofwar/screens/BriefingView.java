@@ -1,7 +1,8 @@
-package com.axlan.gdxtactics.screens;
+package com.axlan.fogofwar.screens;
 
-import com.axlan.gdxtactics.models.LevelData;
-import com.axlan.gdxtactics.models.LoadedResources;
+import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

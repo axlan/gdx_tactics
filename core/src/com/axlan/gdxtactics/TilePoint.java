@@ -1,4 +1,4 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;

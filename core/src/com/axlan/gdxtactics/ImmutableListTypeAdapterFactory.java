@@ -1,4 +1,4 @@
-package com.axlan.gdxtactics.models;
+package com.axlan.gdxtactics;
 
 
 import com.google.gson.Gson;

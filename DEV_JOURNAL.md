@@ -1,3 +1,10 @@
+# 10/4 Refactor Package organization
+
+To make the organization a little clearer I organized the code that was somewhat generic to creating
+a tactics game into the package `com.axlan.gdxtactics` while the code that is for the specific game
+is under `com.axlan.fogofwar`. This is going to be a pretty fluid, but should help me think about
+making as much of the interfaces as generic as possible.
+
 # 10/2 Refactor TiledScreen
 
 Refactored the tile screen to be a bit easier to understand and to properly resize.
