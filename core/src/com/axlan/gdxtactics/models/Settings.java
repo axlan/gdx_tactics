@@ -23,15 +23,30 @@ public final class Settings {
   /** JSON file to load unit stats from */
   public final String unitStatsDataFile;
   /**
+   * The number of tiles that are show horizontally on map screen. Sets resolution.
+   */
+  public final int tilesPerScreenWidth;
+  /**
+   * How many pixels should the camera pan per second when scrolling across the map.
+   */
+  public final float cameraSpeed;
+  /**
+   * When the mouse is closer then this many pixels from the edge, scroll the map.
+   */
+  public final int edgeScrollSize;
+  /**
    * Settings controlling how sprites are drawn
    */
   public final SpritesSettings sprites;
 
   private Settings(String levelDataFile, String unitStatsDataFile,
-      SpritesSettings sprites) {
+      SpritesSettings sprites, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
     this.levelDataFile = levelDataFile;
     this.unitStatsDataFile = unitStatsDataFile;
     this.sprites = sprites;
+    this.tilesPerScreenWidth = tilesPerScreenWidth;
+    this.cameraSpeed = cameraSpeed;
+    this.edgeScrollSize = edgeScrollSize;
   }
 
   /**

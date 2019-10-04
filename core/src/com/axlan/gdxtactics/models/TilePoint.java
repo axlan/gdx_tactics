@@ -18,6 +18,11 @@ public class TilePoint {
     this.y = y;
   }
 
+  public TilePoint(float x, float y) {
+    this.x = (int) x;
+    this.y = (int) y;
+  }
+
   public TilePoint(TilePoint point) {
     this(point.x, point.y);
   }
@@ -27,7 +32,7 @@ public class TilePoint {
   }
 
   public TilePoint(Vector2 point) {
-    this((int) point.x, (int) point.y);
+    this(point.x, point.y);
   }
 
   public TilePoint add(int x, int y) {

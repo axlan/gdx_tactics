@@ -1,8 +1,15 @@
-# 9/28 Commenting code
+# 10/2 Refactor TiledScreen
+
+Refactored the tile screen to be a bit easier to understand and to properly resize.
+
+# 9/28 - 10/1 Commenting code
 
 Mostly finished the actual restructuring. Going back through the code to comment it, fix warnings, and other cleanup.
 
 Learned you could classify TODOs in InelliJ so I added priority levels as I'm going through.
+
+Some fairly major restructuring of the path finding API. Allowed the nodes to be generated on the
+fly based on the tile map.
 
 # 9/27 Massive Cleanup
 

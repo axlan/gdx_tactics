@@ -1,7 +1,5 @@
 package com.axlan.gdxtactics.screens;
 
-import com.axlan.gdxtactics.logic.PathSearch;
-import com.axlan.gdxtactics.logic.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.models.DeploymentSelection;
 import com.axlan.gdxtactics.models.FieldedUnit;
 import com.axlan.gdxtactics.models.FieldedUnit.State;
@@ -17,35 +15,37 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A screen to play out the turn based battle. Player commands their troops against enemy AI.
+ */
 public class BattleView extends TiledScreen {
 
-
-  List<TilePoint> getShortestPath(BattleTileNode start, BattleTileNode goal) {
-    start.goal = goal;
-    ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
-    ArrayList<TilePoint> points = new ArrayList<>();
-    for (PathSearchNode node : path) {
-      points.add(((BattleTileNode) node).pos);
-    }
-    return points;
-  }
-
-  private Map<String, UnitStats> unitStats;
+  /**
+   * Mapping of points on the map, to the players units on that tile.
+   */
   private HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
+  /**
+   * Key to {@link #playerUnits} for the unit currently being issued a command
+   */
   private TilePoint selected = null;
+  /** Key to {@link #playerUnits} for the unit currently in a movement animation */
   private TilePoint moving = null;
+  /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
+  /** Used to draw potential paths and movement animations on the map */
   private PathVisualizer pathVisualizer;
 
   public BattleView() {
-    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx");
-    this.unitStats = LoadedResources.getUnitStats();
-    pathVisualizer = new PathVisualizer(new TilePoint((int) tileSize.x, (int) tileSize.y));
+    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
+        LoadedResources.getSettings().tilesPerScreenWidth,
+        LoadedResources.getSettings().cameraSpeed,
+        LoadedResources.getSettings().edgeScrollSize);
+    Map<String, UnitStats> unitStats = LoadedResources.getUnitStats();
+    pathVisualizer = new PathVisualizer(getTilePixelSize());
     DeploymentSelection deploymentSelection = GameStateManager.deploymentSelection;
     for (TilePoint point : deploymentSelection.getPlayerUnitPlacements().keySet()) {
       String unitType = deploymentSelection.getPlayerUnitPlacements().get(point);
@@ -68,7 +68,7 @@ public class BattleView extends TiledScreen {
             Poses.IDLE);
       }
       if (sprite != null) {
-        Vector2 worldPos = tileToWorld(point);
+        TilePoint worldPos = tileToWorld(point);
         sprite.setPosition(worldPos.x, worldPos.y);
         if (unit.state == State.DONE) {
           sprite.setColor(Color.GRAY);
@@ -90,9 +90,7 @@ public class BattleView extends TiledScreen {
       if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
         //TODO-P1 Make enemy units not passable
         //TODO-P1 Cache steps from these calculations
-        BattleTileNode start = new BattleTileNode(selected);
-        BattleTileNode goal = new BattleTileNode(playerPos);
-        List<TilePoint> points = getShortestPath(start, goal);
+        List<TilePoint> points = getShortestPath(selected, playerPos);
         shapeRenderer.setColor(Color.BLUE);
         pathVisualizer.drawArrow(shapeRenderer, points);
       }
@@ -113,9 +111,7 @@ public class BattleView extends TiledScreen {
         moving = playerPos;
         //TODO-P1 Make enemy units not passable
         //TODO-P1 Cache steps from these calculations
-        BattleTileNode start = new BattleTileNode(selected);
-        BattleTileNode goal = new BattleTileNode(playerPos);
-        List<TilePoint> points = getShortestPath(start, goal);
+        List<TilePoint> points = getShortestPath(selected, playerPos);
         pathVisualizer.startAnimation(unit.stats.type, points,
             LoadedResources.getSettings().sprites.movementDurationPerTile,
             LoadedResources.getSettings().sprites.frameDuration);
@@ -142,78 +138,4 @@ public class BattleView extends TiledScreen {
     elapsedTime += delta;
   }
 
-  /**
-   * class to store description of 2D tile game map to search for shortest movement paths
-   */
-  public class BattleTileNode implements PathSearchNode {
-
-    TilePoint pos;
-    private BattleTileNode goal = null;
-
-    BattleTileNode(TilePoint pos) {
-      this.pos = pos;
-    }
-
-    BattleTileNode(TilePoint pos, BattleTileNode goal) {
-      this.pos = pos;
-      this.goal = goal;
-    }
-
-    @Override
-    public int heuristics() {
-      return Math.abs(goal.pos.x - pos.x) + Math.abs(goal.pos.y - pos.y);
-    }
-
-    @Override
-    public int edgeWeight(PathSearchNode neighbor) {
-      return 1;
-    }
-
-    @Override
-    public List<PathSearchNode> getNeighbors() {
-      ArrayList<PathSearchNode> tmp = new ArrayList<>();
-      if (pos.x < numTiles.x - 1) {
-        TilePoint neighborPos = pos.add(1, 0);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
-        }
-      }
-      if (pos.x > 0) {
-        TilePoint neighborPos = pos.sub(1, 0);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
-        }
-      }
-      if (pos.y < numTiles.y - 1) {
-        TilePoint neighborPos = pos.add(0, 1);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
-        }
-      }
-      if (pos.y > 0) {
-        TilePoint neighborPos = pos.sub(0, 1);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
-        }
-      }
-      return tmp;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || o.getClass() != this.getClass()) {
-        return false;
-      }
-      BattleTileNode g = (BattleTileNode) o;
-      return this.pos.equals(g.pos);
-    }
-
-    @Override
-    public int hashCode() {
-      return pos.hashCode();
-    }
-  }
 }

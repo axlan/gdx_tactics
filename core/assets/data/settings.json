@@ -1,6 +1,9 @@
 {
   "levelDataFile": "data/levels/demo.json",
   "unitStatsDataFile": "data/units/stats.json",
+  "tilesPerScreenWidth": 20,
+  "cameraSpeed": 300,
+  "edgeScrollSize": 16,
   "sprites": {
     "atlasFile": "images/units/tank.atlas",
     "frameDuration": 0.1,

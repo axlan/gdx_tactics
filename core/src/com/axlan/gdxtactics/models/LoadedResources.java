@@ -1,6 +1,5 @@
 package com.axlan.gdxtactics.models;
 
-import com.axlan.gdxtactics.Constants;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import java.util.Collections;
 import java.util.Map;
@@ -12,6 +11,8 @@ import java.util.Map;
  * <P>All members of this class are static and immutable
  */
 public final class LoadedResources {
+
+  private static final String SETTINGS_FILE = "data/settings.json";
 
   private static Settings settings;
   private static TextureAtlas textureAtlas;
@@ -42,7 +43,7 @@ public final class LoadedResources {
 
   /** Load the resources used across all levels */
   public static void initializeGlobal() {
-    settings = Settings.loadFromJson(Constants.SETTINGS_FILE);
+    settings = Settings.loadFromJson(SETTINGS_FILE);
     textureAtlas = new TextureAtlas(settings.sprites.atlasFile);
     unitStats = Collections.unmodifiableMap(UnitStats.loadFromJson(settings.unitStatsDataFile));
   }

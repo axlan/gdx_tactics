@@ -1,5 +1,6 @@
 package com.axlan.gdxtactics.screens;
 
+import com.axlan.gdxtactics.Utilities;
 import com.axlan.gdxtactics.models.GameStateManager;
 import com.axlan.gdxtactics.models.LevelData;
 import com.axlan.gdxtactics.models.LevelData.Formation;
@@ -31,38 +32,71 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.sun.tools.javac.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-
+/**
+ * A screen that lets the player decide where to position their troops. They can view their intel to
+ * inform their decision.
+ */
 public class DeployView extends TiledScreen {
 
-  private static final Color[] INTEL_COLORS = new Color[]{
-      Color.BLUE,
-      Color.GREEN,
-      Color.RED,
-      Color.CYAN,
-      Color.MAGENTA,
-      Color.YELLOW,
-      Color.BLACK,
-      Color.WHITE
-  };
+  /**
+   * List of colors to differentiate intel sources
+   */
+  private static final java.util.List<Color> COLOR_LIST =
+      Collections.unmodifiableList(
+          Arrays.asList(
+              Color.BLUE,
+              Color.GREEN,
+              Color.RED,
+              Color.CYAN,
+              Color.MAGENTA,
+              Color.YELLOW,
+              Color.BLACK,
+              Color.WHITE
+          ));
+  /**
+   * The set of enemy spawn points randomly selected
+   */
   private final Integer[] enemySpawnSelections;
+  /**
+   * Labels describing how many units of each type are still available to deploy
+   */
   private final VisLabel[] remainingLabels;
-  private final VisCheckBox[] intelCheckBoxes;
   //TODO allow for determinism
   private final Random rand = new Random();
-  private final HashMap<TilePoint, String> placements = new HashMap<>();
+  /** Check boxes to select intel to display */
+  private final VisCheckBox[] intelCheckBoxes;
   private final LevelData levelData;
   private final PlayerResources playerResources;
+  /**
+   * Mapping of map points to the unit type deployed there
+   */
+  private final HashMap<TilePoint, String> placements = new HashMap<>();
+  /** Animations for intel that can be shown on the map */
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
-  private String selectedUnit;
-  private float elapsedTime = 0;
+  /**
+   * Button to finalize deployment
+   */
   private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
   private final CompletionObserver observer;
+  /** The type of unit currently selected to deploy. null for removing previous deployments.*/
+  private String selectedUnit;
+  /** Keeps track of time for selecting frames for animations */
+  private float elapsedTime = 0;
 
+  /**
+   *
+   * @param observer  observer to call when briefing is finished
+   */
   public DeployView(CompletionObserver observer) {
-    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx");
+    super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
+        LoadedResources.getSettings().tilesPerScreenWidth,
+        LoadedResources.getSettings().cameraSpeed,
+        LoadedResources.getSettings().edgeScrollSize);
     this.levelData = LoadedResources.getLevelData();
     this.observer = observer;
     this.playerResources = GameStateManager.playerResources;
@@ -82,27 +116,12 @@ public class DeployView extends TiledScreen {
     stage.addActor(createIntelSelectWindow());
   }
 
-  private Array<Integer> getNElements(int n, int length) {
-    assert (length >= n);
-    Array<Integer> ret = new Array<>();
-    for (int i = 0; i < n; i++) {
-      int val;
-      do {
-        val = rand.nextInt(length);
-      } while (ret.contains(val, false));
-      ret.add(val);
-    }
-    return ret;
-  }
+  //TODO-P2 fix window so resize works
 
-  private Array<Integer> getIntRange(int start, int end, int inc) {
-    Integer[] ret = new Integer[(end - start) / inc];
-    for (int i = 0; i < ret.length; i++) {
-      ret[i] = start + inc * i;
-    }
-    return new Array<>(ret);
-  }
-
+  /**
+   *
+   * @return Create a window for selecting units to deploy
+   */
   private VisWindow createUnitSelectWindow() {
 
     final VisWindow unitSelection = new VisWindow("Unit Selection");
@@ -153,6 +172,10 @@ public class DeployView extends TiledScreen {
   }
 
 
+  /**
+   *
+   * @return Create a window for selecting which intel sources to show
+   */
   private VisWindow createIntelSelectWindow() {
     VisWindow intelSelection = new VisWindow("Intel Selection");
     VisTable table = new VisTable();
@@ -163,7 +186,7 @@ public class DeployView extends TiledScreen {
       ArrayList<AnimatedSprite<AtlasRegion>> spotted = new ArrayList<>();
       intelCheckBoxes[i] = new VisCheckBox(resource.name, true);
       VisCheckBoxStyle style = new VisCheckBoxStyle(intelCheckBoxes[i].getStyle());
-      style.checkedFontColor = INTEL_COLORS[i];
+      style.checkedFontColor = COLOR_LIST.get(i);
       intelCheckBoxes[i].setStyle(style);
       table.add(intelCheckBoxes[i]);
       table.row();
@@ -175,9 +198,9 @@ public class DeployView extends TiledScreen {
         int numSpotted = Math.min(formation.units.size(), intel.numberOfUnits);
         Array<Integer> unitIds;
         if (intel.spotType == SpotType.RANDOM) {
-          unitIds = getNElements(numSpotted, formation.units.size());
+          unitIds = Utilities.getNElements(rand, numSpotted, formation.units.size());
         } else {
-          unitIds = getIntRange(0, numSpotted, 1);
+          unitIds = Utilities.getIntRange(0, numSpotted, 1);
         }
         for (int unitId : unitIds) {
           //TODO set sprite based on unit type
@@ -185,9 +208,9 @@ public class DeployView extends TiledScreen {
           TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
           AnimatedSprite<AtlasRegion> sprite = SpriteLookup
               .getAnimation(spottedType, Poses.IDLE);
-          sprite.setColor(INTEL_COLORS[i]);
+          sprite.setColor(COLOR_LIST.get(i));
           sprite.setAlpha(0.5f);
-          Vector2 worldPos = tileToWorld(spottedTilePos);
+          TilePoint worldPos = tileToWorld(spottedTilePos);
           sprite.setPosition(worldPos.x, worldPos.y);
           spotted.add(sprite);
         }
@@ -197,6 +220,11 @@ public class DeployView extends TiledScreen {
     return intelSelection;
   }
 
+  /**
+   *
+   * @param type The identifier for a type of unit
+   * @return a count of how many units of the given type haven't been deployed
+   */
   private int remainingUnits(String type) {
     for (UnitAllotment unit : levelData.playerUnits) {
       if (!unit.type.equals(type)) {
@@ -213,6 +241,10 @@ public class DeployView extends TiledScreen {
     return 0;
   }
 
+  /**
+   * Update the UnitSelectWindow to reflect the units currently deployed. Enable the done button if
+   * all units are deployed.
+   */
   private void updateRemainingLabels() {
     int totalRemaining = 0;
     for (int i = 0; i < levelData.playerUnits.size(); i++) {
@@ -228,7 +260,7 @@ public class DeployView extends TiledScreen {
   public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     batch.begin();
     if (selectedUnit != null) {
-      Vector2 worldPos = screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+      TilePoint worldPos = screenToWorld(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
       AnimatedSprite<AtlasRegion> img = SpriteLookup.getAnimation(selectedUnit, Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);
@@ -252,7 +284,7 @@ public class DeployView extends TiledScreen {
     batch.begin();
 
     for (TilePoint point : placements.keySet()) {
-      Vector2 worldPos = tileToWorld(point);
+      TilePoint worldPos = tileToWorld(point);
       AnimatedSprite<AtlasRegion> img = SpriteLookup
           .getAnimation(placements.get(point), Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
