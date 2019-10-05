@@ -11,7 +11,6 @@ import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -41,6 +40,10 @@ public class BattleView extends TiledScreen {
   private float elapsedTime = 0;
   /** Used to draw potential paths and movement animations on the map */
   private final PathVisualizer pathVisualizer;
+  /**
+   * Path from {@link #selected} to the mouse location
+   */
+  private List<TilePoint> selectedUnitPath = null;
 
   public BattleView() {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
@@ -88,15 +91,9 @@ public class BattleView extends TiledScreen {
     }
     batch.end();
     shapeRenderer.begin(ShapeType.Filled);
-    if (selected != null) {
-      TilePoint playerPos = screenToTile(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-      if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
-        //TODO-P1 Make enemy units not passable
-        //TODO-P1 Cache steps from these calculations
-        List<TilePoint> points = getShortestPath(selected, playerPos);
-        shapeRenderer.setColor(Color.BLUE);
-        pathVisualizer.drawArrow(shapeRenderer, points);
-      }
+    if (selectedUnitPath != null) {
+      shapeRenderer.setColor(Color.BLUE);
+      pathVisualizer.drawArrow(shapeRenderer, selectedUnitPath);
     }
     shapeRenderer.end();
   }
@@ -105,23 +102,21 @@ public class BattleView extends TiledScreen {
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
 
-    if (selected != null) {
-      if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
+    if (selected != null && selectedUnitPath != null) {
+      if (!playerUnits.containsKey(playerPos) && isTilePassable(playerPos)) {
         FieldedUnit unit = playerUnits.get(selected);
         unit.state = State.MOVING;
         playerUnits.remove(selected);
         playerUnits.put(playerPos, unit);
         moving = playerPos;
-        //TODO-P1 Make enemy units not passable
-        //TODO-P1 Cache steps from these calculations
-        List<TilePoint> points = getShortestPath(selected, playerPos);
-        pathVisualizer.startAnimation(unit.stats.type, points,
+        pathVisualizer.startAnimation(unit.stats.type, selectedUnitPath,
             LoadedResources.getSettings().sprites.movementDurationPerTile,
             LoadedResources.getSettings().sprites.frameDuration);
       } else {
         playerUnits.get(selected).state = State.IDLE;
       }
       selected = null;
+      selectedUnitPath = null;
     }
     if (playerUnits.containsKey(playerPos) && playerUnits.get(playerPos).state == State.IDLE) {
       selected = playerPos;
@@ -129,6 +124,23 @@ public class BattleView extends TiledScreen {
     }
 
     return super.touchDown(screenX, screenY, pointer, button);
+  }
+
+  @Override
+  public boolean mouseMoved(int screenX, int screenY) {
+    super.mouseMoved(screenX, screenY);
+    if (selected != null) {
+      TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
+      // Only recalculate path when mouse has moved onto new tile.
+      if (selectedUnitPath != null && playerPos.equals(
+          selectedUnitPath.get(selectedUnitPath.size() - 1))) {
+        return false;
+      }
+      if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
+        selectedUnitPath = getShortestPath(selected, playerPos);
+      }
+    }
+    return false;
   }
 
   @Override
