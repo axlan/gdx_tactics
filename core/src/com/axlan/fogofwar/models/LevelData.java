@@ -161,6 +161,19 @@ public final class LevelData {
     public TilePoint getUnitPos(int spawnIdx, int unitIdx) {
       return spawnPoints.get(spawnIdx).add(units.get(unitIdx).relativePosition);
     }
+
+    /**
+     * Get the absolute position of a unit in the formation
+     *
+     * @param spawnIdx The index of the spawn point that was selected.
+     * @param unit     The unit in units to get the absolute position for.
+     * @return The absolute position of the specified unit.
+     */
+    public TilePoint getUnitPos(int spawnIdx, UnitStart unit) {
+      int unitIdx = units.indexOf(unit);
+      return getUnitPos(spawnIdx, unitIdx);
+    }
+
   }
 
   /**

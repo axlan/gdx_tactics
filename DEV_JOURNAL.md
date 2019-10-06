@@ -1,9 +1,27 @@
-# 10/4 Refactor Package organization
+# 10/5 Working on BattleView
+
+As I go back to filling in the battle view logic I gave some thought to what the alpha would look
+like. To add stakes to the campaign, I think the best game design is to give a starting army and
+some amount of resources gain each turn based on the territory captured. The player will have to
+decide the allocation of troops for each battle, knowing they won;t be immediately available for
+other battles. They might decide not to commit troops to a battle that is too costly to win.
+
+# 10/4 Start Adding Missing Features to BattleView
+
+With the refactor/cleanup/commenting totally done, it's back to adding actual features.
+Created TODOs with the capabilities to fill in.
+
+# 10/4 Refactor Package Organization
 
 To make the organization a little clearer I organized the code that was somewhat generic to creating
 a tactics game into the package `com.axlan.gdxtactics` while the code that is for the specific game
 is under `com.axlan.fogofwar`. This is going to be a pretty fluid, but should help me think about
 making as much of the interfaces as generic as possible.
+
+One interesting point I hit was refactoring the ImmutableListTypeAdapterFactory. It should be
+possible to infer the desired type from the generic parameter. However, since the generic is only
+figured out at run time you can't access it's class information. There's probably a better way to
+work around this, but I ended up having to pass it in as a function parameter.
 
 # 10/2 Refactor TiledScreen
 

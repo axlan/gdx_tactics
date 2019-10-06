@@ -4,6 +4,8 @@ import com.axlan.fogofwar.models.DeploymentSelection;
 import com.axlan.fogofwar.models.FieldedUnit;
 import com.axlan.fogofwar.models.FieldedUnit.State;
 import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LevelData.Formation;
+import com.axlan.fogofwar.models.LevelData.UnitStart;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.UnitStats;
 import com.axlan.gdxtactics.AnimatedSprite;
@@ -21,6 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//TODO-P1 Add enemy units
+//TODO-P1 Add concept of turns and mechanism to end player turns
+//TODO-P1 Show terrain and unit info under cursor
+//TODO-P1 Add attack action
+//TODO-P1 Add enemy turn
+//TODO-P1 Add scenario goal along with victory / failure conditions
+//TODO-P2 Add fog of war mechanic
+//TODO-P3 Add intel view
+//TODO-P3 Add support for more then one enemy or ally
+//TODO-P3 Add touch screen support
+
 /**
  * A screen to play out the turn based battle. Player commands their troops against enemy AI.
  */
@@ -30,6 +43,10 @@ public class BattleView extends TiledScreen {
    * Mapping of points on the map, to the players units on that tile.
    */
   private final HashMap<TilePoint, FieldedUnit> playerUnits = new HashMap<>();
+  /**
+   * Mapping of points on the map, to the enemy units on that tile.
+   */
+  private final HashMap<TilePoint, FieldedUnit> enemyUnits = new HashMap<>();
   /**
    * Key to {@link #playerUnits} for the unit currently being issued a command
    */
@@ -57,7 +74,15 @@ public class BattleView extends TiledScreen {
       String unitType = deploymentSelection.getPlayerUnitPlacements().get(point);
       playerUnits.put(point, new FieldedUnit(unitStats.get(unitType)));
     }
-
+    List<Formation> enemyFormations = LoadedResources.getLevelData().enemyFormations;
+    for (int formationIdx = 0; formationIdx < enemyFormations.size(); formationIdx++) {
+      Formation formation = enemyFormations.get(formationIdx);
+      int spawnIdx = deploymentSelection.getEnemySpawnSelections().get(formationIdx);
+      for (UnitStart unit : formation.units) {
+        TilePoint startPos = formation.getUnitPos(spawnIdx, unit);
+        enemyUnits.put(startPos, new FieldedUnit(unitStats.get(unit.unitType)));
+      }
+    }
   }
 
   @Override
@@ -79,6 +104,23 @@ public class BattleView extends TiledScreen {
         if (unit.state == State.DONE) {
           sprite.setColor(Color.GRAY);
         }
+        sprite.draw(batch, elapsedTime);
+      }
+    }
+    for (TilePoint point : enemyUnits.keySet()) {
+      FieldedUnit unit = enemyUnits.get(point);
+      AnimatedSprite<AtlasRegion> sprite = null;
+      if (unit.state == State.IDLE || unit.state == State.DONE) {
+        sprite = LoadedResources.getAnimation(unit.stats.type,
+            Poses.IDLE);
+      }
+      if (sprite != null) {
+        TilePoint worldPos = tileToWorld(point);
+        sprite.setPosition(worldPos.x, worldPos.y);
+        if (unit.state == State.DONE) {
+          sprite.setColor(Color.GRAY);
+        }
+        sprite.setColor(Color.BLUE);
         sprite.draw(batch, elapsedTime);
       }
     }

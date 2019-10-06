@@ -19,6 +19,8 @@ import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO-P3 add capability for animated tiles
+
 /**
  * Class for drawing and handling input for a 2D {@link TiledMap} with a {@link OrthographicCamera}
  */
