@@ -19,20 +19,26 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO-P1 Add enemy units
 //TODO-P1 Add concept of turns and mechanism to end player turns
 //TODO-P1 Show terrain and unit info under cursor
 //TODO-P1 Add attack action
 //TODO-P1 Add enemy turn
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //TODO-P2 Add fog of war mechanic
+//TODO-P2 Add overlay when unit is selected to show move and attack range
 //TODO-P3 Add intel view
 //TODO-P3 Add support for more then one enemy or ally
 //TODO-P3 Add touch screen support
+//TODO-P3 Add battle animations
 
 /**
  * A screen to play out the turn based battle. Player commands their troops against enemy AI.
@@ -61,6 +67,15 @@ public class BattleView extends TiledScreen {
    * Path from {@link #selected} to the mouse location
    */
   private List<TilePoint> selectedUnitPath = null;
+  /**
+   * Disable selecting units when some other action needs to complete
+   */
+  private boolean disableSelection = false;
+  /**
+   * Stores a moved unit's start position to allow move to be undone
+   */
+  private TilePoint moveStartPos = null;
+
 
   public BattleView() {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
@@ -83,6 +98,54 @@ public class BattleView extends TiledScreen {
         enemyUnits.put(startPos, new FieldedUnit(unitStats.get(unit.unitType)));
       }
     }
+  }
+
+  /**
+   * Move the player controlled unit in playerUnits to a new position key
+   *
+   * @param oldPos old unit position
+   * @param newPos new unit position
+   */
+  private void movePlayerUnit(TilePoint oldPos, TilePoint newPos) {
+    final FieldedUnit unit = playerUnits.get(oldPos);
+    playerUnits.remove(oldPos);
+    playerUnits.put(newPos, unit);
+  }
+
+  /**
+   * Create a dialogue window to select the action the unit should take
+   *
+   * @param unitPos the position of the acting unit
+   */
+  private void createActionDialogue(final TilePoint unitPos) {
+    final FieldedUnit unit = playerUnits.get(unitPos);
+    VisDialog actionDialogue = new VisDialog("Choose Action");
+    actionDialogue.button("Attack");
+    actionDialogue.getButtonsTable().row();
+    VisTextButton waitButton = new VisTextButton("Wait");
+    waitButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        unit.state = State.DONE;
+        disableSelection = false;
+      }
+    });
+    actionDialogue.button(waitButton);
+    actionDialogue.getButtonsTable().row();
+    VisTextButton cancelButton = new VisTextButton("Cancel");
+    cancelButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        unit.state = State.IDLE;
+        movePlayerUnit(unitPos, moveStartPos);
+        disableSelection = false;
+      }
+    });
+    actionDialogue.button(cancelButton);
+    Vector2 screenPos = tileToScreen(unitPos);
+    //TODO-P2 Make dialogue less likely to block relevant map space
+    actionDialogue.setPosition(screenPos.x, screenPos.y);
+    stage.addActor(actionDialogue);
   }
 
   @Override
@@ -128,6 +191,7 @@ public class BattleView extends TiledScreen {
       if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
         FieldedUnit unit = playerUnits.get(moving);
         unit.state = State.DONE;
+        createActionDialogue(moving);
         moving = null;
       }
     }
@@ -140,31 +204,52 @@ public class BattleView extends TiledScreen {
     shapeRenderer.end();
   }
 
+  /**
+   * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
+   * property or it will throw a  ClassCastException
+   *
+   * @param point        the 2D index of the tile of interest
+   * @param blockedTiles list of additional tiles the unit can't move through
+   * @return whether the tile can be passed through
+   */
+  private boolean isTilePassable(TilePoint point, List<TilePoint> blockedTiles) {
+    return isTilePassable(point) && !blockedTiles.contains(point);
+  }
+
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
-
-    if (selected != null && selectedUnitPath != null) {
-      if (!playerUnits.containsKey(playerPos) && isTilePassable(playerPos)) {
-        FieldedUnit unit = playerUnits.get(selected);
-        unit.state = State.MOVING;
-        playerUnits.remove(selected);
-        playerUnits.put(playerPos, unit);
-        moving = playerPos;
-        pathVisualizer.startAnimation(unit.stats.type, selectedUnitPath,
-            LoadedResources.getSettings().sprites.movementDurationPerTile,
-            LoadedResources.getSettings().sprites.frameDuration);
-      } else {
-        playerUnits.get(selected).state = State.IDLE;
+    if (!disableSelection) {
+      if (selected != null) {
+        if (playerPos.equals(selected)) {
+          disableSelection = true;
+          createActionDialogue(selected);
+        } else if (selectedUnitPath != null) {
+          ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
+          if (!playerUnits.containsKey(playerPos) && isTilePassable(playerPos, enemyPosList)) {
+            FieldedUnit unit = playerUnits.get(selected);
+            unit.state = State.MOVING;
+            movePlayerUnit(selected, playerPos);
+            moving = playerPos;
+            disableSelection = true;
+            pathVisualizer.startAnimation(
+                unit.stats.type,
+                selectedUnitPath,
+                LoadedResources.getSettings().sprites.movementDurationPerTile,
+                LoadedResources.getSettings().sprites.frameDuration);
+          } else {
+            playerUnits.get(selected).state = State.IDLE;
+          }
+        }
+        selected = null;
+        selectedUnitPath = null;
       }
-      selected = null;
-      selectedUnitPath = null;
+      if (playerUnits.containsKey(playerPos) && playerUnits.get(playerPos).state == State.IDLE) {
+        selected = playerPos;
+        moveStartPos = playerPos;
+        playerUnits.get(playerPos).state = State.SELECTED;
+      }
     }
-    if (playerUnits.containsKey(playerPos) && playerUnits.get(playerPos).state == State.IDLE) {
-      selected = playerPos;
-      playerUnits.get(playerPos).state = State.SELECTED;
-    }
-
     return super.touchDown(screenX, screenY, pointer, button);
   }
 
@@ -178,8 +263,9 @@ public class BattleView extends TiledScreen {
           selectedUnitPath.get(selectedUnitPath.size() - 1))) {
         return false;
       }
-      if (!playerPos.equals(selected) && isTilePassable(playerPos)) {
-        selectedUnitPath = getShortestPath(selected, playerPos);
+      ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
+      if (!playerPos.equals(selected) && isTilePassable(playerPos, enemyPosList)) {
+        selectedUnitPath = getShortestPath(selected, playerPos, enemyPosList);
       }
     }
     return false;

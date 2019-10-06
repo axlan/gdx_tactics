@@ -7,6 +7,6 @@
   "sprites": {
     "atlasFile": "images/units/tank.atlas",
     "frameDuration": 0.1,
-    "movementDurationPerTile": 0.2
+    "movementDurationPerTile": 0.1
   }
 }

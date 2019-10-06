@@ -37,6 +37,12 @@
         }
     ],
     "mapName": "advanced1",
+  "enemyBehavior": {
+    "behaviorType": "MOVE",
+    "args": {
+      "target": "{'x': 12, 'y': 5}"
+    }
+  },
     "cameraCenter": {"x": 8, "y": 4},
     "playerSpawnPoints": [
         {
@@ -79,10 +85,10 @@
         ],
         "units": [{
           "unitType": "scout",
-            "relativePosition": {"x": 0, "y": 0},
-            "behavior": { "behaviorType": "MOVE", "args": {
-                "target": "{'x': 12, 'y': 5}"
-            }}
+          "relativePosition": {
+            "x": 0,
+            "y": 0
+          }
         }]
     }]
 }

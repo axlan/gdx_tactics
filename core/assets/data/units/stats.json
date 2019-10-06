@@ -4,13 +4,17 @@
     "visionRange": 3,
     "maxHealth": 10,
     "attack": 5,
-    "movement": 3
+    "movement": 3,
+    "minAttackRange": 1,
+    "maxAttackRange": 1
   },
   {
     "type": "scout",
     "visionRange": 5,
     "maxHealth": 5,
     "attack": 2,
-    "movement": 5
+    "movement": 5,
+    "minAttackRange": 1,
+    "maxAttackRange": 1
   }
 ]

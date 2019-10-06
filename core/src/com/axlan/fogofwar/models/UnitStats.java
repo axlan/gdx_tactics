@@ -27,13 +27,24 @@ public class UnitStats implements Cloneable {
   public final int attack;
   /** Base tiles of movement range */
   public final int movement;
+  /**
+   * Base tiles of movement range
+   */
+  public final int minAttackRange;
+  /**
+   * Base tiles of movement range
+   */
+  public final int maxAttackRange;
 
-  private UnitStats(String type, int visionRange, int maxHealth, int attack, int movement) {
+  public UnitStats(String type, int visionRange, int maxHealth, int attack, int movement,
+      int minAttackRange, int maxAttackRange) {
     this.type = type;
     this.visionRange = visionRange;
     this.maxHealth = maxHealth;
     this.attack = attack;
     this.movement = movement;
+    this.minAttackRange = minAttackRange;
+    this.maxAttackRange = maxAttackRange;
   }
 
   /**

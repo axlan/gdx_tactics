@@ -380,9 +380,10 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param goalPos  Ending tile index
    * @return The adjacent tiles to move through to go from start to goal
    */
-  protected List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos) {
-    BattleTileNode start = new BattleTileNode(startPos);
-    BattleTileNode goal = new BattleTileNode(goalPos);
+  protected List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos,
+      List<TilePoint> blockedTiles) {
+    BattleTileNode start = new BattleTileNode(startPos, blockedTiles);
+    BattleTileNode goal = new BattleTileNode(goalPos, blockedTiles);
     start.goal = goal;
     ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
     ArrayList<TilePoint> points = new ArrayList<>();
@@ -402,13 +403,16 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     final TilePoint pos;
     private BattleTileNode goal = null;
+    private final List<TilePoint> blockedTiles;
 
-    BattleTileNode(TilePoint pos) {
+    BattleTileNode(TilePoint pos, List<TilePoint> blockedTiles) {
       this.pos = pos;
+      this.blockedTiles = blockedTiles;
     }
 
-    BattleTileNode(TilePoint pos, BattleTileNode goal) {
+    BattleTileNode(TilePoint pos, List<TilePoint> blockedTiles, BattleTileNode goal) {
       this.pos = pos;
+      this.blockedTiles = blockedTiles;
       this.goal = goal;
     }
 
@@ -427,26 +431,26 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
       ArrayList<PathSearchNode> tmp = new ArrayList<>();
       if (pos.x < getMapTileSize().x - 1) {
         TilePoint neighborPos = pos.add(1, 0);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
+        if (isTilePassable(neighborPos) && !blockedTiles.contains(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, blockedTiles, goal));
         }
       }
       if (pos.x > 0) {
         TilePoint neighborPos = pos.sub(1, 0);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
+        if (isTilePassable(neighborPos) && !blockedTiles.contains(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, blockedTiles, goal));
         }
       }
       if (pos.y < getMapTileSize().y - 1) {
         TilePoint neighborPos = pos.add(0, 1);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
+        if (isTilePassable(neighborPos) && !blockedTiles.contains(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, blockedTiles, goal));
         }
       }
       if (pos.y > 0) {
         TilePoint neighborPos = pos.sub(0, 1);
-        if (isTilePassable(neighborPos)) {
-          tmp.add(new BattleTileNode(neighborPos, goal));
+        if (isTilePassable(neighborPos) && !blockedTiles.contains(neighborPos)) {
+          tmp.add(new BattleTileNode(neighborPos, blockedTiles, goal));
         }
       }
       return tmp;

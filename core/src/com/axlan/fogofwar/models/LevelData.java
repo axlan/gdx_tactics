@@ -39,12 +39,16 @@ public final class LevelData {
   public final List<Formation> enemyFormations;
   /** The name of the map to load/use */
   public final String mapName;
+  /**
+   * How the enemy units will behave
+   */
+  public final UnitBehavior enemyBehavior;
 
   private LevelData(TilePoint cameraCenter,
       List<UnitAllotment> playerUnits, String briefSetting,
       List<BriefPage> briefPages, List<ShopItem> shopItems,
       List<TilePoint> playerSpawnPoints,
-      List<Formation> enemyFormations, String mapName) {
+      List<Formation> enemyFormations, String mapName, UnitBehavior enemyBehavior) {
     this.cameraCenter = cameraCenter;
     this.playerUnits = Collections.unmodifiableList(playerUnits);
     this.briefSetting = briefSetting;
@@ -53,6 +57,7 @@ public final class LevelData {
     this.playerSpawnPoints = Collections.unmodifiableList(playerSpawnPoints);
     this.enemyFormations = Collections.unmodifiableList(enemyFormations);
     this.mapName = mapName;
+    this.enemyBehavior = enemyBehavior;
   }
 
   /**
@@ -127,14 +132,10 @@ public final class LevelData {
     public final String unitType;
     /** Position of unit relative to spawn point of {@link Formation} */
     public final TilePoint relativePosition;
-    /** How the unit will behave */
-    public final UnitBehavior behavior;
 
-    private UnitStart(String unitType, TilePoint relativePosition,
-        UnitBehavior behavior) {
+    private UnitStart(String unitType, TilePoint relativePosition) {
       this.unitType = unitType;
       this.relativePosition = relativePosition;
-      this.behavior = behavior;
     }
   }
 
