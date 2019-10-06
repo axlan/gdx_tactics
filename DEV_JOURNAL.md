@@ -6,6 +6,13 @@ some amount of resources gain each turn based on the territory captured. The pla
 decide the allocation of troops for each battle, knowing they won;t be immediately available for
 other battles. They might decide not to commit troops to a battle that is too costly to win.
 
+As I started to implement the actual battle logic, I realized that the enemy AI couldn't really be
+on a unit by unit basis. I move the behavior to be for the whole scenario instead.
+
+I hit a really weird bug where the mouseMoved callback in BattleView stops getting called if I
+clicked and quickly moved the cursor. After a lot of fruitless debugging, it seems like this might 
+be a result of the trackpad I'm using triggering a drag action or something.
+
 # 10/4 Start Adding Missing Features to BattleView
 
 With the refactor/cleanup/commenting totally done, it's back to adding actual features.

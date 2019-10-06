@@ -29,6 +29,10 @@ public class FieldedUnit {
     state = State.IDLE;
   }
 
+  public void fight(FieldedUnit opponent) {
+    opponent.currentHealth -= stats.attack;
+  }
+
   /**
    * The state of the unit in the current turn
    */

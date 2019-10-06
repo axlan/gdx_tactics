@@ -13,11 +13,14 @@ import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -75,6 +78,10 @@ public class BattleView extends TiledScreen {
    * Stores a moved unit's start position to allow move to be undone
    */
   private TilePoint moveStartPos = null;
+  /**
+   * Targets for an attack
+   */
+  private List<TilePoint> targetSelection = null;
 
 
   public BattleView() {
@@ -120,8 +127,26 @@ public class BattleView extends TiledScreen {
   private void createActionDialogue(final TilePoint unitPos) {
     final FieldedUnit unit = playerUnits.get(unitPos);
     VisDialog actionDialogue = new VisDialog("Choose Action");
-    actionDialogue.button("Attack");
-    actionDialogue.getButtonsTable().row();
+    final ArrayList<TilePoint> targets = new ArrayList<>();
+    for (TilePoint enemyPos : enemyUnits.keySet()) {
+      int distance = unitPos.absDiff(enemyPos);
+      if (distance >= unit.stats.minAttackRange && distance <= unit.stats.minAttackRange) {
+        targets.add(enemyPos);
+      }
+    }
+    if (!targets.isEmpty()) {
+      VisTextButton attackButton = new VisTextButton("Attack");
+      attackButton.addListener(
+          new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+              targetSelection = targets;
+              selected = unitPos;
+            }
+          });
+      actionDialogue.button(attackButton);
+      actionDialogue.getButtonsTable().row();
+    }
     VisTextButton waitButton = new VisTextButton("Wait");
     waitButton.addListener(new ChangeListener() {
       @Override
@@ -190,7 +215,7 @@ public class BattleView extends TiledScreen {
     if (moving != null) {
       if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
         FieldedUnit unit = playerUnits.get(moving);
-        unit.state = State.DONE;
+        unit.state = State.SELECTED;
         createActionDialogue(moving);
         moving = null;
       }
@@ -200,6 +225,19 @@ public class BattleView extends TiledScreen {
     if (selectedUnitPath != null) {
       shapeRenderer.setColor(Color.BLUE);
       pathVisualizer.drawArrow(shapeRenderer, selectedUnitPath);
+    }
+    if (targetSelection != null) {
+      // Get back to the correct alpha blend mode
+      Gdx.gl.glEnable(GL20.GL_BLEND);
+      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
+          GL20.GL_ONE_MINUS_SRC_ALPHA);
+      Color attackColor = Color.RED;
+      attackColor.a = 0.5f;
+      shapeRenderer.setColor(attackColor);
+      for (TilePoint point : targetSelection) {
+        Rectangle tileRect = getTileWorldRect(point);
+        shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
+      }
     }
     shapeRenderer.end();
   }
@@ -219,14 +257,34 @@ public class BattleView extends TiledScreen {
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
+    if (targetSelection != null) {
+      if (targetSelection.contains(playerPos)) {
+        FieldedUnit unit = playerUnits.get(selected);
+        FieldedUnit enemy = enemyUnits.get(playerPos);
+        unit.fight(enemy);
+        unit.state = State.DONE;
+        if (unit.currentHealth <= 0) {
+          playerUnits.remove(selected);
+        }
+        if (enemy.currentHealth <= 0) {
+          enemyUnits.remove(playerPos);
+        }
+        disableSelection = false;
+        selected = null;
+        targetSelection = null;
+      } else {
+        createActionDialogue(selected);
+      }
+    }
     if (!disableSelection) {
       if (selected != null) {
         if (playerPos.equals(selected)) {
           disableSelection = true;
           createActionDialogue(selected);
-        } else if (selectedUnitPath != null) {
+        } else {
           ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
-          if (!playerUnits.containsKey(playerPos) && isTilePassable(playerPos, enemyPosList)) {
+          if (selectedUnitPath != null && !playerUnits.containsKey(playerPos) && isTilePassable(
+              playerPos, enemyPosList)) {
             FieldedUnit unit = playerUnits.get(selected);
             unit.state = State.MOVING;
             movePlayerUnit(selected, playerPos);
@@ -256,7 +314,7 @@ public class BattleView extends TiledScreen {
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
     super.mouseMoved(screenX, screenY);
-    if (selected != null) {
+    if (selected != null && !disableSelection) {
       TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));
       // Only recalculate path when mouse has moved onto new tile.
       if (selectedUnitPath != null && playerPos.equals(
@@ -266,6 +324,9 @@ public class BattleView extends TiledScreen {
       ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
       if (!playerPos.equals(selected) && isTilePassable(playerPos, enemyPosList)) {
         selectedUnitPath = getShortestPath(selected, playerPos, enemyPosList);
+        if (selectedUnitPath.isEmpty()) {
+          selectedUnitPath = null;
+        }
       }
     }
     return false;
