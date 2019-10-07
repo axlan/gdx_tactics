@@ -1,6 +1,7 @@
 package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.utils.Array;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -33,6 +34,10 @@ public class Utilities {
       ret.add(val);
     }
     return ret;
+  }
+
+  public static <T> T getTail(List<T> list) {
+    return list.get(list.size() - 1);
   }
 
   /**

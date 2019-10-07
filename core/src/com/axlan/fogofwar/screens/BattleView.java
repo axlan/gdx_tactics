@@ -1,5 +1,7 @@
 package com.axlan.fogofwar.screens;
 
+import static com.axlan.gdxtactics.Utilities.getTail;
+
 import com.axlan.fogofwar.models.DeploymentSelection;
 import com.axlan.fogofwar.models.FieldedUnit;
 import com.axlan.fogofwar.models.FieldedUnit.State;
@@ -31,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO-P1 Limit unit movement range
 //TODO-P1 Add level data on who goes first
 //TODO-P1 Add concept of turns and mechanism to end player turns
 //TODO-P1 Show terrain and unit info under cursor
@@ -39,7 +40,7 @@ import java.util.Map;
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //TODO-P2 Separate UI and logic about the state of the battle
 //TODO-P2 Add fog of war mechanic
-//TODO-P2 Add overlay when unit is selected to show move and attack range
+//TODO-P2 Add overlay when unit is selected to show move and attack range (redo path calculation)
 //TODO-P3 Add intel view
 //TODO-P3 Add end turn button / Give option to end turn when no active units left.
 //TODO-P3 Add support for more then one enemy or ally AI/Commander
@@ -76,11 +77,18 @@ public class BattleView extends TiledScreen {
    * Path from {@link #startLocation} to the mouse location
    */
   private List<TilePoint> selectedUnitPath = null;
+  /**
+   * Path from {@link #startLocation} to the last valid mouse position
+   */
+  private List<TilePoint> shownUnitPath = null;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
   /** Used to draw potential paths and movement animations on the map */
   private final PathVisualizer pathVisualizer;
 
+  /**
+   * Check if all player units are done and start enemy turn if they have.
+   */
   private void checkTurnDone() {
     boolean done = true;
     for (FieldedUnit unit : playerUnits.values()) {
@@ -236,9 +244,9 @@ public class BattleView extends TiledScreen {
     }
     batch.end();
     shapeRenderer.begin(ShapeType.Filled);
-    if (selectedUnitPath != null) {
+    if (state == BattleViewState.CHOOSE_MOVE && shownUnitPath != null) {
       shapeRenderer.setColor(Color.BLUE);
-      pathVisualizer.drawArrow(shapeRenderer, selectedUnitPath);
+      pathVisualizer.drawArrow(shapeRenderer, shownUnitPath);
     }
     if (state == BattleViewState.CHOOSE_ATTACK) {
       // Get back to the correct alpha blend mode
@@ -274,16 +282,15 @@ public class BattleView extends TiledScreen {
         if (clickedTile.equals(startLocation)) {
           createActionDialogue(clickedTile);
         } else {
-          ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
-          if (selectedUnitPath != null && !playerUnits.containsKey(clickedTile) && isTilePassable(
-              clickedTile, enemyPosList)) {
+          if (shownUnitPath != null && !playerUnits.containsKey(clickedTile) && getTail(
+              shownUnitPath).equals(clickedTile)) {
             FieldedUnit unit = playerUnits.get(startLocation);
             unit.state = State.MOVING;
             movePlayerUnit(startLocation, endLocation);
             state = BattleViewState.MOVING;
             pathVisualizer.startAnimation(
                 unit.stats.type,
-                selectedUnitPath,
+                shownUnitPath,
                 LoadedResources.getSettings().sprites.movementDurationPerTile,
                 LoadedResources.getSettings().sprites.frameDuration);
           } else {
@@ -291,6 +298,7 @@ public class BattleView extends TiledScreen {
             state = BattleViewState.IDLE;
           }
         }
+        shownUnitPath = null;
         selectedUnitPath = null;
         break;
       case MOVING:
@@ -332,21 +340,39 @@ public class BattleView extends TiledScreen {
     return isTilePassable(point) && !blockedTiles.contains(point);
   }
 
+  // TODO-P3 allow for tiles that require more movement for certain units
+
+  /**
+   * Add up the movement distance along a path
+   *
+   * @param points the list of adjacent points in a path
+   * @param unit   the unit that will be following the path
+   * @return the total movement required for the unit to follow the path
+   */
+  @SuppressWarnings("unused")
+  private int getDistance(List<TilePoint> points, FieldedUnit unit) {
+    return points.size();
+  }
+
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
     super.mouseMoved(screenX, screenY);
     if (state == BattleViewState.CHOOSE_MOVE) {
       TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
       // Only recalculate path when mouse has moved onto new tile.
-      if (selectedUnitPath != null && curMouseTile.equals(
-          selectedUnitPath.get(selectedUnitPath.size() - 1))) {
+      if (selectedUnitPath != null && curMouseTile.equals(getTail(selectedUnitPath))) {
         return false;
       }
       ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
-      if (!curMouseTile.equals(startLocation) && isTilePassable(curMouseTile, enemyPosList)) {
+      if (curMouseTile.equals(startLocation)) {
+        selectedUnitPath = null;
+        shownUnitPath = null;
+      } else if (isTilePassable(curMouseTile, enemyPosList)) {
         selectedUnitPath = getShortestPath(startLocation, curMouseTile, enemyPosList);
-        if (selectedUnitPath.isEmpty()) {
-          selectedUnitPath = null;
+        FieldedUnit unit = playerUnits.get(startLocation);
+        if (!selectedUnitPath.isEmpty()
+            && getDistance(selectedUnitPath, unit) <= unit.stats.movement) {
+          shownUnitPath = selectedUnitPath;
         }
       }
     }

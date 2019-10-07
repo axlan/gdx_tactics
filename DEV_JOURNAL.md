@@ -1,3 +1,8 @@
+# 10/6 Working on BattleView
+
+Slowing grinding through TODO list. Have been trying to follow structured comit style layed out in
+https://www.conventionalcommits.org/en/v1.0.0/ .
+
 # 10/5 Working on BattleView
 
 As I go back to filling in the battle view logic I gave some thought to what the alpha would look
