@@ -1,6 +1,17 @@
+# 10/8 Redoing distance calc functions
+
+Needed to make the pathfinding more flexible ot allow AI to access movement.
+
+Introduced a bug that makes enemies transparent after first unit is selected. Might have been present
+before after attacking.
+
+# 10/7 Working on AI
+
+Started doing groundwork to make enemy AI. Mostly refactoring to give AI access to needed info.
+
 # 10/6 Working on BattleView
 
-Slowing grinding through TODO list. Have been trying to follow structured comit style layed out in
+Slowing grinding through TODO list. Have been trying to follow structured commit style laid out in
 https://www.conventionalcommits.org/en/v1.0.0/ .
 
 # 10/5 Working on BattleView

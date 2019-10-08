@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//TODO-P1 Fix enemy transparent after first move select
 //TODO-P1 Add level data on who goes first
 //TODO-P1 Add concept of turns and mechanism to end player turns
 //TODO-P1 Show terrain and unit info under cursor
@@ -44,7 +45,7 @@ import java.util.Map;
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //TODO-P2 Separate UI and logic about the state of the battle
 //TODO-P2 Add fog of war mechanic
-//TODO-P2 Add overlay when unit is selected to show move and attack range (redo path calculation)
+//TODO-P2 Add overlay when unit is selected attack range
 //TODO-P3 Add intel view
 //TODO-P3 Add end turn button / Give option to end turn when no active units left.
 //TODO-P3 Add support for more then one enemy or ally AI/Commander
@@ -85,6 +86,10 @@ public class BattleView extends TiledScreen {
    * Path from {@link #startLocation} to the last valid mouse position
    */
   private List<TilePoint> shownUnitPath = null;
+  /**
+   * List of tiles that selected unit can move to
+   */
+  private List<TilePoint> reachableTiles = null;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
   /** Used to draw potential paths and movement animations on the map */
@@ -266,15 +271,24 @@ public class BattleView extends TiledScreen {
     }
     batch.end();
     shapeRenderer.begin(ShapeType.Filled);
-    if (state == BattleViewState.CHOOSE_MOVE && shownUnitPath != null) {
-      shapeRenderer.setColor(Color.BLUE);
-      pathVisualizer.drawArrow(shapeRenderer, shownUnitPath);
+    // Get back to the correct alpha blend mode
+    Gdx.gl.glEnable(GL20.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
+        GL20.GL_ONE_MINUS_SRC_ALPHA);
+    if (state == BattleViewState.CHOOSE_MOVE) {
+      Color moveColor = Color.BLUE;
+      moveColor.a = 0.5f;
+      shapeRenderer.setColor(moveColor);
+      for (TilePoint tile : reachableTiles) {
+        Rectangle tileRect = getTileWorldRect(tile);
+        shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
+      }
+      if (shownUnitPath != null) {
+        shapeRenderer.setColor(Color.BLUE);
+        pathVisualizer.drawArrow(shapeRenderer, shownUnitPath);
+      }
     }
     if (state == BattleViewState.CHOOSE_ATTACK) {
-      // Get back to the correct alpha blend mode
-      Gdx.gl.glEnable(GL20.GL_BLEND);
-      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
-          GL20.GL_ONE_MINUS_SRC_ALPHA);
       Color attackColor = Color.RED;
       attackColor.a = 0.5f;
       shapeRenderer.setColor(attackColor);
@@ -292,11 +306,15 @@ public class BattleView extends TiledScreen {
     TilePoint clickedTile = screenToTile(new Vector2(screenX, screenY));
     switch (state) {
       case IDLE:
-        if (playerUnits.containsKey(clickedTile)
-            && playerUnits.get(clickedTile).state == State.IDLE) {
-          startLocation = clickedTile;
-          playerUnits.get(clickedTile).state = State.SELECTED;
-          state = BattleViewState.CHOOSE_MOVE;
+        if (playerUnits.containsKey(clickedTile)) {
+          FieldedUnit unit = playerUnits.get(clickedTile);
+          if (unit.state == State.IDLE) {
+            startLocation = clickedTile;
+            unit.state = State.SELECTED;
+            state = BattleViewState.CHOOSE_MOVE;
+            ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
+            reachableTiles = getPointsWithinRange(clickedTile, unit.stats.movement, enemyPosList);
+          }
         }
         break;
       case CHOOSE_MOVE:
@@ -371,7 +389,7 @@ public class BattleView extends TiledScreen {
    */
   @SuppressWarnings("unused")
   private int getDistance(List<TilePoint> points, FieldedUnit unit) {
-    return points.size();
+    return points.size() - 1;
   }
 
   @Override

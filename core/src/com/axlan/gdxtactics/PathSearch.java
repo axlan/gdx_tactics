@@ -5,34 +5,113 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class PathSearch {
+
+  /**
+   * Finds a path from start to goal.
+   *
+   * @param start the start point of the path
+   * @param goal  the desired finish point
+   * @return list of nodes that form the shortest path to the node in the parameter current or null
+   * if no path exists
+   */
+  public static ArrayList<PathSearchNode> runSearchByGoal(PathSearchNode start,
+      PathSearchNode goal) {
+    return runSearchByGoal(start, goal, null);
+  }
+
+  /**
+   * Finds a path from start to goal if one exists that is <=
+   *
+   * @param start         the start point of the path
+   * @param goal          the desired finish point
+   * @param distanceLimit the distance limit for the paths searched
+   * @return list of nodes that form the shortest path to the node in the parameter current or null
+   * if no path exists within the distanceLimit
+   */
+  public static ArrayList<PathSearchNode> runSearchByGoal(PathSearchNode start, PathSearchNode goal,
+      Integer distanceLimit) {
+    AStarSearchResult result = aStarSearch(start, goal, distanceLimit);
+    if (result == null) {
+      return null;
+    }
+    return reconstructPath(result.cameFrom, goal);
+  }
+
+  /**
+   * Get the shortest distance and paths to nodes that are within distanceLimit of the start node
+   *
+   * @param start         start of search space
+   * @param distanceLimit distance limit for search
+   * @return results to reconstruct reachable nodes within distanceLimit
+   */
+  public static AStarSearchResult runSearchByDistance(PathSearchNode start, int distanceLimit) {
+    return aStarSearch(start, null, distanceLimit);
+  }
+
+  /**
+   * Get the shortest distance and paths to nodes that are reachable from the start node
+   *
+   * @param start node to start search from
+   * @return results to reconstruct reachable nodes
+   */
+  public static AStarSearchResult runSearchAll(PathSearchNode start) {
+    return aStarSearch(start, null, null);
+  }
+
+  /**
+   * Filter a result set to the nodes that are within a distance limit of the start point
+   *
+   * @param result        the result set to filter
+   * @param distanceLimit max distance for results in new set
+   * @return a new set of results where the nodes are <= distanceLimit from the start point
+   */
+  public static AStarSearchResult filterResultByDistance(AStarSearchResult result,
+      int distanceLimit) {
+    AStarSearchResult newResult = new AStarSearchResult(result);
+    List<PathSearchNode> nodes = new ArrayList<>(result.valueMap.keySet());
+    for (PathSearchNode node : nodes) {
+      if (result.valueMap.get(node).gScore > distanceLimit) {
+        result.valueMap.remove(node);
+        result.cameFrom.remove(node);
+      }
+    }
+    return newResult;
+  }
 
   /**
    * Take the mapping of nodes and retrieve the list of nodes that form the shortest path to the
    * goal
    *
    * @param cameFrom A mapping of nodes to the node that got to them with the shortest distance
-   * @param current  The node to get the shortest path to
-   * @return list of nodes that form the shortest path to the node in the parameter current
+   * @param endPoint  The node to get the shortest path to
+   * @return list of nodes that form the shortest path to the node in the parameter current or null
+   *     if no path exists
    */
-  private static ArrayList<PathSearchNode> reconstructPath(
-      HashMap<PathSearchNode, PathSearchNode> cameFrom, PathSearchNode current) {
+  public static ArrayList<PathSearchNode> reconstructPath(
+      HashMap<PathSearchNode, PathSearchNode> cameFrom, PathSearchNode endPoint) {
+    if (!cameFrom.containsKey(endPoint)) {
+      return null;
+    }
     ArrayList<PathSearchNode> totalPath = new ArrayList<>();
-    totalPath.add(current);
-    while (cameFrom.containsKey(current)) {
-      current = cameFrom.get(current);
-      totalPath.add(0, current);
+    totalPath.add(endPoint);
+    while (cameFrom.containsKey(endPoint)) {
+      endPoint = cameFrom.get(endPoint);
+      totalPath.add(0, endPoint);
     }
     return totalPath;
   }
 
-  /** A* finds a path from start to goal.
+  /** A* finds path to nodes connected to start node
    * <p>Implementation adapted from <a href=https://en.wikipedia.org/wiki/A*_search_algorithm>https://en.wikipedia.org/wiki/A*_search_algorithm</a>
    * @param start node to start from
-   * @param goal node to end at
-   * @return Returns the shortest path from start to goal, or null if no path exists
+   * @param goal node to end at. If null map all nodes linked to start.
+   * @param distanceLimit only search nodes that are <= this distance limit. No limit if null
+   * @return Returns results mapping distances and paths. Used in other class functions.
    */
-  public static ArrayList<PathSearchNode> aStarSearch(PathSearchNode start, PathSearchNode goal) {
+  private static AStarSearchResult aStarSearch(PathSearchNode start, PathSearchNode goal,
+      Integer distanceLimit) {
     // The set of discovered nodes that need to be (re-)expanded.
     // Initially, only the start node is known.
     PriorityQueue<PriorityItem> openSet = new PriorityQueue<>();
@@ -51,7 +130,7 @@ public class PathSearch {
     while (openSet.size() > 0) {
       PriorityItem current = openSet.remove();
       if (current.obj.equals(goal)) {
-        return reconstructPath(cameFrom, current.obj);
+        return new AStarSearchResult(cameFrom, valueMap);
       }
       closedSet.add(current.obj);
       for (PathSearchNode neighbor : current.obj.getNeighbors()) {
@@ -61,6 +140,10 @@ public class PathSearch {
         // d(current,neighbor) is the weight of the edge from current to neighbor always
         // tentative_gScore is the distance from start to the neighbor through current
         int tentativeGScore = current.gScore + current.obj.edgeWeight(neighbor);
+        // Ignore nodes that are over the distance limit if present
+        if (distanceLimit != null && tentativeGScore > distanceLimit) {
+          continue;
+        }
         if (!valueMap.containsKey(neighbor) || tentativeGScore < valueMap.get(neighbor).gScore) {
           // This path to neighbor is better than any previous one. Record it!
           cameFrom.put(neighbor, current.obj);
@@ -72,8 +155,44 @@ public class PathSearch {
         }
       }
     }
+    if (goal == null) {
+      return new AStarSearchResult(cameFrom, valueMap);
+    }
     // Open set is empty but goal was never reached
     return null;
+  }
+
+  /**
+   * Raw results of A* search
+   */
+  public static class AStarSearchResult {
+
+    /**
+     * For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
+     * to n currently known.
+     */
+    public final HashMap<PathSearchNode, PathSearchNode> cameFrom;
+
+    /**
+     * Mapping of nodes to their distance scores.
+     */
+    public final HashMap<PathSearchNode, PriorityItem> valueMap;
+
+    /**
+     * @param cameFrom {@link #cameFrom}
+     * @param valueMap {@link #valueMap}
+     */
+    AStarSearchResult(
+        HashMap<PathSearchNode, PathSearchNode> cameFrom,
+        HashMap<PathSearchNode, PriorityItem> valueMap) {
+      this.cameFrom = cameFrom;
+      this.valueMap = valueMap;
+    }
+
+    AStarSearchResult(AStarSearchResult result) {
+      this.cameFrom = new HashMap<>(result.cameFrom);
+      this.valueMap = new HashMap<>(result.valueMap);
+    }
   }
 
   /**

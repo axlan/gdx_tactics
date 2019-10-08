@@ -1,5 +1,6 @@
 package com.axlan.gdxtactics;
 
+import com.axlan.gdxtactics.PathSearch.AStarSearchResult;
 import com.axlan.gdxtactics.PathSearch.PathSearchNode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -377,12 +378,33 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     BattleTileNode goal = new BattleTileNode(goalPos);
     tileNodeGoal = goalPos;
     tileNodeContext = context;
-    ArrayList<PathSearchNode> path = PathSearch.aStarSearch(start, goal);
+    ArrayList<PathSearchNode> path = PathSearch.runSearchByGoal(start, goal);
     ArrayList<TilePoint> points = new ArrayList<>();
     if (path != null) {
       for (PathSearchNode node : path) {
         points.add(((BattleTileNode) node).pos);
       }
+    }
+    return points;
+  }
+
+  /**
+   * Get all points that are <= distanceLimit from startPos
+   *
+   * @param startPos      point to search from
+   * @param distanceLimit distance to search
+   * @param context       context to determine if tiles can be passed through
+   * @return set of points that are <= distanceLimit
+   */
+  public List<TilePoint> getPointsWithinRange(TilePoint startPos, int distanceLimit,
+      Object context) {
+    BattleTileNode start = new BattleTileNode(startPos);
+    tileNodeGoal = null;
+    tileNodeContext = context;
+    AStarSearchResult result = PathSearch.runSearchByDistance(start, distanceLimit);
+    ArrayList<TilePoint> points = new ArrayList<>();
+    for (PathSearchNode node : result.valueMap.keySet()) {
+      points.add(((BattleTileNode) node).pos);
     }
     return points;
   }
@@ -401,6 +423,9 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     @Override
     public int heuristics() {
+      if (tileNodeGoal == null) {
+        return 0;
+      }
       return Math.abs(tileNodeGoal.x - pos.x) + Math.abs(tileNodeGoal.y - pos.y);
     }
 
