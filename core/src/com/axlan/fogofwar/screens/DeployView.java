@@ -1,5 +1,7 @@
 package com.axlan.fogofwar.screens;
 
+import static com.axlan.gdxtactics.Utilities.getTransparentColor;
+
 import com.axlan.fogofwar.models.GameStateManager;
 import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.Formation;
@@ -274,8 +276,7 @@ public class DeployView extends TiledScreen {
   @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
 
-    Color spawnColor = Color.PURPLE;
-    spawnColor.a = 0.75f;
+    Color spawnColor = getTransparentColor(Color.PURPLE, 0.75f);
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(spawnColor);
     for (TilePoint point : levelData.playerSpawnPoints) {

@@ -1,5 +1,6 @@
 package com.axlan.fogofwar.screens;
 
+import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGet2d;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
@@ -276,8 +277,7 @@ public class BattleView extends TiledScreen {
     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
         GL20.GL_ONE_MINUS_SRC_ALPHA);
     if (state == BattleViewState.CHOOSE_MOVE) {
-      Color moveColor = Color.BLUE;
-      moveColor.a = 0.5f;
+      Color moveColor = getTransparentColor(Color.BLUE, 0.5f);
       shapeRenderer.setColor(moveColor);
       for (TilePoint tile : reachableTiles) {
         Rectangle tileRect = getTileWorldRect(tile);
@@ -289,8 +289,7 @@ public class BattleView extends TiledScreen {
       }
     }
     if (state == BattleViewState.CHOOSE_ATTACK) {
-      Color attackColor = Color.RED;
-      attackColor.a = 0.5f;
+      Color attackColor = getTransparentColor(Color.RED, 0.5f);
       shapeRenderer.setColor(attackColor);
       for (TilePoint point : targetSelection) {
         Rectangle tileRect = getTileWorldRect(point);

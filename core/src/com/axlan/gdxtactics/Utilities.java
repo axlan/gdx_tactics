@@ -1,5 +1,6 @@
 package com.axlan.gdxtactics;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import java.util.List;
 import java.util.Random;
@@ -76,4 +77,18 @@ public class Utilities {
     }
     return new Array<>(ret);
   }
+
+  /**
+   * Create a new color that's the same as an old one, but with a different alpha value
+   *
+   * @param color original color
+   * @param alpha new alpha
+   * @return new color with new alpha
+   */
+  public static Color getTransparentColor(Color color, float alpha) {
+    Color newColor = new Color(color);
+    newColor.a = alpha;
+    return newColor;
+  }
+
 }

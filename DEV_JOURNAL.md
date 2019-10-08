@@ -5,6 +5,8 @@ Needed to make the pathfinding more flexible ot allow AI to access movement.
 Introduced a bug that makes enemies transparent after first unit is selected. Might have been present
 before after attacking.
 
+Turned out it was due to modifying the alpha value of a constant in the Color namespace.
+
 # 10/7 Working on AI
 
 Started doing groundwork to make enemy AI. Mostly refactoring to give AI access to needed info.
