@@ -57,7 +57,7 @@ public final class Settings {
    */
   @SuppressWarnings("SameParameterValue")
   static Settings loadFromJson(String projectPath) {
-    return JsonLoader.loadFromJson(projectPath, Settings.class);
+    return JsonLoader.loadFromJsonFile(projectPath, Settings.class);
   }
 
   /**

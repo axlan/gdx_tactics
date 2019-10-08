@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.screens;
 
-import static com.axlan.gdxtactics.Utilities.getTail;
+import static com.axlan.gdxtactics.Utilities.listGet2d;
+import static com.axlan.gdxtactics.Utilities.listGetTail;
 
 import com.axlan.fogofwar.models.DeploymentSelection;
 import com.axlan.fogofwar.models.FieldedUnit;
@@ -22,6 +23,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -29,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +89,10 @@ public class BattleView extends TiledScreen {
   private float elapsedTime = 0;
   /** Used to draw potential paths and movement animations on the map */
   private final PathVisualizer pathVisualizer;
+  /**
+   * Unmodifiable 2D list of the properties of each tile in the map
+   */
+  private final List<List<TileProperties>> tileProperties;
 
   /**
    * Check if all player units are done and start enemy turn if they have.
@@ -127,6 +135,20 @@ public class BattleView extends TiledScreen {
         enemyUnits.put(startPos, new FieldedUnit(unitStats.get(unit.unitType)));
       }
     }
+
+    TiledMapTileLayer tileLayer = (TiledMapTileLayer) map.getLayers().get(0);
+    ArrayList<List<TileProperties>> tmpTileProperties = new ArrayList<>();
+    for (int r = 0; r < getMapTileSize().x; r++) {
+      ArrayList<TileProperties> tmpColumn = new ArrayList<>();
+      for (int c = 0; c < getMapTileSize().y; c++) {
+        tmpColumn.add(new TileProperties(tileLayer.getCell(r, c).getTile().getProperties()));
+      }
+      tmpTileProperties.add(Collections.unmodifiableList(tmpColumn));
+    }
+    tileProperties = Collections.unmodifiableList(tmpTileProperties);
+
+
+
   }
 
   /**
@@ -282,7 +304,7 @@ public class BattleView extends TiledScreen {
         if (clickedTile.equals(startLocation)) {
           createActionDialogue(clickedTile);
         } else {
-          if (shownUnitPath != null && !playerUnits.containsKey(clickedTile) && getTail(
+          if (shownUnitPath != null && !playerUnits.containsKey(clickedTile) && listGetTail(
               shownUnitPath).equals(clickedTile)) {
             FieldedUnit unit = playerUnits.get(startLocation);
             unit.state = State.MOVING;
@@ -328,16 +350,14 @@ public class BattleView extends TiledScreen {
     return super.touchDown(screenX, screenY, pointer, button);
   }
 
-  /**
-   * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
-   * property or it will throw a  ClassCastException
-   *
-   * @param point        the 2D index of the tile of interest
-   * @param blockedTiles list of additional tiles the unit can't move through
-   * @return whether the tile can be passed through
-   */
-  private boolean isTilePassable(TilePoint point, List<TilePoint> blockedTiles) {
-    return isTilePassable(point) && !blockedTiles.contains(point);
+  @Override
+  protected boolean isTilePassable(TilePoint point, Object context) {
+    if (point.x < 0 || point.x >= getMapTileSize().x || point.y < 0
+        || point.y >= getMapTileSize().y) {
+      return false;
+    }
+    @SuppressWarnings("unchecked") List<TilePoint> blockedTiles = (List<TilePoint>) context;
+    return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles.contains(point);
   }
 
   // TODO-P3 allow for tiles that require more movement for certain units
@@ -360,7 +380,7 @@ public class BattleView extends TiledScreen {
     if (state == BattleViewState.CHOOSE_MOVE) {
       TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
       // Only recalculate path when mouse has moved onto new tile.
-      if (selectedUnitPath != null && curMouseTile.equals(getTail(selectedUnitPath))) {
+      if (selectedUnitPath != null && curMouseTile.equals(listGetTail(selectedUnitPath))) {
         return false;
       }
       ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
@@ -390,6 +410,14 @@ public class BattleView extends TiledScreen {
 
   }
 
+  public HashMap<TilePoint, FieldedUnit> getEnemyUnits() {
+    return enemyUnits;
+  }
+
+  public HashMap<TilePoint, FieldedUnit> getPlayerUnits() {
+    return playerUnits;
+  }
+
   enum BattleViewState {
     IDLE,
     CHOOSE_MOVE,
@@ -397,6 +425,17 @@ public class BattleView extends TiledScreen {
     CHOOSE_ACTION,
     CHOOSE_ATTACK,
     ENEMY_TURN
+  }
+
+  static class TileProperties {
+
+    final static String passableKey = "passable";
+
+    final boolean passable;
+
+    TileProperties(MapProperties mapProperties) {
+      this.passable = mapProperties.get(passableKey, false, Boolean.class);
+    }
   }
 
 }

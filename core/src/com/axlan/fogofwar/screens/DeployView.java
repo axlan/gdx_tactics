@@ -312,6 +312,14 @@ public class DeployView extends TiledScreen {
     elapsedTime += delta;
   }
 
+  /**
+   * Dummy since finding path not needed
+   */
+  @Override
+  protected boolean isTilePassable(TilePoint point, Object context) {
+    return false;
+  }
+
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     TilePoint playerPos = screenToTile(new Vector2(screenX, screenY));

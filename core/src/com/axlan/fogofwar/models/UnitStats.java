@@ -56,7 +56,7 @@ public class UnitStats implements Cloneable {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   static HashMap<String, UnitStats> loadFromJson(String projectPath) {
-    UnitStats[] statsList = JsonLoader.loadFromJson(projectPath, UnitStats[].class);
+    UnitStats[] statsList = JsonLoader.loadFromJsonFile(projectPath, UnitStats[].class);
     HashMap<String, UnitStats> statMap = new HashMap<>();
     for (UnitStats stat : statsList) {
       statMap.put(stat.type, stat);

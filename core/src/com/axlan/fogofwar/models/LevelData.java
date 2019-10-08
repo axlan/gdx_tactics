@@ -7,7 +7,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class for loading and storing descriptions of a level from JSON. The structure of the JSON should
@@ -69,7 +68,7 @@ public final class LevelData {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   static LevelData loadFromJson(String projectPath) {
-    return JsonLoader.loadFromJson(projectPath, LevelData.class);
+    return JsonLoader.loadFromJsonFile(projectPath, LevelData.class);
   }
 
   /**
@@ -110,13 +109,14 @@ public final class LevelData {
 
     /** Type of behavior pattern */
     public final UnitBehaviorType behaviorType;
-    /** A map of parameters that modify the behaviorType */
-    public final Map<String, String> args;
+    /**
+     * String containing Json for parameters that modify the behaviorType
+     */
+    public final String args;
 
-    private UnitBehavior(UnitBehaviorType behaviorType,
-        Map<String, String> args) {
+    private UnitBehavior(UnitBehaviorType behaviorType, String args) {
       this.behaviorType = behaviorType;
-      this.args = Collections.unmodifiableMap(args);
+      this.args = args;
     }
   }
 

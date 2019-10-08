@@ -36,8 +36,28 @@ public class Utilities {
     return ret;
   }
 
-  public static <T> T getTail(List<T> list) {
+  /**
+   * Return the last item in a list.  Exception if empty.
+   *
+   * @param list list to get tail from
+   * @param <T>  type of items in list (can be implicit)
+   * @return the last element in list
+   */
+  public static <T> T listGetTail(List<T> list) {
     return list.get(list.size() - 1);
+  }
+
+  /**
+   * Get an item from a list of lists
+   *
+   * @param list 2d list to get item in
+   * @param x    first index
+   * @param y    second index
+   * @param <T>  type of items in list (can be implicit)
+   * @return item at x,y
+   */
+  public static <T> T listGet2d(List<List<T>> list, int x, int y) {
+    return list.get(x).get(y);
   }
 
   /**
