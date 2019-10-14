@@ -39,6 +39,10 @@ public final class LevelData {
   /** The name of the map to load/use */
   public final String mapName;
   /**
+   * True if the player goes first
+   */
+  public final boolean doesPlayerGoFirst;
+  /**
    * How the enemy units will behave
    */
   public final UnitBehavior enemyBehavior;
@@ -47,7 +51,8 @@ public final class LevelData {
       List<UnitAllotment> playerUnits, String briefSetting,
       List<BriefPage> briefPages, List<ShopItem> shopItems,
       List<TilePoint> playerSpawnPoints,
-      List<Formation> enemyFormations, String mapName, UnitBehavior enemyBehavior) {
+      List<Formation> enemyFormations, String mapName, UnitBehavior enemyBehavior,
+      boolean doesPlayerGoFirst) {
     this.cameraCenter = cameraCenter;
     this.playerUnits = Collections.unmodifiableList(playerUnits);
     this.briefSetting = briefSetting;
@@ -57,6 +62,7 @@ public final class LevelData {
     this.enemyFormations = Collections.unmodifiableList(enemyFormations);
     this.mapName = mapName;
     this.enemyBehavior = enemyBehavior;
+    this.doesPlayerGoFirst = doesPlayerGoFirst;
   }
 
   /**

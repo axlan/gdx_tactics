@@ -11,6 +11,7 @@ import com.axlan.fogofwar.models.DeploymentSelection;
 import com.axlan.fogofwar.models.FieldedUnit;
 import com.axlan.fogofwar.models.FieldedUnit.State;
 import com.axlan.fogofwar.models.GameStateManager;
+import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.Formation;
 import com.axlan.fogofwar.models.LevelData.UnitStart;
 import com.axlan.fogofwar.models.LoadedResources;
@@ -36,12 +37,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO-P1 Add level data on who goes first
 //TODO-P1 Show terrain and unit info under cursor
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //TODO-P2 Separate UI and logic about the state of the battle
@@ -105,34 +106,16 @@ public class BattleView extends TiledScreen {
   private EnemyAi enemyAi;
 
   /**
-   * Check if all player units are done and start enemy turn if they have.
-   */
-  private void checkTurnDone() {
-    boolean done = true;
-    for (FieldedUnit unit : playerUnits.values()) {
-      done &= unit.state == State.DONE;
-    }
-    if (done) {
-      state = BattleViewState.ENEMY_IDLE;
-      for (FieldedUnit unit : enemyUnits.values()) {
-        unit.state = State.IDLE;
-      }
-      enemyAi = new EnemyAi(LoadedResources.getLevelData(), this);
-    } else {
-      state = BattleViewState.IDLE;
-    }
-  }
-  /**
    * Targets for an attack
    */
   private List<TilePoint> targetSelection = null;
-
 
   public BattleView() {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
         LoadedResources.getSettings().tilesPerScreenWidth,
         LoadedResources.getSettings().cameraSpeed,
         LoadedResources.getSettings().edgeScrollSize);
+    LevelData levelData = LoadedResources.getLevelData();
     Map<String, UnitStats> unitStats = LoadedResources.getUnitStats();
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     DeploymentSelection deploymentSelection = GameStateManager.deploymentSelection;
@@ -140,7 +123,7 @@ public class BattleView extends TiledScreen {
       String unitType = deploymentSelection.getPlayerUnitPlacements().get(point);
       playerUnits.put(point, new FieldedUnit(unitStats.get(unitType)));
     }
-    List<Formation> enemyFormations = LoadedResources.getLevelData().enemyFormations;
+    List<Formation> enemyFormations = levelData.enemyFormations;
     for (int formationIdx = 0; formationIdx < enemyFormations.size(); formationIdx++) {
       Formation formation = enemyFormations.get(formationIdx);
       int spawnIdx = deploymentSelection.getEnemySpawnSelections().get(formationIdx);
@@ -160,9 +143,42 @@ public class BattleView extends TiledScreen {
       tmpTileProperties.add(Collections.unmodifiableList(tmpColumn));
     }
     tileProperties = Collections.unmodifiableList(tmpTileProperties);
+    changeTurn(levelData.doesPlayerGoFirst);
+  }
 
+  /**
+   * Switch to a fresh state for either the player or enemy turn
+   *
+   * @param isPlayerTurn if true, start player turn. Otherwise start enemy.
+   */
+  private void changeTurn(boolean isPlayerTurn) {
+    Collection<FieldedUnit> unitList;
+    if (isPlayerTurn) {
+      state = BattleViewState.IDLE;
+      unitList = playerUnits.values();
+    } else {
+      state = BattleViewState.ENEMY_IDLE;
+      unitList = enemyUnits.values();
+      enemyAi = new EnemyAi(LoadedResources.getLevelData(), this);
+    }
+    for (FieldedUnit unit : unitList) {
+      unit.state = State.IDLE;
+    }
+  }
 
-
+  /**
+   * Check if all player units are done and start enemy turn if they have.
+   */
+  private void checkTurnDone() {
+    boolean done = true;
+    for (FieldedUnit unit : playerUnits.values()) {
+      done &= unit.state == State.DONE;
+    }
+    if (done) {
+      changeTurn(false);
+    } else {
+      state = BattleViewState.IDLE;
+    }
   }
 
   /**
@@ -337,8 +353,7 @@ public class BattleView extends TiledScreen {
             startLocation = clickedTile;
             unit.state = State.SELECTED;
             state = BattleViewState.CHOOSE_MOVE;
-            ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
-            reachableTiles = getPointsWithinRange(clickedTile, unit.stats.movement, enemyPosList);
+            reachableTiles = getPointsWithinRange(clickedTile, unit.stats.movement, enemyUnits);
           }
         }
         break;
@@ -435,12 +450,11 @@ public class BattleView extends TiledScreen {
       if (selectedUnitPath != null && curMouseTile.equals(listGetTail(selectedUnitPath))) {
         return false;
       }
-      ArrayList<TilePoint> enemyPosList = new ArrayList<>(enemyUnits.keySet());
       if (curMouseTile.equals(startLocation)) {
         selectedUnitPath = null;
         shownUnitPath = null;
-      } else if (isTilePassable(curMouseTile, enemyPosList)) {
-        selectedUnitPath = getShortestPath(startLocation, curMouseTile, enemyPosList);
+      } else if (isTilePassable(curMouseTile, enemyUnits)) {
+        selectedUnitPath = getShortestPath(startLocation, curMouseTile, enemyUnits);
         FieldedUnit unit = playerUnits.get(startLocation);
         if (!selectedUnitPath.isEmpty()
             && getDistance(selectedUnitPath, unit) <= unit.stats.movement) {
@@ -470,10 +484,7 @@ public class BattleView extends TiledScreen {
             LoadedResources.getSettings().sprites.movementDurationPerTile,
             LoadedResources.getSettings().sprites.frameDuration);
       } else {
-        state = BattleViewState.IDLE;
-        for (FieldedUnit unit : playerUnits.values()) {
-          unit.state = State.IDLE;
-        }
+        changeTurn(true);
       }
     }
   }
