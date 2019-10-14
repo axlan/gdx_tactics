@@ -41,11 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO-P1 Fix enemy transparent after first move select
 //TODO-P1 Add level data on who goes first
-//TODO-P1 Add concept of turns and mechanism to end player turns
 //TODO-P1 Show terrain and unit info under cursor
-//TODO-P1 Add enemy turn
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //TODO-P2 Separate UI and logic about the state of the battle
 //TODO-P2 Add fog of war mechanic

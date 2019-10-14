@@ -18,9 +18,19 @@ import java.util.List;
 //TODO-P3 improve system for allowing multiple AIs for development
 //TODO-P3 make enemy actions respect fog of war
 //TODO-P3 make MOVE understand how to improve state even if blocked off
+
+/**
+ * Class for controlling AI units
+ */
 public class EnemyAi {
 
+  /**
+   * Level data that specifies AI behavior
+   */
   private final LevelData levelData;
+  /**
+   * BattleView that keeps track of unit states and map information
+   */
   private final BattleView battleView;
 
   public EnemyAi(LevelData levelData, BattleView battleView) {
@@ -28,6 +38,12 @@ public class EnemyAi {
     this.battleView = battleView;
   }
 
+  /**
+   * Basic implementation of AI for units that only move
+   *
+   * @param args parameters for specifying movement
+   * @return The next unit movement, or null if no units left tp move
+   */
   private EnemyMoveAction getNextActionMoveAI1(MoveArgs args) {
     EnemyMoveAction nextAction = null;
 
@@ -66,6 +82,11 @@ public class EnemyAi {
     return nextAction;
   }
 
+  /**
+   * Based on the current board state, and the AI selection for the level, return the next AI move
+   *
+   * @return the next move, or null if no more moves to make
+   */
   public EnemyAction getNextAction() {
     final UnitBehavior behavior = levelData.enemyBehavior;
     EnemyAction nextAction = null;
@@ -82,7 +103,10 @@ public class EnemyAi {
     return nextAction;
   }
 
-  private class MoveArgs {
+  /**
+   * Class to describes an AI that focuses on moving to a certain point.
+   */
+  private static class MoveArgs {
 
     final TilePoint target;
 
@@ -91,15 +115,21 @@ public class EnemyAi {
     }
   }
 
-  public abstract class EnemyAction {
+  /**
+   * Base class for describing enemy unit actions
+   */
+  public static abstract class EnemyAction {
 
   }
 
-  public class EnemyMoveAction extends EnemyAction {
+  /**
+   * Class that describes an enemy unit movement
+   */
+  public static class EnemyMoveAction extends EnemyAction {
 
     public final List<TilePoint> path;
 
-    public EnemyMoveAction(List<TilePoint> path) {
+    EnemyMoveAction(List<TilePoint> path) {
       this.path = Collections.unmodifiableList(path);
     }
   }

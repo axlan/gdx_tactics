@@ -1,3 +1,7 @@
+# 10/14 Adding minimal AI
+
+Using the refactored pathfinding, working on adding a minimal AI to get the example level playable.
+
 # 10/8 Redoing distance calc functions
 
 Needed to make the pathfinding more flexible ot allow AI to access movement.
