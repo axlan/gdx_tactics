@@ -39,7 +39,7 @@
     "mapName": "advanced1",
   "enemyBehavior": {
     "behaviorType": "MOVE",
-      "args": "{\"target\": {\"x\": 12, \"y\": 5}}"
+      "args": "{\"target\": {\"x\": 8, \"y\": 7}}"
   },
     "cameraCenter": {"x": 8, "y": 4},
     "playerSpawnPoints": [

@@ -4,6 +4,9 @@ import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGet2d;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
+import com.axlan.fogofwar.logic.EnemyAi;
+import com.axlan.fogofwar.logic.EnemyAi.EnemyAction;
+import com.axlan.fogofwar.logic.EnemyAi.EnemyMoveAction;
 import com.axlan.fogofwar.models.DeploymentSelection;
 import com.axlan.fogofwar.models.FieldedUnit;
 import com.axlan.fogofwar.models.FieldedUnit.State;
@@ -99,6 +102,10 @@ public class BattleView extends TiledScreen {
    * Unmodifiable 2D list of the properties of each tile in the map
    */
   private final List<List<TileProperties>> tileProperties;
+  /**
+   * AI for controlling enemy turn
+   */
+  private EnemyAi enemyAi;
 
   /**
    * Check if all player units are done and start enemy turn if they have.
@@ -109,7 +116,11 @@ public class BattleView extends TiledScreen {
       done &= unit.state == State.DONE;
     }
     if (done) {
-      state = BattleViewState.ENEMY_TURN;
+      state = BattleViewState.ENEMY_IDLE;
+      for (FieldedUnit unit : enemyUnits.values()) {
+        unit.state = State.IDLE;
+      }
+      enemyAi = new EnemyAi(LoadedResources.getLevelData(), this);
     } else {
       state = BattleViewState.IDLE;
     }
@@ -224,6 +235,18 @@ public class BattleView extends TiledScreen {
     playerUnits.put(newPos, unit);
   }
 
+  /**
+   * Move the enemy controlled unit in enemyUnits to a new position key
+   *
+   * @param oldPos old unit position
+   * @param newPos new unit position
+   */
+  private void moveEnemyUnit(TilePoint oldPos, TilePoint newPos) {
+    final FieldedUnit unit = enemyUnits.get(oldPos);
+    enemyUnits.remove(oldPos);
+    enemyUnits.put(newPos, unit);
+  }
+
   @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     batch.begin();
@@ -268,6 +291,12 @@ public class BattleView extends TiledScreen {
         FieldedUnit unit = playerUnits.get(endLocation);
         unit.state = State.SELECTED;
         createActionDialogue(endLocation);
+      }
+    } else if (state == BattleViewState.ENEMY_MOVING) {
+      if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
+        FieldedUnit unit = enemyUnits.get(endLocation);
+        unit.state = State.DONE;
+        state = BattleViewState.ENEMY_IDLE;
       }
     }
     batch.end();
@@ -361,7 +390,9 @@ public class BattleView extends TiledScreen {
           createActionDialogue(endLocation);
         }
         break;
-      case ENEMY_TURN:
+      case ENEMY_IDLE:
+        break;
+      case ENEMY_MOVING:
         break;
     }
     return super.touchDown(screenX, screenY, pointer, button);
@@ -373,8 +404,15 @@ public class BattleView extends TiledScreen {
         || point.y >= getMapTileSize().y) {
       return false;
     }
-    @SuppressWarnings("unchecked") List<TilePoint> blockedTiles = (List<TilePoint>) context;
-    return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles.contains(point);
+    if (context instanceof List<?>) {
+      @SuppressWarnings("unchecked") List<TilePoint> blockedTiles = (List<TilePoint>) context;
+      return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles.contains(point);
+    } else if (context instanceof Map<?, ?>) {
+      @SuppressWarnings("unchecked") Map<TilePoint, FieldedUnit> blockedTiles = (Map<TilePoint, FieldedUnit>) context;
+      return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles
+          .containsKey(point);
+    }
+    throw new ClassCastException("Bad type for context");
   }
 
   // TODO-P3 allow for tiles that require more movement for certain units
@@ -419,7 +457,28 @@ public class BattleView extends TiledScreen {
   @Override
   public void updateScreen(float delta) {
     elapsedTime += delta;
-
+    if (state == BattleViewState.ENEMY_IDLE) {
+      EnemyAction action = enemyAi.getNextAction();
+      if (action instanceof EnemyMoveAction) {
+        EnemyMoveAction moveAction = (EnemyMoveAction) action;
+        state = BattleViewState.ENEMY_MOVING;
+        startLocation = moveAction.path.get(0);
+        endLocation = listGetTail(moveAction.path);
+        FieldedUnit unit = enemyUnits.get(startLocation);
+        unit.state = State.MOVING;
+        moveEnemyUnit(startLocation, endLocation);
+        pathVisualizer.startAnimation(
+            unit.stats.type,
+            moveAction.path,
+            LoadedResources.getSettings().sprites.movementDurationPerTile,
+            LoadedResources.getSettings().sprites.frameDuration);
+      } else {
+        state = BattleViewState.IDLE;
+        for (FieldedUnit unit : playerUnits.values()) {
+          unit.state = State.IDLE;
+        }
+      }
+    }
   }
 
   @Override
@@ -441,7 +500,8 @@ public class BattleView extends TiledScreen {
     MOVING,
     CHOOSE_ACTION,
     CHOOSE_ATTACK,
-    ENEMY_TURN
+    ENEMY_IDLE,
+    ENEMY_MOVING
   }
 
   static class TileProperties {
