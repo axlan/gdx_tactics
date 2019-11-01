@@ -46,13 +46,23 @@ public final class LevelData {
    * How the enemy units will behave
    */
   public final UnitBehavior enemyBehavior;
+  /**
+   * Additional optional win conditions for the player
+   */
+  public final AlternativeWinConditions playerWinConditions;
+  /**
+   * Additional optional win conditions for the enemy
+   */
+  public final AlternativeWinConditions enemyWinConditions;
+
 
   private LevelData(TilePoint cameraCenter,
       List<UnitAllotment> playerUnits, String briefSetting,
       List<BriefPage> briefPages, List<ShopItem> shopItems,
       List<TilePoint> playerSpawnPoints,
       List<Formation> enemyFormations, String mapName, UnitBehavior enemyBehavior,
-      boolean doesPlayerGoFirst) {
+      boolean doesPlayerGoFirst, AlternativeWinConditions playerWinConditions,
+      AlternativeWinConditions enemyWinConditions) {
     this.cameraCenter = cameraCenter;
     this.playerUnits = Collections.unmodifiableList(playerUnits);
     this.briefSetting = briefSetting;
@@ -63,6 +73,8 @@ public final class LevelData {
     this.mapName = mapName;
     this.enemyBehavior = enemyBehavior;
     this.doesPlayerGoFirst = doesPlayerGoFirst;
+    this.enemyWinConditions = enemyWinConditions;
+    this.playerWinConditions = playerWinConditions;
   }
 
   /**
@@ -123,6 +135,21 @@ public final class LevelData {
     private UnitBehavior(UnitBehaviorType behaviorType, String args) {
       this.behaviorType = behaviorType;
       this.args = args;
+    }
+  }
+
+  /**
+   * Optional alternative win conditions
+   */
+  public static class AlternativeWinConditions {
+
+    /**
+     * Win if unit reaches this point
+     */
+    public final TilePoint moveToPoint;
+
+    public AlternativeWinConditions(TilePoint moveToPoint) {
+      this.moveToPoint = moveToPoint;
     }
   }
 

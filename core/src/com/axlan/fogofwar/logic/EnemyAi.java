@@ -1,10 +1,11 @@
 package com.axlan.fogofwar.logic;
 
+import com.axlan.fogofwar.models.BattleMap;
+import com.axlan.fogofwar.models.BattleState;
 import com.axlan.fogofwar.models.FieldedUnit;
 import com.axlan.fogofwar.models.FieldedUnit.State;
 import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.UnitBehavior;
-import com.axlan.fogofwar.screens.BattleView;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.TilePoint;
 import java.util.ArrayList;
@@ -31,11 +32,16 @@ public class EnemyAi {
   /**
    * BattleView that keeps track of unit states and map information
    */
-  private final BattleView battleView;
+  private final BattleState battleState;
+  /**
+   * Class for accessing map data for pathing
+   */
+  private final BattleMap battleMap;
 
-  public EnemyAi(LevelData levelData, BattleView battleView) {
+  public EnemyAi(LevelData levelData, BattleState battleView, BattleMap battleMap) {
     this.levelData = levelData;
-    this.battleView = battleView;
+    this.battleState = battleView;
+    this.battleMap = battleMap;
   }
 
   /**
@@ -47,8 +53,8 @@ public class EnemyAi {
   private EnemyMoveAction getNextActionMoveAI1(MoveArgs args) {
     EnemyMoveAction nextAction = null;
 
-    final HashMap<TilePoint, FieldedUnit> enemyUnits = battleView.getEnemyUnits();
-    final HashMap<TilePoint, FieldedUnit> playerUnits = battleView.getPlayerUnits();
+    final HashMap<TilePoint, FieldedUnit> enemyUnits = battleState.enemyUnits;
+    final HashMap<TilePoint, FieldedUnit> playerUnits = battleState.playerUnits;
 
     for (TilePoint enemyPos : enemyUnits.keySet()) {
       FieldedUnit enemyUnit = enemyUnits.get(enemyPos);
@@ -58,7 +64,7 @@ public class EnemyAi {
       HashMap<TilePoint, FieldedUnit> blockedTiles = new HashMap<>(playerUnits);
       List<TilePoint> path = null;
       while (path == null) {
-        path = battleView.getShortestPath(enemyPos, args.target, blockedTiles);
+        path = battleMap.getShortestPath(enemyPos, args.target, blockedTiles);
         if (path == null) {
           break;
         }

@@ -34,7 +34,6 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
-import com.sun.tools.javac.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -166,8 +165,10 @@ public class DeployView extends TiledScreen {
     doneButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        ArrayList<Integer> enemyList = new ArrayList<>();
+        Collections.addAll(enemyList, enemySpawnSelections);
         GameStateManager.deploymentSelection
-            .setDeployments(List.from(enemySpawnSelections), placements);
+            .setDeployments(enemyList, placements);
         observer.onDone();
       }
     });
@@ -311,14 +312,6 @@ public class DeployView extends TiledScreen {
   @Override
   public void updateScreen(float delta) {
     elapsedTime += delta;
-  }
-
-  /**
-   * Dummy since finding path not needed
-   */
-  @Override
-  protected boolean isTilePassable(TilePoint point, Object context) {
-    return false;
   }
 
   @Override

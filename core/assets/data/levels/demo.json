@@ -1,6 +1,12 @@
 {
     "briefSetting": "Eastern Front Command Center",
     "doesPlayerGoFirst": false,
+    "enemyWinConditions": {
+        "moveToPoint": {
+            "x": 8,
+            "y": 7
+        }
+    },
     "briefPages": [
         {
             "speaker": "Comander",

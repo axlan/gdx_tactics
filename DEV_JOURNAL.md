@@ -1,3 +1,17 @@
+# 10/31 Separate the Battle State From the View
+
+Took a couple week break. The next few features to work on are:
+
+ * Wrapping the current scenes in a main menu and title screen
+ * Add some sort of framework for having multiple levels
+ * Add some basic save / load functionality
+ * Finish the basic game logic to allow victory/loss
+ 
+The first step to making some of this a bit easier is to seperate out the state describing a battle.
+Right now it is mixed in with the GUI logic of the view.
+
+I did a refactor to pull out the state, and map data into their own classes.
+
 # 10/14 Adding minimal AI
 
 Using the refactored pathfinding, working on adding a minimal AI to get the example level playable.

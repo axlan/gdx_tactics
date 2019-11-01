@@ -1,7 +1,5 @@
 package com.axlan.gdxtactics;
 
-import com.axlan.gdxtactics.PathSearch.AStarSearchResult;
-import com.axlan.gdxtactics.PathSearch.PathSearchNode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -17,8 +15,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import java.util.ArrayList;
-import java.util.List;
 
 //TODO-P3 add capability for animated tiles
 
@@ -44,9 +40,6 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   private boolean mouseMoveCameraToRight = false;
   private boolean mouseMoveCameraToBottom = false;
   private OrthographicCamera camera;
-  private TilePoint tileNodeGoal = null;
-  private Object tileNodeContext = null;
-
 
   /**
    *
@@ -97,15 +90,6 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param delta time since last update
    */
   protected abstract void updateScreen(float delta);
-
-  /**
-   * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
-   * property or it will throw a  ClassCastException
-   * @param point the 2D index of the tile of interest
-   * @param context additional context to decide which tiles are passable
-   * @return whether the tile can be passed through
-   */
-  protected abstract boolean isTilePassable(TilePoint point, Object context);
 
   /* Utils methods */
 
@@ -212,7 +196,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   /**
    * @return The size of the world map in tiles
    */
-  protected TilePoint getMapTileSize() {
+  private TilePoint getMapTileSize() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
     return new TilePoint(layer.getWidth(), layer.getHeight());
   }
@@ -363,123 +347,6 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   @Override
   public boolean scrolled(int amount) {
     return false;
-  }
-
-  /**
-   * Get the shortest path between two locations on the map avoiding blocked tiles.
-   *
-   * @param startPos Starting tile index
-   * @param goalPos  Ending tile index
-   * @return The adjacent tiles to move through to go from start to goal
-   */
-  public List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos,
-      Object context) {
-    BattleTileNode start = new BattleTileNode(startPos);
-    BattleTileNode goal = new BattleTileNode(goalPos);
-    tileNodeGoal = goalPos;
-    tileNodeContext = context;
-    ArrayList<PathSearchNode> path = PathSearch.runSearchByGoal(start, goal);
-    ArrayList<TilePoint> points = new ArrayList<>();
-    if (path != null) {
-      for (PathSearchNode node : path) {
-        points.add(((BattleTileNode) node).pos);
-      }
-    }
-    return points;
-  }
-
-  /**
-   * Get all points that are <= distanceLimit from startPos
-   *
-   * @param startPos      point to search from
-   * @param distanceLimit distance to search
-   * @param context       context to determine if tiles can be passed through
-   * @return set of points that are <= distanceLimit
-   */
-  public List<TilePoint> getPointsWithinRange(TilePoint startPos, int distanceLimit,
-      Object context) {
-    BattleTileNode start = new BattleTileNode(startPos);
-    tileNodeGoal = null;
-    tileNodeContext = context;
-    AStarSearchResult result = PathSearch.runSearchByDistance(start, distanceLimit);
-    ArrayList<TilePoint> points = new ArrayList<>();
-    for (PathSearchNode node : result.valueMap.keySet()) {
-      points.add(((BattleTileNode) node).pos);
-    }
-    return points;
-  }
-
-
-  /**
-   * class to wrap 2D game map tiles to search for shortest movement paths
-   */
-  class BattleTileNode implements PathSearchNode {
-
-    final TilePoint pos;
-
-    BattleTileNode(TilePoint pos) {
-      this.pos = pos;
-    }
-
-    @Override
-    public int heuristics() {
-      if (tileNodeGoal == null) {
-        return 0;
-      }
-      return Math.abs(tileNodeGoal.x - pos.x) + Math.abs(tileNodeGoal.y - pos.y);
-    }
-
-    @Override
-    public int edgeWeight(PathSearchNode neighbor) {
-      return 1;
-    }
-
-    @Override
-    public List<PathSearchNode> getNeighbors() {
-      ArrayList<PathSearchNode> tmp = new ArrayList<>();
-      if (pos.x < getMapTileSize().x - 1) {
-        TilePoint neighborPos = pos.add(1, 0);
-        if (isTilePassable(neighborPos, tileNodeContext)) {
-          tmp.add(new BattleTileNode(neighborPos));
-        }
-      }
-      if (pos.x > 0) {
-        TilePoint neighborPos = pos.sub(1, 0);
-        if (isTilePassable(neighborPos, tileNodeContext)) {
-          tmp.add(new BattleTileNode(neighborPos));
-        }
-      }
-      if (pos.y < getMapTileSize().y - 1) {
-        TilePoint neighborPos = pos.add(0, 1);
-        if (isTilePassable(neighborPos, tileNodeContext)) {
-          tmp.add(new BattleTileNode(neighborPos));
-        }
-      }
-      if (pos.y > 0) {
-        TilePoint neighborPos = pos.sub(0, 1);
-        if (isTilePassable(neighborPos, tileNodeContext)) {
-          tmp.add(new BattleTileNode(neighborPos));
-        }
-      }
-      return tmp;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || o.getClass() != this.getClass()) {
-        return false;
-      }
-      BattleTileNode g = (BattleTileNode) o;
-      return this.pos.equals(g.pos);
-    }
-
-    @Override
-    public int hashCode() {
-      return pos.hashCode();
-    }
   }
 
 
