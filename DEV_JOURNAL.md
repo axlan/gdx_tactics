@@ -12,6 +12,11 @@ Right now it is mixed in with the GUI logic of the view.
 
 I did a refactor to pull out the state, and map data into their own classes.
 
+Decided to go with one of the last small features before tackling the big ones, showing info on
+terrain and units.
+
+Decided to have a persistent window showing selected and hovered tile info.
+
 # 10/14 Adding minimal AI
 
 Using the refactored pathfinding, working on adding a minimal AI to get the example level playable.

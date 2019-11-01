@@ -6,7 +6,6 @@ import com.axlan.gdxtactics.PathSearch;
 import com.axlan.gdxtactics.PathSearch.AStarSearchResult;
 import com.axlan.gdxtactics.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.TilePoint;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import java.util.ArrayList;
@@ -121,15 +120,15 @@ public class BattleMap {
     return points;
   }
 
-  static class TileProperties {
-
-    final static String passableKey = "passable";
-
-    final boolean passable;
-
-    TileProperties(MapProperties mapProperties) {
-      this.passable = mapProperties.get(passableKey, false, Boolean.class);
+  /**
+   * Get the properties for a given tile
+   */
+  public TileProperties getTileProperty(TilePoint point) {
+    if (point.x < 0 || point.x >= mapSize.x || point.y < 0
+        || point.y >= mapSize.y) {
+      return null;
     }
+    return listGet2d(tileProperties, point.x, point.y);
   }
 
   /**

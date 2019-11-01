@@ -8,7 +8,7 @@ import com.axlan.fogofwar.screens.BattleView;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
-import com.sun.tools.javac.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,8 +29,10 @@ public class BattleDemo extends Game {
     HashMap<TilePoint, String> playerUnitPlacements = new HashMap<>();
     playerUnitPlacements.put(new TilePoint(3, 6), "tank");
     playerUnitPlacements.put(new TilePoint(4, 6), "tank");
+    ArrayList<Integer> dummyEnemy = new ArrayList<>();
+    dummyEnemy.add(0);
     GameStateManager.deploymentSelection
-        .setDeployments(List.from(new Integer[]{0}), playerUnitPlacements);
+        .setDeployments(dummyEnemy, playerUnitPlacements);
     this.setScreen(new BattleView());
   }
 

@@ -117,6 +117,9 @@ public class DeployView extends TiledScreen {
     sightings = new Array<>(playerResources.getPurchases().size());
     intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
     stage.addActor(createIntelSelectWindow());
+
+    // TODO-P2 Add property window to deploy view
+
   }
 
   //TODO-P2 fix window so resize works
@@ -136,6 +139,7 @@ public class DeployView extends TiledScreen {
     for (int i = 0; i < levelData.playerUnits.size(); i++) {
       final UnitAllotment unit = levelData.playerUnits.get(i);
       //TODO Make button react to hover, press
+      //TODO-P3 Clean up drawable generation
       Button button = new Button(
           LoadedResources.getSpriteLookup().getTextureRegionDrawable(unit.type, Poses.IDLE));
       button.addListener(

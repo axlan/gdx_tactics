@@ -43,7 +43,8 @@ import java.util.Map;
 
 //TODO-P1 Show terrain and unit info under cursor
 //TODO-P1 Add scenario goal along with victory / failure conditions
-//TODO-P2 Separate UI and logic about the state of the battle
+//FIXME-P1 fix weirdness with mouseMoved not always triggering
+//TODO-P2 Move info windows to not block relevant map tiles
 //TODO-P2 Add fog of war mechanic
 //TODO-P2 Add overlay when unit is selected attack range
 //TODO-P3 Add intel view
@@ -100,6 +101,11 @@ public class BattleView extends TiledScreen {
   private EnemyAi enemyAi;
 
   /**
+   * Window to display properties of selected objects on map
+   */
+  private final PropertyWindow propertyWindow;
+
+  /**
    * Targets for an attack
    */
   private List<TilePoint> targetSelection = null;
@@ -120,6 +126,11 @@ public class BattleView extends TiledScreen {
     List<Formation> enemyFormations = levelData.enemyFormations;
     battleState = new BattleState(unitStats, deploymentSelection, enemyFormations);
     battleMap = new BattleMap(map);
+
+    propertyWindow = new PropertyWindow(battleState, battleMap);
+    propertyWindow.setPosition(0, 0);
+    stage.addActor(propertyWindow);
+
     changeTurn(levelData.doesPlayerGoFirst);
   }
 
@@ -443,8 +454,8 @@ public class BattleView extends TiledScreen {
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
     super.mouseMoved(screenX, screenY);
+    TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
     if (state == BattleViewState.CHOOSE_MOVE) {
-      TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
       // Only recalculate path when mouse has moved onto new tile.
       if (selectedUnitPath != null && curMouseTile.equals(listGetTail(selectedUnitPath))) {
         return false;
@@ -462,6 +473,7 @@ public class BattleView extends TiledScreen {
         }
       }
     }
+    propertyWindow.showTileProperties(curMouseTile);
     return false;
   }
 

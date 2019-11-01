@@ -38,9 +38,9 @@ public class EnemyAi {
    */
   private final BattleMap battleMap;
 
-  public EnemyAi(LevelData levelData, BattleState battleView, BattleMap battleMap) {
+  public EnemyAi(LevelData levelData, BattleState battleState, BattleMap battleMap) {
     this.levelData = levelData;
-    this.battleState = battleView;
+    this.battleState = battleState;
     this.battleMap = battleMap;
   }
 
