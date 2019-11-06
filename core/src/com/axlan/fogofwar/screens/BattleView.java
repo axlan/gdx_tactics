@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO-P1 Show terrain and unit info under cursor
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //FIXME-P1 fix weirdness with mouseMoved not always triggering
 //TODO-P2 Move info windows to not block relevant map tiles

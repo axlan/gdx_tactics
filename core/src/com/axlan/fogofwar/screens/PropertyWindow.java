@@ -32,6 +32,12 @@ class PropertyWindow extends VisWindow {
     this.battleMap = battleMap;
   }
 
+  //TODO-P2 Add all useful info to window
+
+  /**
+   * Update the window to show the properties of objects at the map coordinate
+   * @param tile The coordinate of the tile properties to display
+   */
   void showTileProperties(TilePoint tile) {
     this.clear();
 
