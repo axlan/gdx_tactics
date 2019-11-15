@@ -69,7 +69,7 @@ public class DeployView extends TiledScreen {
    * Labels describing how many units of each type are still available to deploy
    */
   private final VisLabel[] remainingLabels;
-  //TODO allow for determinism
+  //TODO-P3 allow for determinism
   private final Random rand = new Random();
   /** Check boxes to select intel to display */
   private final VisCheckBox[] intelCheckBoxes;
@@ -118,7 +118,7 @@ public class DeployView extends TiledScreen {
     intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
     stage.addActor(createIntelSelectWindow());
 
-    // TODO-P2 Add property window to deploy view
+    //TODO-P2 Add property window to deploy view
 
   }
 
@@ -138,7 +138,7 @@ public class DeployView extends TiledScreen {
 
     for (int i = 0; i < levelData.playerUnits.size(); i++) {
       final UnitAllotment unit = levelData.playerUnits.get(i);
-      //TODO Make button react to hover, press
+      //TODO-P3 Make button react to hover, press
       //TODO-P3 Clean up drawable generation
       Button button = new Button(
           LoadedResources.getSpriteLookup().getTextureRegionDrawable(unit.type, Poses.IDLE));
@@ -213,7 +213,6 @@ public class DeployView extends TiledScreen {
           unitIds = Utilities.getIntRange(0, numSpotted, 1);
         }
         for (int unitId : unitIds) {
-          //TODO set sprite based on unit type
           String spottedType = formation.units.get(unitId).unitType;
           TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
           AnimatedSprite<AtlasRegion> sprite = LoadedResources

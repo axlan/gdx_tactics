@@ -8,6 +8,7 @@ package com.axlan.fogofwar.models;
  */
 public class GameStateManager {
   //TODO-P1 add methods for saving and loading state, along with any missing data
+  //TODO-P1 Add save button as child class of actor stage
   /**
    * Keeps track of state associated with the player
    */

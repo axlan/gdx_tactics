@@ -111,7 +111,7 @@ public class StoreView extends StageBasedScreen {
    * @return Root table for UI
    */
   private VisTable makeStoreView() {
-    //TODO Reskin and pretty up
+    //TODO-P3 Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);

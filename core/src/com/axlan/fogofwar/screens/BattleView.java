@@ -436,7 +436,7 @@ public class BattleView extends TiledScreen {
   }
 
 
-  // TODO-P3 allow for tiles that require more movement for certain units
+  //TODO-P3 allow for tiles that require more movement for certain units
 
   /**
    * Add up the movement distance along a path

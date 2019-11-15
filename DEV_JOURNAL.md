@@ -1,3 +1,61 @@
+# 11/15 Title Screen
+
+Looking for a title screen I realized I'm probably going to want a placeholder image for now. The initial thought I had was for a picture of an old fashion war room with the paddles for pushing figures of units around. Found some decent images when searching "Churchill war rooms".
+
+For now I think I'll use one of these as a placeholder. Since pretty much all my assets are placeholders I think I'll just have to go back through after the initial version to commission an artist or find free replacements.  
+
+# 11/15 Looked into music
+
+Realized one feature I hadn't thought about was music and sound effects. Figured it was out of scope for the initial tasks, but added a TODO.
+Also found some decent resources on https://lunalucid.itch.io/ and https://creativecommons.org/about/program-areas/arts-culture/arts-culture-resources/legalmusicforvideos/ 
+
+# 11/14 Resume Dev at Home
+
+Finished my trip, and I want to get this to an initial release. Here's the TODOs to cover for the initial release:
+
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\Core.java
+  * (75, 7) //TODO-P2 load custom skin
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\logic\EnemyAi.java
+  * (16, 3) //TODO-P2 Add comments
+  * (17, 3) //TODO-P2 Add additional AI types
+  * (18, 3) //TODO-P3 Work on improving AIs
+  * (19, 3) //TODO-P3 improve system for allowing multiple AIs for development
+  * (20, 3) //TODO-P3 make enemy actions respect fog of war
+  * (21, 3) //TODO-P3 make MOVE understand how to improve state even if blocked off
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\GameStateManager.java
+  * (10, 5) //TODO-P1 add methods for saving and loading state, along with any missing data
+  * (11, 5) //TODO-P1 Add save button as child class of actor stage
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\LevelData.java
+  * (221, 7) //TODO-P2 Allow items to persist between levels.
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\LoadedResources.java
+  * (71, 5) //TODO-P1 Add concept of multiple levels
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\screens\BattleView.java
+  * (45, 3) //FIXME-P1 fix weirdness with mouseMoved not always triggering
+  * (47, 3) //TODO-P2 Add fog of war mechanic
+  * (201, 9) //TODO-P1 complete logic for winning / losing
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\screens\BriefingView.java
+  * (61, 9) //TODO-P2 load speaker font and avatar based on name from map
+  * (71, 7) //TODO-P3 Reskin and pretty up
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\screens\PropertyWindow.java
+  * (35, 5) //TODO-P2 Add all useful info to window
+  * (58, 9) //TODO-P3 Clean up drawable generation
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\screens\StoreView.java
+  * (114, 7) //TODO-P3 Reskin and pretty up
+
+The major features are still the one's described in the last entry.
+
+Seems like going through the game in order makes sense. So the first thing I'll add is a title screen.
+
+For posterity, here's what the current game looks like:
+
+![Briefing](docs/images/briefing_11_14.png "Briefing")
+
+![Store](docs/images/store_11_14.png "Store")
+
+![Deploy](docs/images/deploy_11_14.png "Deploy")
+
+![Battle](docs/images/battle_11_14.png "Battle")
+
 # 10/31 Separate the Battle State From the View
 
 Took a couple week break. The next few features to work on are:
@@ -7,7 +65,7 @@ Took a couple week break. The next few features to work on are:
  * Add some basic save / load functionality
  * Finish the basic game logic to allow victory/loss
  
-The first step to making some of this a bit easier is to seperate out the state describing a battle.
+The first step to making some of this a bit easier is to separate out the state describing a battle.
 Right now it is mixed in with the GUI logic of the view.
 
 I did a refactor to pull out the state, and map data into their own classes.

@@ -9,6 +9,10 @@ import com.axlan.fogofwar.screens.StoreView;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 
+//TODO-P2 Add campaign component. You have set pool of troops and decide how many to commit to each battle. They will take time to be usable again or have penalty of fuel.
+//TODO-P3 Add random scenario generation.
+//TODO-P2 Add music and sound effects.
+
 /**
  * Main class for game. Supervises switching between the views and handling shared resources.
  */
