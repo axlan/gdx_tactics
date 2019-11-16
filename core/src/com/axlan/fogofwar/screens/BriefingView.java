@@ -59,6 +59,7 @@ public class BriefingView extends StageBasedScreen {
       this.dialogue.setText(this.levelData.briefPages.get(this.curPage).dialogue);
       this.avatarLabel.setText(this.levelData.briefPages.get(this.curPage).speaker);
       //TODO-P2 load speaker font and avatar based on name from map
+      //TODO-P3 add drawables to image atlas
       this.avatar.setDrawable(new Texture(Gdx.files.internal("images/avatars/img_avatar.png")));
     }
   }
@@ -75,7 +76,7 @@ public class BriefingView extends StageBasedScreen {
 
     this.settingLabel.setAlignment(Align.center);
 
-    LabelStyle labelStyle = settingLabel.getStyle();
+    LabelStyle labelStyle = new LabelStyle(settingLabel.getStyle());
     labelStyle.background = VisUI.getSkin().getDrawable("textfield");
 
     this.avatarLabel.setStyle(labelStyle);

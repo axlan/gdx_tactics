@@ -1,11 +1,7 @@
 package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.screens.BattleView;
-import com.axlan.fogofwar.screens.BriefingView;
-import com.axlan.fogofwar.screens.CompletionObserver;
-import com.axlan.fogofwar.screens.DeployView;
-import com.axlan.fogofwar.screens.StoreView;
+import com.axlan.fogofwar.screens.*;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
 
@@ -18,6 +14,30 @@ import com.kotcrab.vis.ui.VisUI;
  * Main class for game. Supervises switching between the views and handling shared resources.
  */
 public class Core extends Game {
+
+    /**
+     * Switch the screen to the {@link TitleScreen}
+     */
+    private void showTitle() {
+        TitleSelectionObserver observer =
+                new TitleSelectionObserver() {
+                    @Override
+                    public void onDone(TitleSelection selection) {
+                        switch (selection) {
+                            case NEW_GAME:
+                                showBriefing();
+                                break;
+                            case LOAD_GAME:
+                                //TODO-P1 Load game Menu
+                            case SETTINGS:
+                                //TODO-P1 Settings menu
+                                throw new RuntimeException("Not Implemented");
+                        }
+                    }
+                };
+        TitleScreen titleScreen = new TitleScreen(observer);
+        this.setScreen(titleScreen);
+    }
 
   /**
    * Switch the screen to the {@link StoreView}
@@ -78,6 +98,6 @@ public class Core extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
 
-    this.showBriefing();
+      this.showTitle();
   }
 }

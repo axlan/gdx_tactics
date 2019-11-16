@@ -122,7 +122,7 @@ public class StoreView extends StageBasedScreen {
 
     this.moneyLabel.setAlignment(Align.right);
 
-    LabelStyle labelStyle = headingLabel.getStyle();
+    LabelStyle labelStyle = new LabelStyle(headingLabel.getStyle());
     labelStyle.background = VisUI.getSkin().getDrawable("textfield");
 
     this.description.setStyle(labelStyle);

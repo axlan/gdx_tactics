@@ -2,7 +2,11 @@ package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -90,5 +94,34 @@ public class Utilities {
     newColor.a = alpha;
     return newColor;
   }
+
+  /**
+   * Method to generate buttons that map to the possible values of an enum type.
+   * <p>
+   * Names convert from Upper snake case to capitalized spaced words.
+   *
+   * @param enumList Result of EnumType.values()
+   * @param <T>      Class of Enum
+   * @return mapping of enums to buttons with text corresponding to the enums names
+   */
+  public static <T> Map<T, VisTextButton> enumToButtons(T[] enumList) {
+    LinkedHashMap<T, VisTextButton> buttons = new LinkedHashMap<>();
+    for (T val : enumList) {
+      Enum enumVal = (Enum) val;
+      String[] words = enumVal.name().toLowerCase().split("_");
+      StringBuilder name = new StringBuilder();
+      for (String word : words) {
+        name.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
+        //noinspection StringEquality
+        if (word != words[words.length - 1]) {
+          name.append(' ');
+        }
+      }
+      //noinspection unchecked
+      buttons.put((T) enumVal, new VisTextButton(name.toString()));
+    }
+    return buttons;
+  }
+
 
 }
