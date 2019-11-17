@@ -1,10 +1,12 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.gdxtactics.AnimatedSprite;
+import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -16,19 +18,37 @@ import java.util.Map;
  */
 public final class LoadedResources {
 
-  private static final String SETTINGS_FILE = "data/settings.json";
+  private static final String READ_ONLY_SETTINGS_FILE = "data/read_only_settings.json";
+  private static final String EDITABLE_SETTINGS_FILE = "session/settings.json";
+  private static final String DEFAULT_SETTINGS_FILE = "data/default_settings.json";
 
-  private static Settings settings;
+  private static ReadOnlySettings readOnlySettings;
+  private static EditableSettings editableSettings;
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
   private static LevelData levelData;
 
   /**
-   * Get the settings that describe the applications behavior
+   * Get the read only settings that describe the applications behavior
    */
-  public static Settings getSettings() {
-    return settings;
+  public static ReadOnlySettings getReadOnlySettings() {
+    return readOnlySettings;
   }
+
+  /**
+   * Get the editable settings that describe the applications behavior
+   */
+  public static EditableSettings getEditableSettings() {
+    return editableSettings;
+  }
+
+  /**
+   * Get the editable settings that describe the applications behavior
+   */
+  public static void writeEditableSettings() {
+    JsonLoader.writeToJsonFile(EDITABLE_SETTINGS_FILE, editableSettings);
+  }
+
 
   /**
    * Get the SpriteLookup used to generate sprites
@@ -47,7 +67,7 @@ public final class LoadedResources {
   public static AnimatedSprite<AtlasRegion> getAnimation(
       String sprite, Poses pose) {
     return spriteLookup
-        .getAnimation(sprite, pose, LoadedResources.getSettings().sprites.frameDuration, true);
+            .getAnimation(sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
   }
 
 
@@ -63,16 +83,19 @@ public final class LoadedResources {
 
   /** Load the resources used across all levels */
   public static void initializeGlobal() {
-    settings = Settings.loadFromJson(SETTINGS_FILE);
-    spriteLookup = new SpriteLookup(new TextureAtlas(settings.sprites.atlasFile));
-    unitStats = Collections.unmodifiableMap(UnitStats.loadFromJson(settings.unitStatsDataFile));
+    EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
+    editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
+    editableSettings.apply();
+    readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
+    spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
+    unitStats = Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
   }
 
   //TODO-P1 Add concept of multiple levels
 
   /** Load the resources for the current level */
   public static void initializeLevel() {
-    levelData = LevelData.loadFromJson(settings.levelDataFile);
+    levelData = LevelData.loadFromJson(readOnlySettings.levelDataFile);
   }
 
 }

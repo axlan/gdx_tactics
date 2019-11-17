@@ -5,14 +5,14 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 /**
- * Class for loading and storing settomgs from JSON. The structure of the JSON should mimic the
+ * Class for loading read only settings from JSON. The structure of the JSON should mimic the
  * structure of the class.
  *
  * <p> All lists loaded are unmodifiable
  * <p> A static instance is managed by {@link LoadedResources}
  */
 @SuppressWarnings({"WeakerAccess"})
-public final class Settings {
+public final class ReadOnlySettings {
 
   /**
    * JSON file to load level data from
@@ -37,8 +37,8 @@ public final class Settings {
    */
   public final SpritesSettings sprites;
 
-  private Settings(String levelDataFile, String unitStatsDataFile,
-      SpritesSettings sprites, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
+    private ReadOnlySettings(String levelDataFile, String unitStatsDataFile,
+                             SpritesSettings sprites, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
     this.levelDataFile = levelDataFile;
     this.unitStatsDataFile = unitStatsDataFile;
     this.sprites = sprites;
@@ -56,8 +56,8 @@ public final class Settings {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   @SuppressWarnings("SameParameterValue")
-  static Settings loadFromJson(String projectPath) {
-    return JsonLoader.loadFromJsonFile(projectPath, Settings.class);
+  static ReadOnlySettings loadFromJson(String projectPath) {
+      return JsonLoader.loadFromJsonFileInternal(projectPath, ReadOnlySettings.class);
   }
 
   /**

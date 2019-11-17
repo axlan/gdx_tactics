@@ -5,6 +5,7 @@ import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.TilePoint;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public final class LevelData {
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   static LevelData loadFromJson(String projectPath) {
-    return JsonLoader.loadFromJsonFile(projectPath, LevelData.class);
+    return JsonLoader.loadFromJsonFileInternal(projectPath, LevelData.class);
   }
 
   /**

@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,8 @@ public class PathSearchDemo extends Game implements InputProcessor {
         foundPath.add(((DemoTileNode) node).pos);
       }
       pathVisualizer.startAnimation("tank", foundPath,
-          LoadedResources.getSettings().sprites.movementDurationPerTile,
-          LoadedResources.getSettings().sprites.frameDuration);
+              LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+              LoadedResources.getReadOnlySettings().sprites.frameDuration);
     } else if (keycode == Keys.R) {
       initializeTileStates();
     }

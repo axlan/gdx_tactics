@@ -10,6 +10,7 @@ public interface TitleSelectionObserver {
     enum TitleSelection {
         NEW_GAME,
         LOAD_GAME,
-        SETTINGS
+        SETTINGS,
+        QUIT
     }
 }

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
  * <p>TilePoint instance are immutable
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class TilePoint {
+public class TilePoint implements Cloneable {
 
   public final int x;
   public final int y;

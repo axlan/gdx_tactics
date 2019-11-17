@@ -1,22 +1,12 @@
 package com.axlan.fogofwar.screens;
 
-import static com.axlan.gdxtactics.Utilities.getTransparentColor;
-import static com.axlan.gdxtactics.Utilities.listGetTail;
-
 import com.axlan.fogofwar.logic.EnemyAi;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyAction;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyMoveAction;
-import com.axlan.fogofwar.models.BattleMap;
-import com.axlan.fogofwar.models.BattleState;
-import com.axlan.fogofwar.models.DeploymentSelection;
-import com.axlan.fogofwar.models.FieldedUnit;
+import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.models.FieldedUnit.State;
-import com.axlan.fogofwar.models.GameStateManager;
-import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.AlternativeWinConditions;
 import com.axlan.fogofwar.models.LevelData.Formation;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.UnitStats;
 import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
@@ -35,11 +25,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTextButton;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
+import static com.axlan.gdxtactics.Utilities.getTransparentColor;
+import static com.axlan.gdxtactics.Utilities.listGetTail;
 
 //TODO-P1 Add scenario goal along with victory / failure conditions
 //FIXME-P1 fix weirdness with mouseMoved not always triggering
@@ -115,9 +105,9 @@ public class BattleView extends TiledScreen {
 
   public BattleView() {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
-        LoadedResources.getSettings().tilesPerScreenWidth,
-        LoadedResources.getSettings().cameraSpeed,
-        LoadedResources.getSettings().edgeScrollSize);
+            LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
+            LoadedResources.getReadOnlySettings().cameraSpeed,
+            LoadedResources.getReadOnlySettings().edgeScrollSize);
     levelData = LoadedResources.getLevelData();
     Map<String, UnitStats> unitStats = LoadedResources.getUnitStats();
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
@@ -396,8 +386,8 @@ public class BattleView extends TiledScreen {
             pathVisualizer.startAnimation(
                 unit.stats.type,
                 shownUnitPath,
-                LoadedResources.getSettings().sprites.movementDurationPerTile,
-                LoadedResources.getSettings().sprites.frameDuration);
+                    LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+                    LoadedResources.getReadOnlySettings().sprites.frameDuration);
           } else {
             battleState.playerUnits.get(startLocation).state = State.IDLE;
             state = BattleViewState.IDLE;
@@ -492,8 +482,8 @@ public class BattleView extends TiledScreen {
         pathVisualizer.startAnimation(
             unit.stats.type,
             moveAction.path,
-            LoadedResources.getSettings().sprites.movementDurationPerTile,
-            LoadedResources.getSettings().sprites.frameDuration);
+                LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+                LoadedResources.getReadOnlySettings().sprites.frameDuration);
       } else {
         changeTurn(true);
       }

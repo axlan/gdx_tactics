@@ -60,10 +60,5 @@ public class TitleScreen extends StageBasedScreen {
         return root;
     }
 
-    public enum TitleSelections {
-
-    }
-
-
 }
 

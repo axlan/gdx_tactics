@@ -1,14 +1,8 @@
 package com.axlan.fogofwar.screens;
 
-import static com.axlan.gdxtactics.Utilities.getTransparentColor;
-
 import com.axlan.fogofwar.models.GameStateManager;
 import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LevelData.Formation;
-import com.axlan.fogofwar.models.LevelData.Intel;
-import com.axlan.fogofwar.models.LevelData.ShopItem;
-import com.axlan.fogofwar.models.LevelData.SpotType;
-import com.axlan.fogofwar.models.LevelData.UnitAllotment;
+import com.axlan.fogofwar.models.LevelData.*;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.PlayerResources;
 import com.axlan.gdxtactics.AnimatedSprite;
@@ -28,17 +22,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
+import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisCheckBox.VisCheckBoxStyle;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisWindow;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
+
+import java.util.*;
+
+import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 
 /**
  * A screen that lets the player decide where to position their troops. They can view their intel to
@@ -97,9 +86,9 @@ public class DeployView extends TiledScreen {
    */
   public DeployView(CompletionObserver observer) {
     super("maps/" + LoadedResources.getLevelData().mapName + ".tmx",
-        LoadedResources.getSettings().tilesPerScreenWidth,
-        LoadedResources.getSettings().cameraSpeed,
-        LoadedResources.getSettings().edgeScrollSize);
+            LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
+            LoadedResources.getReadOnlySettings().cameraSpeed,
+            LoadedResources.getReadOnlySettings().edgeScrollSize);
     this.levelData = LoadedResources.getLevelData();
     this.observer = observer;
     this.playerResources = GameStateManager.playerResources;
