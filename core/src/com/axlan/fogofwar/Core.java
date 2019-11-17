@@ -19,6 +19,9 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
+    /**
+     * Screen to return to after settings menu closes
+     */
     private Screen hiddenScreen = null;
 
     /**

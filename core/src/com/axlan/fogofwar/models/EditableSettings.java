@@ -17,19 +17,26 @@ import com.google.gson.JsonSyntaxException;
 @SuppressWarnings({"WeakerAccess"})
 public final class EditableSettings implements Cloneable {
 
+    /**
+     * Defaults to fallback on if modified settings not found
+     */
     private static EditableSettings defaults = null;
+    /** Make game fullscreen */
     public boolean fullScreen;
+    /** Screen resolution to use */
     public TilePoint screenSize;
 
     private EditableSettings() {
     }
 
+    /** Load the default settings */
     public static void setDefaults(String projectPath) {
         defaults = JsonLoader.loadFromJsonFileInternal(projectPath, EditableSettings.class);
     }
 
     /**
      * This method deserializes the JSON read from the specified path into a Settings object
+     * Returns a clone of the default settings if projectPath cannot be loaded
      *
      * @param projectPath path in the assets directory to JSON file to parse
      * @return a new instance of LevelData populated from the JSON file
@@ -57,6 +64,7 @@ public final class EditableSettings implements Cloneable {
         }
     }
 
+    /** Apply the settings to the currently running game */
     public void apply() {
         if (fullScreen) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());

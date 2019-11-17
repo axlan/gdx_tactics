@@ -43,7 +43,7 @@ public final class LoadedResources {
   }
 
   /**
-   * Get the editable settings that describe the applications behavior
+   * Write the editable settings to JSON file
    */
   public static void writeEditableSettings() {
     JsonLoader.writeToJsonFile(EDITABLE_SETTINGS_FILE, editableSettings);

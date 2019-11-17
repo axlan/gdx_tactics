@@ -9,6 +9,9 @@ import com.kotcrab.vis.ui.widget.*;
 
 public class SettingsScreen extends StageBasedScreen {
 
+    /**
+     * Supported resolutions
+     */
     private final static TilePoint[] RESOLUTIONS = new TilePoint[]{
             new TilePoint(640, 480),
             new TilePoint(800, 600),
