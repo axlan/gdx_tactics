@@ -14,7 +14,7 @@ import java.util.HashMap;
  * <p> A static instance is managed by {@link LoadedResources}
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class UnitStats implements Cloneable {
+public class UnitStats {
 
   /**
    * Identifier for unit

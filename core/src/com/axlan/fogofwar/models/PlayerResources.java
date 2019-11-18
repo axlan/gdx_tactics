@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.models.LevelData.ShopItem;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,11 @@ public class PlayerResources {
   PlayerResources() {
     money = 20;
     purchases = new ArrayList<>();
+  }
+
+  PlayerResources(PlayerResources other) {
+    money = other.money;
+    purchases = new ArrayList<>(other.purchases);
   }
 
   /**

@@ -1,18 +1,10 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.BattleMap;
-import com.axlan.fogofwar.models.BattleState;
-import com.axlan.fogofwar.models.FieldedUnit;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.TileProperties;
+import com.axlan.fogofwar.models.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kotcrab.vis.ui.widget.VisImage;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisSplitPane;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisWindow;
+import com.kotcrab.vis.ui.widget.*;
 
 class PropertyWindow extends VisWindow {
 
@@ -57,7 +49,7 @@ class PropertyWindow extends VisWindow {
       unitPropertiesTable.row();
       //TODO-P3 Clean up drawable generation
       TextureRegionDrawable unitTexture = LoadedResources.getSpriteLookup()
-          .getTextureRegionDrawable(unit.stats.type, Poses.IDLE);
+              .getTextureRegionDrawable(unit.getStats().type, Poses.IDLE);
       unitPropertiesTable.add(new VisImage(unitTexture)).size(32, 32);
       this.add(splitPane);
     } else {

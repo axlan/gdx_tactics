@@ -19,9 +19,9 @@ public class DeployDemo extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
-    GameStateManager.playerResources.addMoney((int) 1e10);
-    GameStateManager.playerResources.makePurchase(levelData.shopItems.get(0));
-    GameStateManager.playerResources.makePurchase(levelData.shopItems.get(1));
+      GameStateManager.gameState.playerResources.addMoney((int) 1e10);
+      GameStateManager.gameState.playerResources.makePurchase(levelData.shopItems.get(0));
+      GameStateManager.gameState.playerResources.makePurchase(levelData.shopItems.get(1));
     this.setScreen(new DeployView(new CompletionObserver() {
       @Override
       public void onDone() {

@@ -1,8 +1,30 @@
+# 11/17 Saving Battle State
+
+I decided to try to get some basic load and save functionality working limited to the the current BattleScreen before I tried to implement it in it's full form.
+
+It was pretty easy to add a menu bar and to populate it dynamically based on the available save slots.
+
+I decided to use the Preferences interface for allowing HTML5 saves.
+
+The first issue I hit was that Gson was failing to deserialize save data that it have serialized. It turned out that when using an object like a TilePoint as a key into a hashmap, Gson was serializing it as it's String representation. This would not correctly serialize back. This was easily fixed by adding enableComplexMapKeySerialization to the builder.
+
+The second issue I hit was with doing deep copies of the game data. I was using a cache of the save data to handle loading and saving, but made the mistake of directly returning a pointer without doing a deep copy. I kind of went down the rabbit hole on the correct way to do deep copies in Java. https://stackoverflow.com/questions/2427883/clone-vs-copy-constructor-which-is-recommended-in-java and https://www.programmingmitra.com/2017/01/Java-cloning-copy-constructor-versus-Object-clone-or-cloning.html were decent resources. Even though it's a little more manual, I think copy constructors make more sense.
+
+# 11/16 Settings Screen
+
+Not the most interesting feature, but I decided to add a settings menu to trial run writing persistent data.
+
+I was able to make a settings menu relatively simply, but I hit an issue with my plan to use JSON files to store persistent data. I found https://stackoverflow.com/questions/26227194/saving-and-loading-files-in-html5-with-libgdx which points out that the HTML5 build only supports https://github.com/libgdx/libgdx/wiki/Preferences as a means to persist data.
+
 # 11/15 Title Screen
 
 Looking for a title screen I realized I'm probably going to want a placeholder image for now. The initial thought I had was for a picture of an old fashion war room with the paddles for pushing figures of units around. Found some decent images when searching "Churchill war rooms".
 
 For now I think I'll use one of these as a placeholder. Since pretty much all my assets are placeholders I think I'll just have to go back through after the initial version to commission an artist or find free replacements.  
+
+# 11/15 Github CI
+
+I remembered that GitHub had added some free CI awhile back, so I decided I might as well add a build test. Extremely straight forward, and I even added a little badge to the README.
 
 # 11/15 Looked into music
 
@@ -22,7 +44,7 @@ Finished my trip, and I want to get this to an initial release. Here's the TODOs
   * (19, 3) //TODO-P3 improve system for allowing multiple AIs for development
   * (20, 3) //TODO-P3 make enemy actions respect fog of war
   * (21, 3) //TODO-P3 make MOVE understand how to improve state even if blocked off
-* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\GameStateManager.java
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\GameStateManager.gameState.java
   * (10, 5) //TODO-P1 add methods for saving and loading state, along with any missing data
   * (11, 5) //TODO-P1 Add save button as child class of actor stage
 * C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\LevelData.java

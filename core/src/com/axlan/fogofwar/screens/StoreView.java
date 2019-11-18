@@ -34,7 +34,7 @@ public class StoreView extends StageBasedScreen {
       CompletionObserver observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
-    setData(LoadedResources.getLevelData(), GameStateManager.playerResources);
+    setData(LoadedResources.getLevelData(), GameStateManager.gameState.playerResources);
   }
 
   /**

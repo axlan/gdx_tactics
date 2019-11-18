@@ -5,12 +5,12 @@ package com.axlan.fogofwar.models;
  *
  * @see com.axlan.fogofwar.screens.BattleView
  */
-public class FieldedUnit {
+public class FieldedUnit implements Cloneable {
 
   /**
-   * Stats for the unit
+   * Unit type identifier
    */
-  public final UnitStats stats;
+  public final String type;
   /**
    * The state of the unit in the current turn
    */
@@ -21,16 +21,26 @@ public class FieldedUnit {
   public int currentHealth;
 
   /**
-   * @param stats Stats for the unit
+   * @param type Unit type identifier
    */
-  public FieldedUnit(UnitStats stats) {
-    this.stats = stats;
-    this.currentHealth = stats.maxHealth;
+  FieldedUnit(String type) {
+    this.type = type;
+    this.currentHealth = getStats().maxHealth;
     state = State.IDLE;
   }
 
+  FieldedUnit(FieldedUnit other) {
+    this.type = other.type;
+    this.currentHealth = other.currentHealth;
+    state = other.state;
+  }
+
+  public UnitStats getStats() {
+    return LoadedResources.getUnitStats().get(type);
+  }
+
   public void fight(FieldedUnit opponent) {
-    opponent.currentHealth -= stats.attack;
+    opponent.currentHealth -= getStats().attack;
   }
 
   /**

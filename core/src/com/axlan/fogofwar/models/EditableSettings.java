@@ -15,7 +15,7 @@ import com.google.gson.JsonSyntaxException;
  * <p> A static instance is managed by {@link LoadedResources}
  */
 @SuppressWarnings({"WeakerAccess"})
-public final class EditableSettings implements Cloneable {
+public final class EditableSettings {
 
     /**
      * Defaults to fallback on if modified settings not found
@@ -27,6 +27,11 @@ public final class EditableSettings implements Cloneable {
     public TilePoint screenSize;
 
     private EditableSettings() {
+    }
+
+    private EditableSettings(EditableSettings other) {
+        this.fullScreen = other.fullScreen;
+        this.screenSize = other.screenSize;
     }
 
     /** Load the default settings */
@@ -55,13 +60,7 @@ public final class EditableSettings implements Cloneable {
         } catch (Exception e) {
             System.out.println("Missing settings file. Using defaults");
         }
-        try {
-            return (EditableSettings) defaults.clone();
-        } catch (CloneNotSupportedException ex) {
-            // Shouldn't be reachable
-            ex.printStackTrace();
-            throw new RuntimeException("CloneNotSupportedException problem");
-        }
+        return new EditableSettings(defaults);
     }
 
     /** Apply the settings to the currently running game */

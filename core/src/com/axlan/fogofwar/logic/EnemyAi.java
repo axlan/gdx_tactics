@@ -8,6 +8,7 @@ import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.UnitBehavior;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.TilePoint;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,7 +66,8 @@ public class EnemyAi {
       List<TilePoint> path = null;
       while (path == null) {
         path = battleMap.getShortestPath(enemyPos, args.target, blockedTiles);
-        if (path == null) {
+          if (path == null || path.size() < 2) {
+              path = null;
           break;
         }
         for (TilePoint point : path.subList(1, path.size() - 1)) {
@@ -79,7 +81,7 @@ public class EnemyAi {
         path = new ArrayList<>();
         path.add(enemyPos);
       } else {
-        int moveIdx = Math.min(enemyUnit.stats.movement, path.size() - 1);
+          int moveIdx = Math.min(enemyUnit.getStats().movement, path.size() - 1);
         path = path.subList(0, moveIdx + 1);
       }
       nextAction = new EnemyMoveAction(path);

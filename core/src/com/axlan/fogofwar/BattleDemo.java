@@ -1,15 +1,14 @@
 package com.axlan.fogofwar;
 
-import com.axlan.fogofwar.models.GameStateManager;
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.screens.BattleView;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.Game;
 import com.kotcrab.vis.ui.VisUI;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class to run a demo of the {@link BattleView}
@@ -22,7 +21,7 @@ public class BattleDemo extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
-    PlayerResources playerResources = GameStateManager.playerResources;
+    PlayerResources playerResources = GameStateManager.gameState.playerResources;
     playerResources.addMoney((int) 1e10);
     playerResources.makePurchase(levelData.shopItems.get(0));
     playerResources.makePurchase(levelData.shopItems.get(1));
@@ -31,8 +30,8 @@ public class BattleDemo extends Game {
     playerUnitPlacements.put(new TilePoint(4, 6), "tank");
     ArrayList<Integer> dummyEnemy = new ArrayList<>();
     dummyEnemy.add(0);
-    GameStateManager.deploymentSelection
-        .setDeployments(dummyEnemy, playerUnitPlacements);
+    List<LevelData.Formation> enemyFormations = levelData.enemyFormations;
+    GameStateManager.gameState.battleState = new BattleState(dummyEnemy, playerUnitPlacements, enemyFormations);
     this.setScreen(new BattleView());
   }
 
