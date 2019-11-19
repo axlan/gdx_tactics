@@ -35,10 +35,19 @@ public class FieldedUnit implements Cloneable {
     state = other.state;
   }
 
+  /**
+   * Get the stats for this unit
+   *
+   * @return unit stats
+   */
   public UnitStats getStats() {
     return LoadedResources.getUnitStats().get(type);
   }
 
+  /**
+   * Deal damage to specified unit
+   * @param opponent unit to damage
+   */
   public void fight(FieldedUnit opponent) {
     opponent.currentHealth -= getStats().attack;
   }

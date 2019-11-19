@@ -11,9 +11,20 @@ import com.kotcrab.vis.ui.widget.PopupMenu;
 
 //TODO-P2 make this more generic and move to gdxtactics
 
+//TODO-P2 add settings option to menu
+
+/**
+ * Class to provide in game menu options like saving and loading
+ */
 class GameMenuBar extends MenuBar {
 
+    /**
+     * Submenu to select save slot
+     */
     private PopupMenu saveSubMenu;
+    /**
+     * Submenu to select load slot
+     */
     private PopupMenu loadSubMenu;
 
     GameMenuBar() {
@@ -22,6 +33,9 @@ class GameMenuBar extends MenuBar {
         updateDataButtons();
     }
 
+    /**
+     * Generate save/load menu items and callbacks based on current save slots
+     */
     private void updateDataButtons() {
         String[] slotLabels = GameStateManager.getSlotLabels();
 

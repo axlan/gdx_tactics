@@ -28,9 +28,16 @@ public class GameStateManager {
    * Active GameState
    */
   public static GameState gameState = new GameState();
+  /**
+   * Cache of saved game states. Null if unused
+   */
   private static GameState[] slots = null;
+  /** Timestamps for each save slot. Null if unused */
   private static long[] slotsTimes = null;
 
+  /**
+   * Loads cache from persistent preferences
+   */
   private static void fetchSavesFromPrefs() {
     if (slots != null) {
       return;
@@ -56,11 +63,15 @@ public class GameStateManager {
     }
   }
 
+  /**
+   * Gets string identifiers for each save slot. {@link #EMPTY_LABEL} if unused
+   * @return array of string labels for save slots
+   */
   public static String[] getSlotLabels() {
     fetchSavesFromPrefs();
     String[] slotNames = new String[NUM_SLOTS];
     Arrays.fill(slotNames, EMPTY_LABEL);
-    DateFormat df = new SimpleDateFormat("dd:MM:yy:HH:mm:ss");
+    DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
     for (int i = 0; i < NUM_SLOTS; i++) {
       if (slotsTimes[i] != 0) {
         Date date = new Date(slotsTimes[i]);
@@ -70,6 +81,10 @@ public class GameStateManager {
     return slotNames;
   }
 
+  /** Save active game data to save slot and write to persistent Preferences
+   *
+   * @param slot index of slot to use. Must be less then {@link #NUM_SLOTS}
+   */
   public static void save(int slot) {
     assert slot < NUM_SLOTS;
     fetchSavesFromPrefs();
@@ -83,6 +98,10 @@ public class GameStateManager {
     prefs.flush();
   }
 
+  /** Replace active game data with data in save slot
+   *
+   * @param slot index of slot to use. Must be less then {@link #NUM_SLOTS}
+   */
   public static void load(int slot) {
     assert slot < NUM_SLOTS;
     fetchSavesFromPrefs();

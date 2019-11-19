@@ -26,9 +26,6 @@ public final class EditableSettings {
     /** Screen resolution to use */
     public TilePoint screenSize;
 
-    private EditableSettings() {
-    }
-
     private EditableSettings(EditableSettings other) {
         this.fullScreen = other.fullScreen;
         this.screenSize = other.screenSize;
