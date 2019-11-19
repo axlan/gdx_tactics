@@ -23,16 +23,16 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 public class BriefingView extends StageBasedScreen {
 
   private final LevelData levelData;
-  private int curPage;
   private final VisLabel dialogue;
   private final VisLabel avatarLabel;
   private final VisImage avatar;
   private final VisLabel settingLabel;
   private final CompletionObserver completionObserver;
+    private int curPage;
 
-  /**
-   * @param observer observer to call when briefing is finished
-   */
+    /**
+     * @param observer observer to call when briefing is finished
+     */
   public BriefingView(CompletionObserver observer) {
     this.completionObserver = observer;
     this.dialogue = new VisLabel();
@@ -51,6 +51,7 @@ public class BriefingView extends StageBasedScreen {
 
   /**
    * Update UI elements with information on new page. No update occurs if page number is invalid.
+   *
    * @param newPage index of new page to show.
    */
   private void updatePage(int newPage) {
@@ -58,18 +59,19 @@ public class BriefingView extends StageBasedScreen {
     if (this.levelData != null && this.curPage < this.levelData.briefPages.size()) {
       this.dialogue.setText(this.levelData.briefPages.get(this.curPage).dialogue);
       this.avatarLabel.setText(this.levelData.briefPages.get(this.curPage).speaker);
-      //TODO-P2 load speaker font and avatar based on name from map
-      //TODO-P3 add drawables to image atlas
+        // TODO-P2 load speaker font and avatar based on name from map
+        // TODO-P3 add drawables to image atlas
       this.avatar.setDrawable(new Texture(Gdx.files.internal("images/avatars/img_avatar.png")));
     }
   }
 
   /**
    * Lay out UI elements
+   *
    * @return Root table for UI
    */
   private VisTable makeBriefingView() {
-    //TODO-P3 Reskin and pretty up
+      // TODO-P3 Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);

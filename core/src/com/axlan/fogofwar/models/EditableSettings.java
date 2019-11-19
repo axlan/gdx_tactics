@@ -6,13 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-//TODO-P2 Switch to libGDX Preferences to allow saves in HTML5
+// TODO-P2 Switch to libGDX Preferences to allow saves in HTML5
 
 /**
  * Class for loading and storing settings from JSON. The structure of the JSON should mimic the
  * structure of the class.
  *
- * <p> A static instance is managed by {@link LoadedResources}
+ * <p>A static instance is managed by {@link LoadedResources}
  */
 @SuppressWarnings({"WeakerAccess"})
 public final class EditableSettings {
@@ -21,9 +21,13 @@ public final class EditableSettings {
      * Defaults to fallback on if modified settings not found
      */
     private static EditableSettings defaults = null;
-    /** Make game fullscreen */
+    /**
+     * Make game fullscreen
+     */
     public boolean fullScreen;
-    /** Screen resolution to use */
+    /**
+     * Screen resolution to use
+     */
     public TilePoint screenSize;
 
     private EditableSettings(EditableSettings other) {
@@ -31,14 +35,16 @@ public final class EditableSettings {
         this.screenSize = other.screenSize;
     }
 
-    /** Load the default settings */
+    /**
+     * Load the default settings
+     */
     public static void setDefaults(String projectPath) {
         defaults = JsonLoader.loadFromJsonFileInternal(projectPath, EditableSettings.class);
     }
 
     /**
-     * This method deserializes the JSON read from the specified path into a Settings object
-     * Returns a clone of the default settings if projectPath cannot be loaded
+     * This method deserializes the JSON read from the specified path into a Settings object Returns a
+     * clone of the default settings if projectPath cannot be loaded
      *
      * @param projectPath path in the assets directory to JSON file to parse
      * @return a new instance of LevelData populated from the JSON file
@@ -49,7 +55,8 @@ public final class EditableSettings {
     static EditableSettings loadFromJson(String projectPath) {
         assert defaults != null;
         try {
-            EditableSettings loaded = JsonLoader.loadFromJsonFileExternal(projectPath, EditableSettings.class);
+            EditableSettings loaded =
+                    JsonLoader.loadFromJsonFileExternal(projectPath, EditableSettings.class);
             if (loaded != null) {
                 return loaded;
             }
@@ -60,7 +67,9 @@ public final class EditableSettings {
         return new EditableSettings(defaults);
     }
 
-    /** Apply the settings to the currently running game */
+    /**
+     * Apply the settings to the currently running game
+     */
     public void apply() {
         if (fullScreen) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
@@ -68,5 +77,4 @@ public final class EditableSettings {
             Gdx.graphics.setWindowedMode(screenSize.x, screenSize.y);
         }
     }
-
 }

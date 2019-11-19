@@ -27,12 +27,12 @@ public class PathSearchDemo extends Game implements InputProcessor {
   private static DemoTileNode goal;
   private static DemoTileNode start;
   private final TilePoint tileSize = new TilePoint(32, 32);
+  private final TilePoint startPoint = new TilePoint(1, 1);
+  private final TilePoint goalPoint = new TilePoint(5, 5);
   private ShapeRenderer shapeRenderer;
   private SpriteBatch spriteBatch;
   private PathVisualizer pathVisualizer;
-  private final TilePoint startPoint = new TilePoint(1, 1);
   private ArrayList<TilePoint> foundPath;
-  private final TilePoint goalPoint = new TilePoint(5, 5);
   private DemoTileNode[][] tiles;
 
   @Override
@@ -48,7 +48,9 @@ public class PathSearchDemo extends Game implements InputProcessor {
       for (PathSearchNode node : path) {
         foundPath.add(((DemoTileNode) node).pos);
       }
-      pathVisualizer.startAnimation("tank", foundPath,
+      pathVisualizer.startAnimation(
+              "tank",
+              foundPath,
               LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
               LoadedResources.getReadOnlySettings().sprites.frameDuration);
     } else if (keycode == Keys.R) {
@@ -183,7 +185,6 @@ public class PathSearchDemo extends Game implements InputProcessor {
           shapeRenderer.setColor(Color.BLUE);
           pathVisualizer.drawArrow(shapeRenderer, foundPath);
         }
-
       }
     }
     shapeRenderer.end();
@@ -229,7 +230,5 @@ public class PathSearchDemo extends Game implements InputProcessor {
       }
       return tmp;
     }
-
   }
-
 }

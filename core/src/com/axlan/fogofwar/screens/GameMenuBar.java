@@ -9,13 +9,17 @@ import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
-//TODO-P2 make this more generic and move to gdxtactics
+// TODO-P2 make this more generic and move to gdxtactics
 
 /**
  * Class to provide in game menu options like saving and loading
  */
 public class GameMenuBar extends MenuBar {
 
+    /**
+     * Callback to replace the current screen with the settings menu
+     */
+    private static CompletionObserver showSettings;
     /**
      * Submenu to select save slot
      */
@@ -25,10 +29,11 @@ public class GameMenuBar extends MenuBar {
      */
     private PopupMenu loadSubMenu;
 
-    /**
-     * Callback to replace the current screen with the settings menu
-     */
-    private static CompletionObserver showSettings;
+    GameMenuBar() {
+        super();
+        this.addMenu(makeOptionsMenu());
+        updateDataButtons();
+    }
 
     /**
      * Sets the callback to use. Must be set before any instance of GameMenuBar is created.
@@ -37,12 +42,6 @@ public class GameMenuBar extends MenuBar {
      */
     public static void setShowSettings(CompletionObserver showSettings) {
         GameMenuBar.showSettings = showSettings;
-    }
-
-    GameMenuBar() {
-        super();
-        this.addMenu(makeOptionsMenu());
-        updateDataButtons();
     }
 
     /**
@@ -58,13 +57,14 @@ public class GameMenuBar extends MenuBar {
             MenuItem item = new MenuItem(slotLabels[i]);
             saveSubMenu.addItem(item);
             final int slot = i;
-            item.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    GameStateManager.save(slot);
-                    updateDataButtons();
-                }
-            });
+            item.addListener(
+                    new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            GameStateManager.save(slot);
+                            updateDataButtons();
+                        }
+                    });
 
             //noinspection StringEquality
             if (slotLabels[i] == GameStateManager.EMPTY_LABEL) {
@@ -72,12 +72,13 @@ public class GameMenuBar extends MenuBar {
             }
             found = true;
             item = new MenuItem(slotLabels[i]);
-            item.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    GameStateManager.load(slot);
-                }
-            });
+            item.addListener(
+                    new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            GameStateManager.load(slot);
+                        }
+                    });
             loadSubMenu.addItem(item);
         }
         if (!found) {
@@ -99,23 +100,24 @@ public class GameMenuBar extends MenuBar {
         optionsMenu.addItem(loadItem);
 
         MenuItem settingsItem = new MenuItem("Settings");
-        settingsItem.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                showSettings.onDone();
-            }
-        });
+        settingsItem.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        showSettings.onDone();
+                    }
+                });
         optionsMenu.addItem(settingsItem);
 
         MenuItem quitItem = new MenuItem("Quit");
-        quitItem.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
+        quitItem.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        Gdx.app.exit();
+                    }
+                });
         optionsMenu.addItem(quitItem);
         return optionsMenu;
     }
-
 }

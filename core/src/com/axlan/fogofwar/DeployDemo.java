@@ -22,12 +22,12 @@ public class DeployDemo extends Game {
       GameStateManager.gameState.playerResources.addMoney((int) 1e10);
       GameStateManager.gameState.playerResources.makePurchase(levelData.shopItems.get(0));
       GameStateManager.gameState.playerResources.makePurchase(levelData.shopItems.get(1));
-    this.setScreen(new DeployView(new CompletionObserver() {
-      @Override
-      public void onDone() {
-
-      }
-    }));
+      this.setScreen(
+              new DeployView(
+                      new CompletionObserver() {
+                          @Override
+                          public void onDone() {
+                          }
+                      }));
   }
-
 }

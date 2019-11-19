@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Class for loading from TextureAtlas based on a sprites name and pose
- *
  */
 @SuppressWarnings("WeakerAccess")
 public class SpriteLookup {
@@ -16,7 +15,7 @@ public class SpriteLookup {
 
   /**
    * @param textureAtlas texture atlas with entries labeled as <type>_<pose>. The indexes of each
-   *                     entry are the frames of the animation.
+   *     entry are the frames of the animation.
    */
   public SpriteLookup(TextureAtlas textureAtlas) {
     this.textureAtlas = textureAtlas;
@@ -24,7 +23,7 @@ public class SpriteLookup {
 
   /**
    * @param sprite name of sprite
-   * @param pose   pose of sprite
+   * @param pose pose of sprite
    * @return Corresponding AtlasRegion
    */
   public Array<AtlasRegion> getRegions(String sprite, Poses pose) {
@@ -33,7 +32,6 @@ public class SpriteLookup {
   }
 
   /**
-   *
    * @param sprite name of sprite
    * @param pose pose of sprite
    * @param frameDuration seconds to show each frame of the animation
@@ -41,8 +39,8 @@ public class SpriteLookup {
    * @return Corresponding AnimatedSprite
    */
   @SuppressWarnings("SameParameterValue")
-  public AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose, float frameDuration,
-      boolean reverse) {
+  public AnimatedSprite<AtlasRegion> getAnimation(
+          String sprite, Poses pose, float frameDuration, boolean reverse) {
     Array<AtlasRegion> regions = getRegions(sprite, pose);
     if (reverse && regions.size > 1) {
       for (int i = regions.size - 2; i >= 0; i--) {
@@ -54,7 +52,7 @@ public class SpriteLookup {
 
   /**
    * @param sprite name of sprite
-   * @param pose   pose of sprite
+   * @param pose pose of sprite
    * @return Corresponding TextureRegionDrawable
    */
   @SuppressWarnings("SameParameterValue")
@@ -70,5 +68,4 @@ public class SpriteLookup {
     UP,
     DOWN
   }
-
 }

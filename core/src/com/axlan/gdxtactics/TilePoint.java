@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * A point in a 2D grid, with integer x and y coordinates
+ *
  * <p>TilePoint instance are immutable
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -75,7 +76,8 @@ public class TilePoint {
     return this.divBy(other.x, other.y);
   }
 
-  /** Get the distance along the 2D North/South/East/West grid
+    /**
+     * Get the distance along the 2D North/South/East/West grid
    *
    * @param x x position of other point
    * @param y y position of other point
@@ -128,5 +130,4 @@ public class TilePoint {
   public String toString() {
     return "(" + x + ", " + y + ")";
   }
-
 }

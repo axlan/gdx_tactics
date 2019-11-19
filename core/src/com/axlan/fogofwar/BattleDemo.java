@@ -31,8 +31,8 @@ public class BattleDemo extends Game {
     ArrayList<Integer> dummyEnemy = new ArrayList<>();
     dummyEnemy.add(0);
     List<LevelData.Formation> enemyFormations = levelData.enemyFormations;
-    GameStateManager.gameState.battleState = new BattleState(dummyEnemy, playerUnitPlacements, enemyFormations);
+    GameStateManager.gameState.battleState =
+            new BattleState(dummyEnemy, playerUnitPlacements, enemyFormations);
     this.setScreen(new BattleView());
   }
-
 }

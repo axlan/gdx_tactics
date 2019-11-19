@@ -14,29 +14,27 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO-P2 Add comments
-//TODO-P2 Add additional AI types
-//TODO-P3 Work on improving AIs
-//TODO-P3 improve system for allowing multiple AIs for development
-//TODO-P3 make enemy actions respect fog of war
-//TODO-P3 make MOVE understand how to improve state even if blocked off
+// TODO-P2 Add comments
+// TODO-P2 Add additional AI types
+// TODO-P3 Work on improving AIs
+// TODO-P3 improve system for allowing multiple AIs for development
+// TODO-P3 make enemy actions respect fog of war
+// TODO-P3 make MOVE understand how to improve state even if blocked off
 
 /**
  * Class for controlling AI units
  */
 public class EnemyAi {
 
-  /**
-   * Level data that specifies AI behavior
-   */
+    /**
+     * Level data that specifies AI behavior
+     */
   private final LevelData levelData;
-  /**
-   * BattleView that keeps track of unit states and map information
-   */
+    /**
+     * BattleView that keeps track of unit states and map information
+     */
   private final BattleState battleState;
-  /**
-   * Class for accessing map data for pathing
-   */
+    /** Class for accessing map data for pathing */
   private final BattleMap battleMap;
 
   public EnemyAi(LevelData levelData, BattleState battleState, BattleMap battleMap) {
@@ -111,9 +109,7 @@ public class EnemyAi {
     return nextAction;
   }
 
-  /**
-   * Class to describes an AI that focuses on moving to a certain point.
-   */
+    /** Class to describes an AI that focuses on moving to a certain point. */
   private static class MoveArgs {
 
     final TilePoint target;
@@ -121,18 +117,15 @@ public class EnemyAi {
     private MoveArgs(TilePoint target) {
       this.target = target;
     }
-  }
+    }
 
-  /**
-   * Base class for describing enemy unit actions
-   */
-  public static abstract class EnemyAction {
+    /**
+     * Base class for describing enemy unit actions
+     */
+    public abstract static class EnemyAction {
+    }
 
-  }
-
-  /**
-   * Class that describes an enemy unit movement
-   */
+    /** Class that describes an enemy unit movement */
   public static class EnemyMoveAction extends EnemyAction {
 
     public final List<TilePoint> path;

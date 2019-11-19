@@ -24,5 +24,4 @@ public class GameState {
         playerResources = new PlayerResources(other.playerResources);
         battleState = new BattleState(other.battleState);
     }
-
 }

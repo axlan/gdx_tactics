@@ -15,16 +15,16 @@ import java.util.Random;
 public class Utilities {
 
   private Utilities() {
-    //this prevents even the native class from
-    //calling this ctor as well :
+    // this prevents even the native class from
+    // calling this ctor as well :
     throw new AssertionError();
   }
 
   /**
    * Randomly select n different numbers from 0 to (length-1) . Use to pick elements from a list.
    *
-   * @param rand   Random number generator
-   * @param n      Number of elements to choose. length >= n
+   * @param rand Random number generator
+   * @param n Number of elements to choose. length >= n
    * @param length Length of list to get indexes for. length >= n
    * @return n different numbers from 0 to (length-1)
    */
@@ -42,10 +42,10 @@ public class Utilities {
   }
 
   /**
-   * Return the last item in a list.  Exception if empty.
+   * Return the last item in a list. Exception if empty.
    *
    * @param list list to get tail from
-   * @param <T>  type of items in list (can be implicit)
+   * @param <T> type of items in list (can be implicit)
    * @return the last element in list
    */
   public static <T> T listGetTail(List<T> list) {
@@ -56,9 +56,9 @@ public class Utilities {
    * Get an item from a list of lists
    *
    * @param list 2d list to get item in
-   * @param x    first index
-   * @param y    second index
-   * @param <T>  type of items in list (can be implicit)
+   * @param x first index
+   * @param y second index
+   * @param <T> type of items in list (can be implicit)
    * @return item at x,y
    */
   public static <T> T listGet2d(List<List<T>> list, int x, int y) {
@@ -70,8 +70,8 @@ public class Utilities {
    * less then end
    *
    * @param start first value in Array
-   * @param end   Last value will be the last greates value in the sequence still less then end
-   * @param inc   Increment each value in the sequence by inc
+   * @param end Last value will be the last greates value in the sequence still less then end
+   * @param inc Increment each value in the sequence by inc
    * @return Array of values in range
    */
   public static Array<Integer> getIntRange(int start, int end, int inc) {
@@ -97,11 +97,11 @@ public class Utilities {
 
   /**
    * Method to generate buttons that map to the possible values of an enum type.
-   * <p>
-   * Names convert from Upper snake case to capitalized spaced words.
+   *
+   * <p>Names convert from Upper snake case to capitalized spaced words.
    *
    * @param enumList Result of EnumType.values()
-   * @param <T>      Class of Enum
+   * @param <T> Class of Enum
    * @return mapping of enums to buttons with text corresponding to the enums names
    */
   public static <T> Map<T, VisTextButton> enumToButtons(T[] enumList) {
@@ -122,6 +122,4 @@ public class Utilities {
     }
     return buttons;
   }
-
-
 }

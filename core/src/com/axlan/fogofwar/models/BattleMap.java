@@ -1,39 +1,35 @@
 package com.axlan.fogofwar.models;
 
-import static com.axlan.gdxtactics.Utilities.listGet2d;
-
 import com.axlan.gdxtactics.PathSearch;
 import com.axlan.gdxtactics.PathSearch.AStarSearchResult;
 import com.axlan.gdxtactics.PathSearch.PathSearchNode;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.axlan.gdxtactics.Utilities.listGet2d;
 
 /**
  * Class for querying information about the current battle map (pathing, tile properties, etc.)
  */
 public class BattleMap {
 
-
-  /**
-   * The length and width of the map in tiles
-   */
+    /**
+     * The length and width of the map in tiles
+     */
   private final TilePoint mapSize;
-  /**
-   * Unmodifiable 2D list of the properties of each tile in the map
-   */
+    /**
+     * Unmodifiable 2D list of the properties of each tile in the map
+     */
   private final List<List<TileProperties>> tileProperties;
-  /**
-   * Goal for current path search
-   */
+    /** Goal for current path search */
   private TilePoint tileNodeGoal = null;
-  /**
-   * Context for current path search
-   */
+    /** Context for current path search */
   private Object tileNodeContext = null;
 
   public BattleMap(final TiledMap map) {
@@ -54,24 +50,25 @@ public class BattleMap {
 
   /**
    * Check if a tile in the map can be passed through. Tiles in the TMX map need a "passable"
-   * property or it will throw a  ClassCastException
+   * property or it will throw a ClassCastException
    *
-   * @param point   the 2D index of the tile of interest
+   * @param point the 2D index of the tile of interest
    * @param context additional context to decide which tiles are passable
    * @return whether the tile can be passed through
    */
   public boolean isTilePassable(TilePoint point, Object context) {
-    if (point.x < 0 || point.x >= mapSize.x || point.y < 0
-        || point.y >= mapSize.y) {
+      if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
       return false;
     }
     if (context instanceof List<?>) {
-      @SuppressWarnings("unchecked") List<TilePoint> blockedTiles = (List<TilePoint>) context;
+        @SuppressWarnings("unchecked")
+        List<TilePoint> blockedTiles = (List<TilePoint>) context;
       return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles.contains(point);
     } else if (context instanceof Map<?, ?>) {
-      @SuppressWarnings("unchecked") Map<TilePoint, FieldedUnit> blockedTiles = (Map<TilePoint, FieldedUnit>) context;
-      return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles
-          .containsKey(point);
+        @SuppressWarnings("unchecked")
+        Map<TilePoint, FieldedUnit> blockedTiles = (Map<TilePoint, FieldedUnit>) context;
+        return listGet2d(tileProperties, point.x, point.y).passable
+                && !blockedTiles.containsKey(point);
     }
     throw new ClassCastException("Bad type for context");
   }
@@ -80,11 +77,10 @@ public class BattleMap {
    * Get the shortest path between two locations on the map avoiding blocked tiles.
    *
    * @param startPos Starting tile index
-   * @param goalPos  Ending tile index
+   * @param goalPos Ending tile index
    * @return The adjacent tiles to move through to go from start to goal
    */
-  public List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos,
-      Object context) {
+  public List<TilePoint> getShortestPath(TilePoint startPos, TilePoint goalPos, Object context) {
     BattleTileNode start = new BattleTileNode(startPos);
     BattleTileNode goal = new BattleTileNode(goalPos);
     tileNodeGoal = goalPos;
@@ -102,13 +98,13 @@ public class BattleMap {
   /**
    * Get all points that are <= distanceLimit from startPos
    *
-   * @param startPos      point to search from
+   * @param startPos point to search from
    * @param distanceLimit distance to search
-   * @param context       context to determine if tiles can be passed through
+   * @param context context to determine if tiles can be passed through
    * @return set of points that are <= distanceLimit
    */
-  public List<TilePoint> getPointsWithinRange(TilePoint startPos, int distanceLimit,
-      Object context) {
+  public List<TilePoint> getPointsWithinRange(
+          TilePoint startPos, int distanceLimit, Object context) {
     BattleTileNode start = new BattleTileNode(startPos);
     tileNodeGoal = null;
     tileNodeContext = context;
@@ -120,20 +116,15 @@ public class BattleMap {
     return points;
   }
 
-  /**
-   * Get the properties for a given tile
-   */
+    /** Get the properties for a given tile */
   public TileProperties getTileProperty(TilePoint point) {
-    if (point.x < 0 || point.x >= mapSize.x || point.y < 0
-        || point.y >= mapSize.y) {
+      if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
       return null;
     }
     return listGet2d(tileProperties, point.x, point.y);
   }
 
-  /**
-   * class to wrap 2D game map tiles to search for shortest movement paths
-   */
+    /** class to wrap 2D game map tiles to search for shortest movement paths */
   class BattleTileNode implements PathSearchNode {
 
     final TilePoint pos;
@@ -201,6 +192,5 @@ public class BattleMap {
     public int hashCode() {
       return pos.hashCode();
     }
-  }
-
+    }
 }

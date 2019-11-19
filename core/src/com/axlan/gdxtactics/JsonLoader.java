@@ -19,9 +19,9 @@ public class JsonLoader {
    * This method deserializes the JSON read from the specified internal path into a <T> object
    *
    * @param projectPath path in the assets directory to JSON file to parse
-   * @param classOfT    class of object to load
+   * @param classOfT class of object to load
    * @return a new instance of <T> populated from the JSON file
-   * @throws JsonIOException     if there was a problem reading from the Reader
+   * @throws JsonIOException if there was a problem reading from the Reader
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   public static <T> T loadFromJsonFileInternal(String projectPath, Class<T> classOfT) {
@@ -35,9 +35,9 @@ public class JsonLoader {
    * This method deserializes the JSON read from the specified external path into a <T> object
    *
    * @param projectPath path in the assets directory to JSON file to parse
-   * @param classOfT    class of object to load
+   * @param classOfT class of object to load
    * @return a new instance of <T> populated from the JSON file
-   * @throws JsonIOException     if there was a problem reading from the Reader
+   * @throws JsonIOException if there was a problem reading from the Reader
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   public static <T> T loadFromJsonFileExternal(String projectPath, Class<T> classOfT) {
@@ -51,7 +51,7 @@ public class JsonLoader {
    * This method serializes an object to a JSON file
    *
    * @param projectPath path in the assets directory to JSON file to write
-   * @param obj         instance of object to write
+   * @param obj instance of object to write
    */
   public static <T> void writeToJsonFile(String projectPath, T obj) {
     Writer writer = Gdx.files.external(projectPath).writer(false);
@@ -70,7 +70,7 @@ public class JsonLoader {
    * @param jsonData String containing JSON to parse
    * @param classOfT class of object to load
    * @return a new instance of <T> populated from the JSON file
-   * @throws JsonIOException     if there was a problem reading from the Reader
+   * @throws JsonIOException if there was a problem reading from the Reader
    * @throws JsonSyntaxException if json is not a valid representation for an object of type
    */
   public static <T> T loadFromJsonString(String jsonData, Class<T> classOfT) {
@@ -78,5 +78,4 @@ public class JsonLoader {
     gsonBuilder.registerTypeAdapterFactory(new ImmutableListTypeAdapterFactory());
     return gsonBuilder.create().fromJson(jsonData, classOfT);
   }
-
 }

@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Extension to Sprite that shows an animated sprite
  *
- * <p> Instances can be created by {@link SpriteLookup}
+ * <p>Instances can be created by {@link SpriteLookup}
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class AnimatedSprite<T> extends Sprite {
@@ -26,7 +26,8 @@ public class AnimatedSprite<T> extends Sprite {
     animation = new Animation<>(frameDuration, frames);
   }
 
-  /** Update the elapsed time that controls which frame of the animation to show
+  /**
+   * Update the elapsed time that controls which frame of the animation to show
    *
    * @param delta amount of time to advance by in seconds
    */
@@ -48,8 +49,9 @@ public class AnimatedSprite<T> extends Sprite {
     super.draw(batch);
   }
 
-  /** Update the elapsed time and draw the frame of the animation on the Batch.
-   * Apply the sprites transformations.
+  /**
+   * Update the elapsed time and draw the frame of the animation on the Batch. Apply the sprites
+   * transformations.
    *
    * @param batch Batch to draw on
    * @param elapsedTime the total elapsed time used to determine the current frame
@@ -63,5 +65,4 @@ public class AnimatedSprite<T> extends Sprite {
   public void setTilePosition(TilePoint tilePoint) {
     this.setPosition(tilePoint.x * this.getWidth(), tilePoint.y * this.getHeight());
   }
-
 }

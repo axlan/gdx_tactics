@@ -1,6 +1,5 @@
 package com.axlan.gdxtactics;
 
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -8,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -25,8 +25,7 @@ class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
 
   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
     Type type = typeToken.getType();
-    if (typeToken.getRawType() != List.class
-        || !(type instanceof ParameterizedType)) {
+      if (typeToken.getRawType() != List.class || !(type instanceof ParameterizedType)) {
       return null;
     }
 
@@ -35,8 +34,7 @@ class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
     return (TypeAdapter<T>) newImmutableListAdapter(elementAdapter);
   }
 
-  private <E> TypeAdapter<List<E>> newImmutableListAdapter(
-      final TypeAdapter<E> elementAdapter) {
+    private <E> TypeAdapter<List<E>> newImmutableListAdapter(final TypeAdapter<E> elementAdapter) {
     return new TypeAdapter<List<E>>() {
       @Override
       public void write(JsonWriter out, List<E> value) throws IOException {

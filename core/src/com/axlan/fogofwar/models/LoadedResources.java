@@ -12,9 +12,10 @@ import java.util.Map;
 
 /**
  * Class for managing resources loaded from filesystem.
+ *
  * <p><b>NOTE</b>: The initialization methods must be called at the start of the application.
  *
- * <P>All members of this class are static and immutable
+ * <p>All members of this class are static and immutable
  */
 public final class LoadedResources {
 
@@ -49,10 +50,7 @@ public final class LoadedResources {
     JsonLoader.writeToJsonFile(EDITABLE_SETTINGS_FILE, editableSettings);
   }
 
-
-  /**
-   * Get the SpriteLookup used to generate sprites
-   */
+  /** Get the SpriteLookup used to generate sprites */
   public static SpriteLookup getSpriteLookup() {
     return spriteLookup;
   }
@@ -61,18 +59,16 @@ public final class LoadedResources {
    * Load an AnimatedSprite by name and pose using default setting for frameDuration and reverse
    *
    * @param sprite name of sprite
-   * @param pose   pose of sprite
+   * @param pose pose of sprite
    * @return Corresponding AnimatedSprite
    */
-  public static AnimatedSprite<AtlasRegion> getAnimation(
-      String sprite, Poses pose) {
-    return spriteLookup
-            .getAnimation(sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
+  public static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose) {
+    return spriteLookup.getAnimation(
+            sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
   }
 
-
   /** Get the mapping of unit types to their corresponding stats. */
-  public static Map<String, UnitStats> getUnitStats() {
+  static Map<String, UnitStats> getUnitStats() {
     return unitStats;
   }
 
@@ -88,14 +84,14 @@ public final class LoadedResources {
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
-    unitStats = Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
+    unitStats =
+            Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
   }
 
-  //TODO-P1 Add concept of multiple levels
+  // TODO-P1 Add concept of multiple levels
 
   /** Load the resources for the current level */
   public static void initializeLevel() {
     levelData = LevelData.loadFromJson(readOnlySettings.levelDataFile);
   }
-
 }

@@ -7,12 +7,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.kotcrab.vis.ui.VisUI;
 
-//TODO-P2 Add campaign component. You have set pool of troops and decide how many to commit to each battle. They will take time to be usable again or have penalty of fuel.
-//TODO-P3 Add random scenario generation.
-//TODO-P2 Add music and sound effects.
-//TODO-P2 Add unit tests with CI. (Probably easiest with web output, and Selenium?)
-//TODO-P3 Use AssetManager to properly load and unload assets to fix "finished with non-zero exit value -1"
-//TODO-P3 Add proper logging framework
+// TODO-P2 Add campaign component. You have set pool of troops and decide how many to commit to each
+// battle. They will take time to be usable again or have penalty of fuel.
+// TODO-P3 Add random scenario generation.
+// TODO-P2 Add music and sound effects.
+// TODO-P2 Add unit tests with CI. (Probably easiest with web output, and Selenium?)
+// TODO-P3 Use AssetManager to properly load and unload assets to fix "finished with non-zero exit
+// value -1"
+// TODO-P3 Add proper logging framework
 
 /**
  * Main class for game. Supervises switching between the views and handling shared resources.
@@ -43,7 +45,7 @@ public class Core extends Game {
                                 showSettings();
                                 break;
                             case LOAD_GAME:
-                                //TODO-P1 Load game Menu
+                                // TODO-P1 Load game Menu
                         }
                     }
                 };
@@ -67,9 +69,9 @@ public class Core extends Game {
         this.setScreen(storeView);
     }
 
-  /**
-   * Switch the screen to the {@link StoreView}
-   */
+    /**
+     * Switch the screen to the {@link StoreView}
+     */
   private void showStore() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -79,12 +81,12 @@ public class Core extends Game {
           }
         };
     StoreView storeView = new StoreView(observer);
-    this.setScreen(storeView);
+      this.setScreen(storeView);
   }
 
-  /**
-   * Switch the screen to the {@link BriefingView}
-   */
+    /**
+     * Switch the screen to the {@link BriefingView}
+     */
   private void showBriefing() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -94,12 +96,10 @@ public class Core extends Game {
           }
         };
     BriefingView briefingView = new BriefingView(observer);
-    this.setScreen(briefingView);
+      this.setScreen(briefingView);
   }
 
-  /**
-   * Switch the screen to the {@link DeployView}
-   */
+    /** Switch the screen to the {@link DeployView} */
   private void showDeployMap() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -109,29 +109,28 @@ public class Core extends Game {
           }
         };
     DeployView deployView = new DeployView(observer);
-    this.setScreen(deployView);
+      this.setScreen(deployView);
   }
 
-  /**
-   * Switch the screen to the {@link BattleView}
-   */
+    /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
     this.setScreen(new BattleView());
   }
 
   @Override
   public void create() {
-    VisUI.load();
-    //TODO-P2 load custom skin
+      VisUI.load();
+      // TODO-P2 load custom skin
     LoadedResources.initializeGlobal();
-    LoadedResources.initializeLevel();
+      LoadedResources.initializeLevel();
       // Set to callback to be able to show the settings menu from other screens
-      GameMenuBar.setShowSettings(new CompletionObserver() {
+      GameMenuBar.setShowSettings(
+              new CompletionObserver() {
           @Override
           public void onDone() {
               showSettings();
           }
-      });
+              });
       this.showTitle();
   }
 }

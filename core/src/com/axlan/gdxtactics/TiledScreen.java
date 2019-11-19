@@ -16,44 +16,43 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-//TODO-P3 add capability for animated tiles
+// TODO-P3 add capability for animated tiles
 
 /**
  * Class for drawing and handling input for a 2D {@link TiledMap} with a {@link OrthographicCamera}
  */
 public abstract class TiledScreen extends StageBasedScreen implements InputProcessor {
 
-  private final SpriteBatch batch;
   protected final TiledMap map;
+    private final SpriteBatch batch;
   private final OrthogonalTiledMapRenderer renderer;
   private final ShapeRenderer shapeRenderer;
   private final int tilesPerScreenWidth;
   private final float cameraSpeed;
   private final int edgeScrollSize;
+    private final float[] cameraBounds = new float[4];
   private boolean keyMoveCameraToLeft = false;
   private boolean keyMoveCameraToTop = false;
   private boolean keyMoveCameraToRight = false;
   private boolean keyMoveCameraToBottom = false;
   private boolean mouseMoveCameraToLeft = false;
   private boolean mouseMoveCameraToTop = false;
-  private final float[] cameraBounds = new float[4];
   private boolean mouseMoveCameraToRight = false;
   private boolean mouseMoveCameraToBottom = false;
   private OrthographicCamera camera;
 
   /**
-   *
    * @param levelTmxFilename Location of TMX map use.
-   *                         <p>Layers from the map : 0 - under entities / 1+ - above entities
+   *     <p>Layers from the map : 0 - under entities / 1+ - above entities
    * @param tilesPerScreenWidth This is the number of tiles that are visible at a time across the
-   *                            width of the screen. It sets the zoom level.
+   *     width of the screen. It sets the zoom level.
    * @param cameraSpeed How many pixels should the camera pan per second when scrolling across the
-   *                    map.
+   *     map.
    * @param edgeScrollSize When the mouse is closer then this many pixels from the edge, scroll the
-   *                       map.
+   *     map.
    */
-  protected TiledScreen(String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed,
-      int edgeScrollSize) {
+  protected TiledScreen(
+          String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
     this.tilesPerScreenWidth = tilesPerScreenWidth;
     this.cameraSpeed = cameraSpeed;
     this.edgeScrollSize = edgeScrollSize;
@@ -67,8 +66,8 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   }
 
   /**
-   *
    * Render entities between background and foreground layers
+   *
    * @param delta time since last update
    * @param batch batch to draw on. Begin must be called before use.
    * @param shapeRenderer shape render to draw on. Begin must be called before use.
@@ -76,17 +75,18 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   protected abstract void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   /**
-   *
    * Draw on top of all other elements, including any UI added to stage.
+   *
    * @param delta time since last update
    * @param batch batch to draw on. Begin must be called before use.
    * @param shapeRenderer shape render to draw on. Begin must be called before use.
    */
-  protected abstract void renderAboveUI(float delta, SpriteBatch batch,
-      ShapeRenderer shapeRenderer);
+  protected abstract void renderAboveUI(
+          float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   /**
    * Update state before drawing
+   *
    * @param delta time since last update
    */
   protected abstract void updateScreen(float delta);
@@ -95,6 +95,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Coverts from a pixel on the screen to a pixel before the camera transformation
+   *
    * @param screenCoord pixel location on the screen
    * @return pixel location before the camera transformation
    */
@@ -105,6 +106,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Coverts from a pixel before the camera transformation to a pixel on the screen
+   *
    * @param worldCoord pixel location before the camera transformation
    * @return pixel location on the screen
    */
@@ -116,6 +118,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Coverts from a pixel on the screen to the tile index it was in
+   *
    * @param screenCoord pixel location on the screen
    * @return tile index the screen pixel was in
    */
@@ -126,6 +129,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Coverts a tile index to a pixel before the camera transformation
+   *
    * @param tileCoord index of a tile in the map
    * @return pixel location of corner of tile before the camera transformation
    */
@@ -135,6 +139,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Coverts a tile index to a pixel on screen
+   *
    * @param tileCoord index of a tile in the map
    * @return pixel location of corner of tile on screen
    */
@@ -185,6 +190,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
   /**
    * Get the rectangle of pixels a tile is draw at before the camera transformation
+   *
    * @param point index of tile
    * @return rectangle covering where the tile is draw before the camera transformation
    */
@@ -193,30 +199,29 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return new Rectangle(worldPoint.x, worldPoint.y, getTilePixelSize().x, getTilePixelSize().y);
   }
 
-  /**
-   * @return The size of the world map in tiles
-   */
+    /**
+     * @return The size of the world map in tiles
+     */
   private TilePoint getMapTileSize() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
     return new TilePoint(layer.getWidth(), layer.getHeight());
   }
 
-  /**
-   * @return The size of a tile in pixels
-   */
+    /**
+     * @return The size of a tile in pixels
+     */
   protected TilePoint getTilePixelSize() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
     return new TilePoint(layer.getTileWidth(), layer.getTileWidth());
   }
 
-  /**
-   * @return The size of the world map in pixels
-   */
+    /**
+     * @return The size of the world map in pixels
+     */
   @SuppressWarnings("WeakerAccess")
   protected TilePoint getMapPixelSize() {
     return getMapTileSize().mult(getTilePixelSize());
   }
-
 
   @Override
   public void show() {
@@ -245,8 +250,9 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     updateScreen(delta);
     renderer.render(backgroundLayers);
     Gdx.gl.glEnable(GL20.GL_BLEND);
-    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,
-        GL20.GL_ONE_MINUS_SRC_ALPHA);   // <<< this line here makes the magic we're after
+      Gdx.gl.glBlendFunc(
+              GL20.GL_SRC_ALPHA,
+              GL20.GL_ONE_MINUS_SRC_ALPHA); // <<< this line here makes the magic we're after
 
     this.batch.setProjectionMatrix(camera.combined);
     this.shapeRenderer.setProjectionMatrix(camera.combined);
@@ -267,11 +273,12 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     // Boundaries for the camera : left, top, right, bottom
     float horizontalMargin =
-        (width * cameraZoom > getMapPixelSize().x) ? (width * cameraZoom - getMapPixelSize().x) / 2
+            (width * cameraZoom > getMapPixelSize().x)
+                    ? (width * cameraZoom - getMapPixelSize().x) / 2
             : 0;
     float verticalMargin =
-        (height * cameraZoom > getMapPixelSize().y) ? (height * cameraZoom - getMapPixelSize().y)
-            / 2
+            (height * cameraZoom > getMapPixelSize().y)
+                    ? (height * cameraZoom - getMapPixelSize().y) / 2
             : 0;
     cameraBounds[0] = ((float) width / 2 - horizontalMargin) * cameraZoom;
     cameraBounds[1] = getMapPixelSize().y - (float) height / 2 * cameraZoom + verticalMargin;
@@ -283,21 +290,20 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     super.resize(width, height);
   }
 
-  @Override
-  public void pause() {
-  }
+    @Override
+    public void pause() {
+    }
 
-  @Override
-  public void resume() {
-  }
+    @Override
+    public void resume() {
+    }
 
-  @Override
-  public void hide() {
-  }
+    @Override
+    public void hide() {
+    }
 
-  @Override
-  public void dispose() {
-  }
+    @Override
+    public void dispose() {}
 
   /* Implemented InputProcessor Methods */
 
@@ -349,6 +355,4 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   public boolean scrolled(int amount) {
     return false;
   }
-
-
 }

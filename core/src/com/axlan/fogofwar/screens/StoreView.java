@@ -23,23 +23,22 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
  */
 public class StoreView extends StageBasedScreen {
 
-  private LevelData levelData;
-  private PlayerResources playerResources;
   private final CompletionObserver observer;
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
+    private LevelData levelData;
+    private PlayerResources playerResources;
 
-  public StoreView(
-      CompletionObserver observer) {
+    public StoreView(CompletionObserver observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
     setData(LoadedResources.getLevelData(), GameStateManager.gameState.playerResources);
-  }
+    }
 
-  /**
-   * Redraw labels and enable buttons based on new amount of money left after a purchase.
-   */
+    /**
+     * Redraw labels and enable buttons based on new amount of money left after a purchase.
+     */
   private void updateMoney() {
     this.moneyLabel.setText(String.format("Money Available: %d", playerResources.getMoney()));
     for (int i = 0; i < levelData.shopItems.size(); i++) {
@@ -51,7 +50,7 @@ public class StoreView extends StageBasedScreen {
   /**
    * Update the UI based on data about the current level, and game state.
    *
-   * @param levelData       description of current level
+   * @param levelData description of current level
    * @param playerResources players current state
    */
   @SuppressWarnings("SameParameterValue")
@@ -108,10 +107,11 @@ public class StoreView extends StageBasedScreen {
 
   /**
    * Lay out UI elements
+   *
    * @return Root table for UI
    */
   private VisTable makeStoreView() {
-    //TODO-P3 Reskin and pretty up
+      // TODO-P3 Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);
