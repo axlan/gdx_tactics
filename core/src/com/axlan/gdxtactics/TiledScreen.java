@@ -280,6 +280,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     camera = new OrthographicCamera(width, height); // (1080,720);
     camera.setToOrtho(false);
     camera.zoom = cameraZoom;
+    super.resize(width, height);
   }
 
   @Override

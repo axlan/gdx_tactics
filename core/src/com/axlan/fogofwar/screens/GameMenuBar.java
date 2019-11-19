@@ -11,12 +11,10 @@ import com.kotcrab.vis.ui.widget.PopupMenu;
 
 //TODO-P2 make this more generic and move to gdxtactics
 
-//TODO-P2 add settings option to menu
-
 /**
  * Class to provide in game menu options like saving and loading
  */
-class GameMenuBar extends MenuBar {
+public class GameMenuBar extends MenuBar {
 
     /**
      * Submenu to select save slot
@@ -26,6 +24,20 @@ class GameMenuBar extends MenuBar {
      * Submenu to select load slot
      */
     private PopupMenu loadSubMenu;
+
+    /**
+     * Callback to replace the current screen with the settings menu
+     */
+    private static CompletionObserver showSettings;
+
+    /**
+     * Sets the callback to use. Must be set before any instance of GameMenuBar is created.
+     *
+     * @param showSettings Callback to replace the current screen with the settings menu
+     */
+    public static void setShowSettings(CompletionObserver showSettings) {
+        GameMenuBar.showSettings = showSettings;
+    }
 
     GameMenuBar() {
         super();
@@ -85,6 +97,15 @@ class GameMenuBar extends MenuBar {
         loadSubMenu = new PopupMenu();
         loadItem.setSubMenu(loadSubMenu);
         optionsMenu.addItem(loadItem);
+
+        MenuItem settingsItem = new MenuItem("Settings");
+        settingsItem.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                showSettings.onDone();
+            }
+        });
+        optionsMenu.addItem(settingsItem);
 
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.addListener(new ChangeListener() {

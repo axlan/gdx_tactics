@@ -1,3 +1,7 @@
+# 11/19 Added Settings to Battle View
+
+Added a method for setting a static callback in the menubar. Aside from fixing a resizing issue, mostly just worked.
+
 # 11/17 Saving Battle State
 
 I decided to try to get some basic load and save functionality working limited to the the current BattleScreen before I tried to implement it in it's full form.

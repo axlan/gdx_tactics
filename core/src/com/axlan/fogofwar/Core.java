@@ -125,7 +125,13 @@ public class Core extends Game {
     //TODO-P2 load custom skin
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
-
+      // Set to callback to be able to show the settings menu from other screens
+      GameMenuBar.setShowSettings(new CompletionObserver() {
+          @Override
+          public void onDone() {
+              showSettings();
+          }
+      });
       this.showTitle();
   }
 }
