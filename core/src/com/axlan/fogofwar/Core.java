@@ -119,18 +119,18 @@ public class Core extends Game {
 
   @Override
   public void create() {
-      VisUI.load();
-      // TODO-P2 load custom skin
+    VisUI.load();
+    // TODO-P2 load custom skin
     LoadedResources.initializeGlobal();
-      LoadedResources.initializeLevel();
-      // Set to callback to be able to show the settings menu from other screens
-      GameMenuBar.setShowSettings(
-              new CompletionObserver() {
+    LoadedResources.initializeLevel();
+    // Set to callback to be able to show the settings menu from other screens
+    GameMenuBar.setShowSettings(
+        new CompletionObserver() {
           @Override
           public void onDone() {
-              showSettings();
+            showSettings();
           }
-              });
-      this.showTitle();
+        });
+    this.showTitle();
   }
 }
