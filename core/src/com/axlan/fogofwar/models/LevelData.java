@@ -20,14 +20,14 @@ import java.util.List;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class LevelData {
 
-    /**
-     * The tile in the map should the camera should start centered on
-     */
+  /**
+   * The tile in the map should the camera should start centered on
+   */
   public final TilePoint cameraCenter;
   /** The set of units available to the player for deployment */
   public final List<UnitAllotment> playerUnits;
 
-    // TODO-P3 Add ally formations
+  // TODO-P3 Add ally formations
   /** The string to display describing where the briefing is occurring */
   public final String briefSetting;
   /** The pages of the briefing to step through */
@@ -40,31 +40,33 @@ public final class LevelData {
   public final List<Formation> enemyFormations;
   /** The name of the map to load/use */
   public final String mapName;
-    /**
-     * True if the player goes first
-     */
+  /**
+   * True if the player goes first
+   */
   public final boolean doesPlayerGoFirst;
-    /**
-     * How the enemy units will behave
-     */
+  /**
+   * How the enemy units will behave
+   */
   public final UnitBehavior enemyBehavior;
-    /** Additional optional win conditions for the player */
+  /**
+   * Additional optional win conditions for the player
+   */
   public final AlternativeWinConditions playerWinConditions;
-    /** Additional optional win conditions for the enemy */
+  /** Additional optional win conditions for the enemy */
   public final AlternativeWinConditions enemyWinConditions;
 
-    private LevelData(
-            TilePoint cameraCenter,
-            List<UnitAllotment> playerUnits,
-            String briefSetting,
-            List<BriefPage> briefPages,
-            List<ShopItem> shopItems,
+  private LevelData(
+      TilePoint cameraCenter,
+      List<UnitAllotment> playerUnits,
+      String briefSetting,
+      List<BriefPage> briefPages,
+      List<ShopItem> shopItems,
       List<TilePoint> playerSpawnPoints,
-            List<Formation> enemyFormations,
-            String mapName,
-            UnitBehavior enemyBehavior,
-            boolean doesPlayerGoFirst,
-            AlternativeWinConditions playerWinConditions,
+      List<Formation> enemyFormations,
+      String mapName,
+      UnitBehavior enemyBehavior,
+      boolean doesPlayerGoFirst,
+      AlternativeWinConditions playerWinConditions,
       AlternativeWinConditions enemyWinConditions) {
     this.cameraCenter = cameraCenter;
     this.playerUnits = Collections.unmodifiableList(playerUnits);
@@ -92,14 +94,14 @@ public final class LevelData {
     return JsonLoader.loadFromJsonFileInternal(projectPath, LevelData.class);
   }
 
-    /** What behavior should the enemy formation take */
+  /** What behavior should the enemy formation take */
   public enum UnitBehaviorType {
-        MOVE,
-        DEFEND,
-        ATTACK
-    }
+    MOVE,
+    DEFEND,
+    ATTACK
+  }
 
-    /** Should the units in a formation be spotted in order, or at random */
+  /** Should the units in a formation be spotted in order, or at random */
   public enum SpotType {
     RANDOM,
     ORDERED
@@ -119,26 +121,26 @@ public final class LevelData {
     }
   }
 
-    // TODO-P3 replace UnitBehavior with more versatile Lua scripts
+  // TODO-P3 replace UnitBehavior with more versatile Lua scripts
 
-    /** Description of behavior enemy unit should take */
+  /** Description of behavior enemy unit should take */
   public static class UnitBehavior {
 
     /** Type of behavior pattern */
     public final UnitBehaviorType behaviorType;
-        /** String containing Json for parameters that modify the behaviorType */
+    /** String containing Json for parameters that modify the behaviorType */
     public final String args;
 
     private UnitBehavior(UnitBehaviorType behaviorType, String args) {
       this.behaviorType = behaviorType;
       this.args = args;
     }
-    }
+  }
 
-    /** Optional alternative win conditions */
+  /** Optional alternative win conditions */
   public static class AlternativeWinConditions {
 
-        /** Win if unit reaches this point */
+    /** Win if unit reaches this point */
     public final TilePoint moveToPoint;
 
     public AlternativeWinConditions(TilePoint moveToPoint) {
@@ -210,8 +212,8 @@ public final class LevelData {
    */
   public static class Intel {
 
-      // TODO-P2 Add reported and actual accuracy values, mis-identification, false positive, etc.
-      // TODO-P2 Allow items to persist between levels.
+    // TODO-P2 Add reported and actual accuracy values, mis-identification, false positive, etc.
+    // TODO-P2 Allow items to persist between levels.
     /** The index of the {@link Formation formation} to reveal info on */
     public final int formationSpottedIdx;
     /** How many units in the formation should be reveled */
@@ -219,7 +221,7 @@ public final class LevelData {
     /** How should the reveal be ordered */
     public final SpotType spotType;
 
-      private Intel(int formationSpottedIdx, int numberOfUnits, SpotType spotType) {
+    private Intel(int formationSpottedIdx, int numberOfUnits, SpotType spotType) {
       this.formationSpottedIdx = formationSpottedIdx;
       this.numberOfUnits = numberOfUnits;
       this.spotType = spotType;
@@ -238,7 +240,7 @@ public final class LevelData {
     /** Pieces of intel that buying the item will reveal */
     public final List<Intel> effects;
 
-      private ShopItem(String name, int cost, String description, List<Intel> effects) {
+    private ShopItem(String name, int cost, String description, List<Intel> effects) {
       this.name = name;
       this.cost = cost;
       this.description = description;

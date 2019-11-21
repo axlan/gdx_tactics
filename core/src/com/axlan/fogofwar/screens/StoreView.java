@@ -27,18 +27,20 @@ public class StoreView extends StageBasedScreen {
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
-    private LevelData levelData;
-    private PlayerResources playerResources;
+  private LevelData levelData;
+  private PlayerResources playerResources;
 
-    public StoreView(CompletionObserver observer) {
+  public StoreView(CompletionObserver observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
-      setData(LoadedResources.getLevelData(), LoadedResources.getGameStateManager().gameState.playerResources);
-    }
+    setData(
+        LoadedResources.getLevelData(),
+        LoadedResources.getGameStateManager().gameState.playerResources);
+  }
 
-    /**
-     * Redraw labels and enable buttons based on new amount of money left after a purchase.
-     */
+  /**
+   * Redraw labels and enable buttons based on new amount of money left after a purchase.
+   */
   private void updateMoney() {
     this.moneyLabel.setText(String.format("Money Available: %d", playerResources.getMoney()));
     for (int i = 0; i < levelData.shopItems.size(); i++) {
@@ -111,7 +113,7 @@ public class StoreView extends StageBasedScreen {
    * @return Root table for UI
    */
   private VisTable makeStoreView() {
-      // TODO-P3 Reskin and pretty up
+    // TODO-P3 Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);

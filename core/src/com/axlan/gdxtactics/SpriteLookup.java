@@ -40,7 +40,7 @@ public class SpriteLookup {
    */
   @SuppressWarnings("SameParameterValue")
   public AnimatedSprite<AtlasRegion> getAnimation(
-          String sprite, Poses pose, float frameDuration, boolean reverse) {
+      String sprite, Poses pose, float frameDuration, boolean reverse) {
     Array<AtlasRegion> regions = getRegions(sprite, pose);
     if (reverse && regions.size > 1) {
       for (int i = regions.size - 2; i >= 0; i--) {

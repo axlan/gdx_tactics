@@ -25,7 +25,8 @@ public class BattleDemo extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
-    PlayerResources playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
+    PlayerResources playerResources =
+        LoadedResources.getGameStateManager().gameState.playerResources;
     playerResources.addMoney((int) 1e10);
     playerResources.makePurchase(levelData.shopItems.get(0));
     playerResources.makePurchase(levelData.shopItems.get(1));
@@ -36,7 +37,7 @@ public class BattleDemo extends Game {
     dummyEnemy.add(0);
     List<LevelData.Formation> enemyFormations = levelData.enemyFormations;
     LoadedResources.getGameStateManager().gameState.battleState =
-            new BattleState(dummyEnemy, playerUnitPlacements, enemyFormations);
+        new BattleState(dummyEnemy, playerUnitPlacements, enemyFormations);
     GameMenuBar menuBar = new GameMenuBar(null, LoadedResources.getGameStateManager());
     this.setScreen(new BattleView(menuBar));
   }

@@ -5,12 +5,12 @@ package com.axlan.fogofwar.screens;
  */
 public interface TitleSelectionObserver {
 
-    void onDone(TitleSelection selection);
+  void onDone(TitleSelection selection);
 
-    enum TitleSelection {
-        NEW_GAME,
-        LOAD_GAME,
-        SETTINGS,
-        QUIT
-    }
+  enum TitleSelection {
+    NEW_GAME,
+    LOAD_GAME,
+    SETTINGS,
+    QUIT
+  }
 }

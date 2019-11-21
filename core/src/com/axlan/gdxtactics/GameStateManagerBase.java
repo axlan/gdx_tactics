@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
- * Base class for storing the state of the current game session. State should be complete for saving and
- * reloading.
+ * Base class for storing the state of the current game session. State should be complete for saving
+ * and reloading.
  */
 public abstract class GameStateManagerBase<T> {
   static final String EMPTY_LABEL = "Empty";
@@ -69,9 +69,7 @@ public abstract class GameStateManagerBase<T> {
    */
   protected abstract void fetchSavesFromPrefs();
 
-  /**
-   * Loads cache from persistent preferences
-   */
+  /** Loads cache from persistent preferences */
   protected void fetchSavesFromPrefs(Class<T> type) {
     slots = newGameStateArray(NUM_SLOTS);
     slotsTimes = new long[NUM_SLOTS];
@@ -122,7 +120,8 @@ public abstract class GameStateManagerBase<T> {
     slots[slot] = newGameState(gameState);
     slotsTimes[slot] = System.currentTimeMillis();
     Preferences prefs = Gdx.app.getPreferences(SAVE_PREF_NAME);
-    // enableComplexMapKeySerialization needed to properly serialize TilePoint key in playerUnitPlacements
+    // enableComplexMapKeySerialization needed to properly serialize TilePoint key in
+    // playerUnitPlacements
     Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
     prefs.putString(SAVE_SLOT_NAME + slot, gson.toJson(gameState));
     prefs.putLong(SAVE_SLOT_TIME_NAME + slot, slotsTimes[slot]);

@@ -5,7 +5,6 @@ import com.axlan.gdxtactics.GameStateManagerBase;
 /**
  * Class for storing the state of the current game session. State should be complete for saving and
  * reloading.
- *
  */
 public class GameStateManager extends GameStateManagerBase<GameState> {
 

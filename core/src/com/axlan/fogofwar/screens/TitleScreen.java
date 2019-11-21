@@ -23,43 +23,43 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
  */
 public class TitleScreen extends StageBasedScreen {
 
-    private TitleSelectionObserver observer;
+  private TitleSelectionObserver observer;
 
-    public TitleScreen(TitleSelectionObserver observer) {
-        this.observer = observer;
-        this.stage.addActor(this.makeTitleScreen());
+  public TitleScreen(TitleSelectionObserver observer) {
+    this.observer = observer;
+    this.stage.addActor(this.makeTitleScreen());
+  }
+
+  private VisTable makeTitleScreen() {
+    VisTable root = new VisTable();
+    root.setFillParent(true);
+    // TODO-P3 add drawables to image atlas
+    root.setBackground(
+        new TextureRegionDrawable(
+            new Texture(Gdx.files.internal("images/backgrounds/war_room.png"))));
+
+    // TODO-P3 add better font
+    // TODO-P3 add font to skin
+    BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
+    LabelStyle titleStyle = new LabelStyle(titleFont, Color.GRAY);
+    VisLabel title = new VisLabel("Fog of War", titleStyle);
+    root.add(title);
+    root.row();
+
+    Map<TitleSelection, VisTextButton> buttons = enumToButtons(TitleSelection.values());
+    for (final TitleSelection val : buttons.keySet()) {
+      VisTextButton button = buttons.get(val);
+      button.addListener(
+          new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+              observer.onDone(val);
+            }
+          });
+      root.add(button);
+      root.row();
     }
 
-    private VisTable makeTitleScreen() {
-        VisTable root = new VisTable();
-        root.setFillParent(true);
-        // TODO-P3 add drawables to image atlas
-        root.setBackground(
-                new TextureRegionDrawable(
-                        new Texture(Gdx.files.internal("images/backgrounds/war_room.png"))));
-
-        // TODO-P3 add better font
-        // TODO-P3 add font to skin
-        BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
-        LabelStyle titleStyle = new LabelStyle(titleFont, Color.GRAY);
-        VisLabel title = new VisLabel("Fog of War", titleStyle);
-        root.add(title);
-        root.row();
-
-        Map<TitleSelection, VisTextButton> buttons = enumToButtons(TitleSelection.values());
-        for (final TitleSelection val : buttons.keySet()) {
-            VisTextButton button = buttons.get(val);
-            button.addListener(
-                    new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-                            observer.onDone(val);
-                        }
-                    });
-            root.add(button);
-            root.row();
-        }
-
-        return root;
-    }
+    return root;
+  }
 }

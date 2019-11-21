@@ -23,58 +23,59 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
-    /**
-     * Screen to return to after settings menu closes
-     */
-    private Screen hiddenScreen = null;
+  /**
+   * Screen to return to after settings menu closes
+   */
+  private Screen hiddenScreen = null;
+
   private GameMenuBar menuBar;
 
-    /**
-     * Switch the screen to the {@link TitleScreen}
-     */
-    private void showTitle() {
-        TitleSelectionObserver observer =
-                new TitleSelectionObserver() {
-                    @Override
-                    public void onDone(TitleSelection selection) {
-                        switch (selection) {
-                            case NEW_GAME:
-                                showBriefing();
-                                break;
-                            case QUIT:
-                                Gdx.app.exit();
-                                break;
-                            case SETTINGS:
-                                showSettings();
-                                break;
-                            case LOAD_GAME:
-                                // TODO-P1 Load game Menu
-                        }
-                    }
-                };
-        TitleScreen titleScreen = new TitleScreen(observer);
-        this.setScreen(titleScreen);
-    }
+  /**
+   * Switch the screen to the {@link TitleScreen}
+   */
+  private void showTitle() {
+    TitleSelectionObserver observer =
+        new TitleSelectionObserver() {
+          @Override
+          public void onDone(TitleSelection selection) {
+            switch (selection) {
+              case NEW_GAME:
+                showBriefing();
+                break;
+              case QUIT:
+                Gdx.app.exit();
+                break;
+              case SETTINGS:
+                showSettings();
+                break;
+              case LOAD_GAME:
+                // TODO-P1 Load game Menu
+            }
+          }
+        };
+    TitleScreen titleScreen = new TitleScreen(observer);
+    this.setScreen(titleScreen);
+  }
 
-    /**
-     * Switch the screen to the {@link StoreView}
-     */
-    private void showSettings() {
-        hiddenScreen = this.getScreen();
-        CompletionObserver observer =
-                new CompletionObserver() {
-                    @Override
-                    public void onDone() {
-                        setScreen(hiddenScreen);
-                    }
-                };
-        SettingsScreen storeView = new SettingsScreen(observer);
-        this.setScreen(storeView);
-    }
+  /**
+   * Switch the screen to the {@link StoreView}
+   */
+  private void showSettings() {
+    hiddenScreen = this.getScreen();
+    CompletionObserver observer =
+        new CompletionObserver() {
+          @Override
+          public void onDone() {
+            setScreen(hiddenScreen);
+          }
+        };
+    SettingsScreen storeView = new SettingsScreen(observer);
+    this.setScreen(storeView);
+  }
 
-    /**
-     * Switch the screen to the {@link StoreView}
-     */
+  /**
+   * Switch the screen to the {@link StoreView}
+   */
   private void showStore() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -84,12 +85,12 @@ public class Core extends Game {
           }
         };
     StoreView storeView = new StoreView(observer);
-      this.setScreen(storeView);
+    this.setScreen(storeView);
   }
 
-    /**
-     * Switch the screen to the {@link BriefingView}
-     */
+  /**
+   * Switch the screen to the {@link BriefingView}
+   */
   private void showBriefing() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -99,10 +100,12 @@ public class Core extends Game {
           }
         };
     BriefingView briefingView = new BriefingView(observer);
-      this.setScreen(briefingView);
+    this.setScreen(briefingView);
   }
 
-    /** Switch the screen to the {@link DeployView} */
+  /**
+   * Switch the screen to the {@link DeployView}
+   */
   private void showDeployMap() {
     CompletionObserver observer =
         new CompletionObserver() {
@@ -112,10 +115,10 @@ public class Core extends Game {
           }
         };
     DeployView deployView = new DeployView(observer);
-      this.setScreen(deployView);
+    this.setScreen(deployView);
   }
 
-    /** Switch the screen to the {@link BattleView} */
+  /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
     this.setScreen(new BattleView(menuBar));
   }
@@ -127,12 +130,13 @@ public class Core extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     // Set to callback to be able to show the settings menu from other screens
-    CompletionObserver menuSettingsCallback = new CompletionObserver() {
-      @Override
-      public void onDone() {
-        showSettings();
-      }
-    };
+    CompletionObserver menuSettingsCallback =
+        new CompletionObserver() {
+          @Override
+          public void onDone() {
+            showSettings();
+          }
+        };
     menuBar = new GameMenuBar(menuSettingsCallback, LoadedResources.getGameStateManager());
     this.showTitle();
   }

@@ -17,7 +17,7 @@ public class PathSearch {
    *     if no path exists
    */
   public static ArrayList<PathSearchNode> runSearchByGoal(
-          PathSearchNode start, PathSearchNode goal) {
+      PathSearchNode start, PathSearchNode goal) {
     return runSearchByGoal(start, goal, null);
   }
 
@@ -31,7 +31,7 @@ public class PathSearch {
    *     if no path exists within the distanceLimit
    */
   public static ArrayList<PathSearchNode> runSearchByGoal(
-          PathSearchNode start, PathSearchNode goal, Integer distanceLimit) {
+      PathSearchNode start, PathSearchNode goal, Integer distanceLimit) {
     AStarSearchResult result = aStarSearch(start, goal, distanceLimit);
     if (result == null) {
       return null;
@@ -68,7 +68,7 @@ public class PathSearch {
    * @return a new set of results where the nodes are <= distanceLimit from the start point
    */
   public static AStarSearchResult filterResultByDistance(
-          AStarSearchResult result, int distanceLimit) {
+      AStarSearchResult result, int distanceLimit) {
     AStarSearchResult newResult = new AStarSearchResult(result);
     List<PathSearchNode> nodes = new ArrayList<>(result.valueMap.keySet());
     for (PathSearchNode node : nodes) {
@@ -103,19 +103,19 @@ public class PathSearch {
     return totalPath;
   }
 
-    /**
-     * A* finds path to nodes connected to start node
-     *
-     * <p>Implementation adapted from <a
-     * href=https://en.wikipedia.org/wiki/A*_search_algorithm>https://en.wikipedia.org/wiki/A*_search_algorithm</a>
-     *
+  /**
+   * A* finds path to nodes connected to start node
+   *
+   * <p>Implementation adapted from <a
+   * href=https://en.wikipedia.org/wiki/A*_search_algorithm>https://en.wikipedia.org/wiki/A*_search_algorithm</a>
+   *
    * @param start node to start from
    * @param goal node to end at. If null map all nodes linked to start.
    * @param distanceLimit only search nodes that are <= this distance limit. No limit if null
    * @return Returns results mapping distances and paths. Used in other class functions.
    */
-    private static AStarSearchResult aStarSearch(
-            PathSearchNode start, PathSearchNode goal, Integer distanceLimit) {
+  private static AStarSearchResult aStarSearch(
+      PathSearchNode start, PathSearchNode goal, Integer distanceLimit) {
     // The set of discovered nodes that need to be (re-)expanded.
     // Initially, only the start node is known.
     PriorityQueue<PriorityItem> openSet = new PriorityQueue<>();
@@ -128,8 +128,8 @@ public class PathSearch {
     openSet.add(item);
     valueMap.put(start, item);
 
-        // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
-        // to n currently known.
+    // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
+    // to n currently known.
     HashMap<PathSearchNode, PathSearchNode> cameFrom = new HashMap<>();
 
     while (openSet.size() > 0) {
@@ -167,36 +167,36 @@ public class PathSearch {
     return null;
   }
 
-    /**
-     * Interface for nodes that will be searched with AStar algorithm
-     */
-    public interface PathSearchNode {
-
-        /**
-         * Heuristics estimate of distance from the node to the goal.
-         *
-         * <p>As long as the heuristic does not overestimate distances, A* finds an optimal path
-         *
-         * @return Estimated distance from the node to the goal
-         */
-        int heuristics();
-
-        /**
-         * @param neighbor The neighboring node to get the distance to
-         * @return The distance to the specified neighbor
-         */
-        @SuppressWarnings({"unused", "SameReturnValue"})
-        int edgeWeight(PathSearchNode neighbor);
-
-        /**
-         * @return List of nodes neighboring this node
-         */
-        List<PathSearchNode> getNeighbors();
-    }
+  /**
+   * Interface for nodes that will be searched with AStar algorithm
+   */
+  public interface PathSearchNode {
 
     /**
-     * Raw results of A* search
+     * Heuristics estimate of distance from the node to the goal.
+     *
+     * <p>As long as the heuristic does not overestimate distances, A* finds an optimal path
+     *
+     * @return Estimated distance from the node to the goal
      */
+    int heuristics();
+
+    /**
+     * @param neighbor The neighboring node to get the distance to
+     * @return The distance to the specified neighbor
+     */
+    @SuppressWarnings({"unused", "SameReturnValue"})
+    int edgeWeight(PathSearchNode neighbor);
+
+    /**
+     * @return List of nodes neighboring this node
+     */
+    List<PathSearchNode> getNeighbors();
+  }
+
+  /**
+   * Raw results of A* search
+   */
   public static class AStarSearchResult {
 
     /**
@@ -205,9 +205,9 @@ public class PathSearch {
      */
     public final HashMap<PathSearchNode, PathSearchNode> cameFrom;
 
-        /**
-         * Mapping of nodes to their distance scores.
-         */
+    /**
+     * Mapping of nodes to their distance scores.
+     */
     public final HashMap<PathSearchNode, PriorityItem> valueMap;
 
     /**
@@ -223,13 +223,13 @@ public class PathSearch {
 
     AStarSearchResult(AStarSearchResult result) {
       this.cameFrom = new HashMap<>(result.cameFrom);
-        this.valueMap = new HashMap<>(result.valueMap);
+      this.valueMap = new HashMap<>(result.valueMap);
     }
-    }
+  }
 
-    /**
-     * Helper class to allow nodes to be sorted in priority Queue
-     */
+  /**
+   * Helper class to allow nodes to be sorted in priority Queue
+   */
   private static class PriorityItem implements Comparable {
 
     /** The estimated total distance to the goal through the node obj */
@@ -244,12 +244,14 @@ public class PathSearch {
      * @see #gScore
      */
     PriorityItem(PathSearchNode obj, Integer gScore) {
-        this.obj = obj;
-        this.fScore = gScore + obj.heuristics();
-        this.gScore = gScore;
+      this.obj = obj;
+      this.fScore = gScore + obj.heuristics();
+      this.gScore = gScore;
     }
 
-        /** Sets comparison method for sorting */
+    /**
+     * Sets comparison method for sorting
+     */
     @Override
     public int compareTo(Object o) {
       PriorityItem arg0 = (PriorityItem) o;

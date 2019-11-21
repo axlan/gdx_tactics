@@ -13,18 +13,18 @@ import java.util.List;
  */
 public class BattleState {
 
-    /**
-     * Mapping of points on the map, to the players units on that tile.
-     */
+  /**
+   * Mapping of points on the map, to the players units on that tile.
+   */
   public final HashMap<TilePoint, FieldedUnit> playerUnits;
-    /**
-     * Mapping of points on the map, to the enemy units on that tile.
-     */
+  /**
+   * Mapping of points on the map, to the enemy units on that tile.
+   */
   public final HashMap<TilePoint, FieldedUnit> enemyUnits;
 
-    public BattleState(
-            ArrayList<Integer> enemySpawns,
-            HashMap<TilePoint, String> playerPlacements,
+  public BattleState(
+      ArrayList<Integer> enemySpawns,
+      HashMap<TilePoint, String> playerPlacements,
       List<Formation> enemyFormations) {
     playerUnits = new HashMap<>();
     enemyUnits = new HashMap<>();

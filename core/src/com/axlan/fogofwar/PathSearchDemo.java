@@ -49,10 +49,10 @@ public class PathSearchDemo extends Game implements InputProcessor {
         foundPath.add(((DemoTileNode) node).pos);
       }
       pathVisualizer.startAnimation(
-              "tank",
-              foundPath,
-              LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
-              LoadedResources.getReadOnlySettings().sprites.frameDuration);
+          "tank",
+          foundPath,
+          LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+          LoadedResources.getReadOnlySettings().sprites.frameDuration);
     } else if (keycode == Keys.R) {
       initializeTileStates();
     }

@@ -25,7 +25,7 @@ class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
 
   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
     Type type = typeToken.getType();
-      if (typeToken.getRawType() != List.class || !(type instanceof ParameterizedType)) {
+    if (typeToken.getRawType() != List.class || !(type instanceof ParameterizedType)) {
       return null;
     }
 
@@ -34,7 +34,7 @@ class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
     return (TypeAdapter<T>) newImmutableListAdapter(elementAdapter);
   }
 
-    private <E> TypeAdapter<List<E>> newImmutableListAdapter(final TypeAdapter<E> elementAdapter) {
+  private <E> TypeAdapter<List<E>> newImmutableListAdapter(final TypeAdapter<E> elementAdapter) {
     return new TypeAdapter<List<E>>() {
       @Override
       public void write(JsonWriter out, List<E> value) throws IOException {

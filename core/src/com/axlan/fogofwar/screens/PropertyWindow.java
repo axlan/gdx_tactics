@@ -8,13 +8,13 @@ import com.kotcrab.vis.ui.widget.*;
 
 class PropertyWindow extends VisWindow {
 
-    /**
-     * BattleView that keeps track of unit states and map information
-     */
+  /**
+   * BattleView that keeps track of unit states and map information
+   */
   private final BattleState battleState;
-    /**
-     * Class for accessing map data for pathing
-     */
+  /**
+   * Class for accessing map data for pathing
+   */
   private final BattleMap battleMap;
 
   PropertyWindow(BattleState battleState, BattleMap battleMap) {
@@ -23,7 +23,7 @@ class PropertyWindow extends VisWindow {
     this.battleMap = battleMap;
   }
 
-    // TODO-P2 Add all useful info to window
+  // TODO-P2 Add all useful info to window
 
   /**
    * Update the window to show the properties of objects at the map coordinate
@@ -47,9 +47,9 @@ class PropertyWindow extends VisWindow {
       VisSplitPane splitPane = new VisSplitPane(unitPropertiesTable, tilePropertiesTable, true);
       unitPropertiesTable.add(new VisLabel("Unit Properties")).left();
       unitPropertiesTable.row();
-        // TODO-P3 Clean up drawable generation
-        TextureRegionDrawable unitTexture =
-                LoadedResources.getSpriteLookup()
+      // TODO-P3 Clean up drawable generation
+      TextureRegionDrawable unitTexture =
+          LoadedResources.getSpriteLookup()
               .getTextureRegionDrawable(unit.getStats().type, Poses.IDLE);
       unitPropertiesTable.add(new VisImage(unitTexture)).size(32, 32);
       this.add(splitPane);

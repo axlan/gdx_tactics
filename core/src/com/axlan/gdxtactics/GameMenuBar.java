@@ -27,9 +27,7 @@ public class GameMenuBar extends MenuBar {
    * Submenu to select save slot
    */
   private PopupMenu saveSubMenu;
-  /**
-   * Submenu to select load slot
-   */
+  /** Submenu to select load slot */
   private PopupMenu loadSubMenu;
 
   public GameMenuBar(CompletionObserver showSettings, GameStateManagerBase<?> gameStateManager) {
@@ -40,9 +38,7 @@ public class GameMenuBar extends MenuBar {
     updateDataButtons();
   }
 
-  /**
-   * Generate save/load menu items and callbacks based on current save slots
-   */
+  /** Generate save/load menu items and callbacks based on current save slots */
   private void updateDataButtons() {
     String[] slotLabels = gameStateManager.getSlotLabels();
 

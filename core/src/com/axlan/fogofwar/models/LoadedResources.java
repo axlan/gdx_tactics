@@ -74,7 +74,7 @@ public final class LoadedResources {
    */
   public static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose) {
     return spriteLookup.getAnimation(
-            sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
+        sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
   }
 
   /** Get the mapping of unit types to their corresponding stats. */
@@ -95,7 +95,7 @@ public final class LoadedResources {
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
-            Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
+        Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
     gameStateManager = new GameStateManager();
   }
 

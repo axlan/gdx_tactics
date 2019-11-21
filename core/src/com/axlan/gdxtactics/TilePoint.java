@@ -76,8 +76,8 @@ public class TilePoint {
     return this.divBy(other.x, other.y);
   }
 
-    /**
-     * Get the distance along the 2D North/South/East/West grid
+  /**
+   * Get the distance along the 2D North/South/East/West grid
    *
    * @param x x position of other point
    * @param y y position of other point

@@ -19,14 +19,20 @@ public class DeployDemo extends Game {
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
     LoadedResources.getGameStateManager().gameState.playerResources.addMoney((int) 1e10);
-    LoadedResources.getGameStateManager().gameState.playerResources.makePurchase(levelData.shopItems.get(0));
-    LoadedResources.getGameStateManager().gameState.playerResources.makePurchase(levelData.shopItems.get(1));
-      this.setScreen(
-              new DeployView(
-                      new CompletionObserver() {
-                          @Override
-                          public void onDone() {
-                          }
-                      }));
+    LoadedResources.getGameStateManager()
+        .gameState
+        .playerResources
+        .makePurchase(levelData.shopItems.get(0));
+    LoadedResources.getGameStateManager()
+        .gameState
+        .playerResources
+        .makePurchase(levelData.shopItems.get(1));
+    this.setScreen(
+        new DeployView(
+            new CompletionObserver() {
+              @Override
+              public void onDone() {
+              }
+            }));
   }
 }
