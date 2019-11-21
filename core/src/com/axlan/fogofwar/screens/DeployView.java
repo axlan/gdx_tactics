@@ -1,12 +1,12 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.*;
+import com.axlan.fogofwar.models.BattleState;
+import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.*;
-import com.axlan.gdxtactics.AnimatedSprite;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.gdxtactics.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
-import com.axlan.gdxtactics.TilePoint;
-import com.axlan.gdxtactics.TiledScreen;
-import com.axlan.gdxtactics.Utilities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -83,7 +83,7 @@ public class DeployView extends TiledScreen {
               LoadedResources.getReadOnlySettings().edgeScrollSize);
     this.levelData = LoadedResources.getLevelData();
     this.observer = observer;
-    this.playerResources = GameStateManager.gameState.playerResources;
+    this.playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
     enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
     for (int i = 0; i < levelData.enemyFormations.size(); i++) {
       Formation formation = levelData.enemyFormations.get(i);
@@ -153,7 +153,7 @@ public class DeployView extends TiledScreen {
                       ArrayList<Integer> enemyList = new ArrayList<>();
                       Collections.addAll(enemyList, enemySpawnSelections);
                       List<Formation> enemyFormations = levelData.enemyFormations;
-                      GameStateManager.gameState.battleState =
+                    LoadedResources.getGameStateManager().gameState.battleState =
                               new BattleState(enemyList, placements, enemyFormations);
                       observer.onDone();
                   }

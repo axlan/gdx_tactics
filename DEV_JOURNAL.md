@@ -1,3 +1,13 @@
+# 11/20 Working on idea of campaign
+
+I spent some time trying to figure out what a simple campaign mode would look like. I built a map using the same sprites as the actual battle that seems like a good starting point.
+
+I think I'll make a tutorial campaign and another simple one as the baseline for the alpha.
+
+# 11/20 Refactored GameStateManager
+
+I refactored the GameStateManager and GameMenuBar to be generic to the specific game data. Totally unnecessary, but I felt that too much of the generic logic was getting added to the game specific package for convenience. 
+
 # 11/19 Added Settings to Battle View
 
 Added a method for setting a static callback in the menubar. Aside from fixing a resizing issue, mostly just worked.
@@ -48,7 +58,7 @@ Finished my trip, and I want to get this to an initial release. Here's the TODOs
   * (19, 3) //TODO-P3 improve system for allowing multiple AIs for development
   * (20, 3) //TODO-P3 make enemy actions respect fog of war
   * (21, 3) //TODO-P3 make MOVE understand how to improve state even if blocked off
-* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\GameStateManager.gameState.java
+* C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\GameStateManager.java
   * (10, 5) //TODO-P1 add methods for saving and loading state, along with any missing data
   * (11, 5) //TODO-P1 Add save button as child class of actor stage
 * C:\Users\feros\GitHub\gdx_tactics\core\src\com\axlan\fogofwar\models\LevelData.java

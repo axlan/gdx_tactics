@@ -1,10 +1,10 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.GameStateManager;
 import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.ShopItem;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -33,7 +33,7 @@ public class StoreView extends StageBasedScreen {
     public StoreView(CompletionObserver observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
-    setData(LoadedResources.getLevelData(), GameStateManager.gameState.playerResources);
+      setData(LoadedResources.getLevelData(), LoadedResources.getGameStateManager().gameState.playerResources);
     }
 
     /**

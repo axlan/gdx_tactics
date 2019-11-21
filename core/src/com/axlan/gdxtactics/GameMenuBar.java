@@ -1,6 +1,5 @@
-package com.axlan.fogofwar.screens;
+package com.axlan.gdxtactics;
 
-import com.axlan.fogofwar.models.GameStateManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -8,8 +7,6 @@ import com.kotcrab.vis.ui.widget.Menu;
 import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
-
-// TODO-P2 make this more generic and move to gdxtactics
 
 /**
  * Class to provide in game menu options like saving and loading
@@ -19,7 +16,13 @@ public class GameMenuBar extends MenuBar {
   /**
    * Callback to replace the current screen with the settings menu
    */
-  private static CompletionObserver showSettings;
+  private CompletionObserver showSettings;
+
+  /**
+   * GameStateManager for handling saves and loads
+   */
+  private GameStateManagerBase<?> gameStateManager;
+
   /**
    * Submenu to select save slot
    */
@@ -29,26 +32,19 @@ public class GameMenuBar extends MenuBar {
    */
   private PopupMenu loadSubMenu;
 
-  GameMenuBar() {
+  public GameMenuBar(CompletionObserver showSettings, GameStateManagerBase<?> gameStateManager) {
     super();
+    this.showSettings = showSettings;
+    this.gameStateManager = gameStateManager;
     this.addMenu(makeOptionsMenu());
     updateDataButtons();
-  }
-
-  /**
-   * Sets the callback to use. Must be set before any instance of GameMenuBar is created.
-   *
-   * @param showSettings Callback to replace the current screen with the settings menu
-   */
-  public static void setShowSettings(CompletionObserver showSettings) {
-    GameMenuBar.showSettings = showSettings;
   }
 
   /**
    * Generate save/load menu items and callbacks based on current save slots
    */
   private void updateDataButtons() {
-    String[] slotLabels = GameStateManager.getSlotLabels();
+    String[] slotLabels = gameStateManager.getSlotLabels();
 
     saveSubMenu.clear();
     loadSubMenu.clear();
@@ -61,13 +57,13 @@ public class GameMenuBar extends MenuBar {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              GameStateManager.save(slot);
+              gameStateManager.save(slot);
               updateDataButtons();
             }
           });
 
       //noinspection StringEquality
-      if (slotLabels[i] == GameStateManager.EMPTY_LABEL) {
+      if (slotLabels[i] == GameStateManagerBase.EMPTY_LABEL) {
         continue;
       }
       found = true;
@@ -76,7 +72,7 @@ public class GameMenuBar extends MenuBar {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              GameStateManager.load(slot);
+              gameStateManager.load(slot);
             }
           });
       loadSubMenu.addItem(item);

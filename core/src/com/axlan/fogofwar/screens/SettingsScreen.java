@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.scenes.scene2d.Actor;

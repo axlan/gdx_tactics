@@ -1,4 +1,4 @@
-package com.axlan.fogofwar.screens;
+package com.axlan.gdxtactics;
 
 /**
  * Interface for a callback that indicates a task completed

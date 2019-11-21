@@ -2,6 +2,8 @@ package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
+import com.axlan.gdxtactics.CompletionObserver;
+import com.axlan.gdxtactics.GameMenuBar;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -25,6 +27,7 @@ public class Core extends Game {
      * Screen to return to after settings menu closes
      */
     private Screen hiddenScreen = null;
+  private GameMenuBar menuBar;
 
     /**
      * Switch the screen to the {@link TitleScreen}
@@ -114,7 +117,7 @@ public class Core extends Game {
 
     /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
-    this.setScreen(new BattleView());
+    this.setScreen(new BattleView(menuBar));
   }
 
   @Override
@@ -124,13 +127,13 @@ public class Core extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     // Set to callback to be able to show the settings menu from other screens
-    GameMenuBar.setShowSettings(
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showSettings();
-          }
-        });
+    CompletionObserver menuSettingsCallback = new CompletionObserver() {
+      @Override
+      public void onDone() {
+        showSettings();
+      }
+    };
+    menuBar = new GameMenuBar(menuSettingsCallback, LoadedResources.getGameStateManager());
     this.showTitle();
   }
 }

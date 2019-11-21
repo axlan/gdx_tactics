@@ -28,6 +28,16 @@ public final class LoadedResources {
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
   private static LevelData levelData;
+  private static GameStateManager gameStateManager;
+
+  /**
+   * Get the class for handling the game state and saving / loading
+   *
+   * @return class for handling the game state and saving / loading * @return
+   */
+  public static GameStateManager getGameStateManager() {
+    return gameStateManager;
+  }
 
   /**
    * Get the read only settings that describe the applications behavior
@@ -86,6 +96,7 @@ public final class LoadedResources {
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
             Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
+    gameStateManager = new GameStateManager();
   }
 
   // TODO-P1 Add concept of multiple levels
