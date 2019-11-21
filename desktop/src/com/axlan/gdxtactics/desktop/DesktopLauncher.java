@@ -1,9 +1,6 @@
 package com.axlan.gdxtactics.desktop;
 
-import com.axlan.fogofwar.BattleDemo;
-import com.axlan.fogofwar.Core;
-import com.axlan.fogofwar.DeployDemo;
-import com.axlan.fogofwar.PathSearchDemo;
+import com.axlan.fogofwar.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -22,6 +19,9 @@ class DesktopLauncher {
         break;
       case "path":
         gameCore = new PathSearchDemo();
+        break;
+      case "overworld":
+        gameCore = new OverwoldDemo();
         break;
       default:
         gameCore = new Core();

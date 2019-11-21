@@ -24,6 +24,11 @@ public class TilePoint {
     this.y = (int) y;
   }
 
+  public TilePoint(double x, double y) {
+    this.x = (int) x;
+    this.y = (int) y;
+  }
+
   public TilePoint(TilePoint point) {
     this(point.x, point.y);
   }
