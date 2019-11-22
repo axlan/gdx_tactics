@@ -243,24 +243,45 @@
  </objectgroup>
  <objectgroup id="4" name="cities">
   <object id="14" name="Arden" x="87.0003" y="295">
+   <properties>
+    <property name="controller" value="PLAYER"/>
+   </properties>
    <point/>
   </object>
   <object id="15" name="Bethel" x="38.3333" y="233.67">
+   <properties>
+    <property name="controller" value="PLAYER"/>
+   </properties>
    <point/>
   </object>
   <object id="16" name="Catalon" x="138.333" y="231.67">
+   <properties>
+    <property name="controller" value="PLAYER"/>
+   </properties>
    <point/>
   </object>
   <object id="17" name="Karn" x="88.3333" y="149.67">
+   <properties>
+    <property name="controller" value="NONE"/>
+   </properties>
    <point/>
   </object>
   <object id="18" name="Yon" x="135.666" y="72.33">
+   <properties>
+    <property name="controller" value="ENEMY"/>
+   </properties>
    <point/>
   </object>
   <object id="19" name="Xer" x="39.0003" y="71.67">
+   <properties>
+    <property name="controller" value="ENEMY"/>
+   </properties>
    <point/>
   </object>
   <object id="20" name="Zed" x="88.3333" y="24.33">
+   <properties>
+    <property name="controller" value="ENEMY"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
