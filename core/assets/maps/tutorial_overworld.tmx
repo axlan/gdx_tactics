@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.5" orientation="orthogonal" renderorder="right-down" width="4" height="8" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="4">
+ <tileset firstgid="1" source="advance_war_map1.tsx"/>
+ <layer id="1" name="background" width="4" height="8">
+  <data encoding="csv">
+22,22,5,6,
+1,10,64,22,
+1,59,1,1,
+1,59,1,1,
+1,42,12,1,
+1,1,59,1,
+67,2,63,1,
+83,64,44,1
+</data>
+ </layer>
+ <layer id="2" name="foreground" width="4" height="8">
+  <data encoding="csv">
+0,0,93,0,
+0,0,109,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0,
+0,93,0,0,
+0,109,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="cities">
+  <object id="2" name="Omega" x="39.3333" y="24">
+   <properties>
+    <property name="controller" value="ENEMY"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="Alpha" x="23" y="120.667">
+   <properties>
+    <property name="controller" value="PLAYER"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="paths">
+  <object id="1" x="23.3333" y="120.667">
+   <polyline points="0,0 16,-0.666667 16,-16.6667 17.3333,-32.3333 16,-48 -1,-49.3333 -0.666667,-66.3333 0,-81.3333 1.33333,-96.6667 16.3333,-97.3333"/>
+  </object>
+ </objectgroup>
+</map>

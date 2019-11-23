@@ -1,6 +1,7 @@
 package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
@@ -93,6 +94,15 @@ public class Utilities {
     Color newColor = new Color(color);
     newColor.a = alpha;
     return newColor;
+  }
+
+  /**
+   * Move the label so so it's center is at it's current specified position
+   *
+   * @param label the label to adjust
+   */
+  public static void centerLabel(Label label) {
+    label.moveBy(-label.getWidth() / 2, -label.getHeight() / 2);
   }
 
   /**

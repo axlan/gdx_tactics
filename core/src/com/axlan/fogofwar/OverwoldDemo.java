@@ -19,7 +19,7 @@ public class OverwoldDemo extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
-    Campaign campaign = new Campaign(new Campaign.WorldMap("overworld"));
+    Campaign campaign = new Campaign(new Campaign.WorldMap("tutorial_overworld"));
     this.setScreen(new OverWorldMap(campaign));
   }
 }

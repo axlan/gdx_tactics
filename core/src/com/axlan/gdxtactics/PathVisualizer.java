@@ -116,17 +116,32 @@ public class PathVisualizer {
    * Draw an arrow along a path.
    *
    * @param shapeRenderer shapeRenderer to draw arrow onto. ShapeRenderer is expected to already
+   *                      have called begin, and to be set with the desired color.
+   * @param points        List of tile indexes that make up the path to draw the sprite along. Each point *
+   *                      must be adjacent to the last.
+   */
+  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points) {
+    drawArrow(shapeRenderer, points, false);
+  }
+
+//TODO-P1 Fix to make arrow point to center of target tile
+  /**
+   * Draw an arrow along a path.
+   *
+   * @param shapeRenderer shapeRenderer to draw arrow onto. ShapeRenderer is expected to already
    *     have called begin, and to be set with the desired color.
    * @param points List of tile indexes that make up the path to draw the sprite along. Each point *
    *     must be adjacent to the last.
+   * @param skipLast End the line one tile early and point toward the remaining tile
    */
-  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points) {
+  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points, boolean skipLast) {
     if (points.size() < 2) {
       return;
     }
     TilePoint lastPoint = tileToPixelCenter(points.get(0).mult(tileSize));
     boolean goingX = false;
-    for (TilePoint nextPoint : points.subList(1, points.size())) {
+    int endPoint = (skipLast) ? points.size() - 1 : points.size();
+    for (TilePoint nextPoint : points.subList(1, endPoint)) {
       nextPoint = tileToPixelCenter(nextPoint.mult(tileSize));
       Boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (nextGoingX != goingX) {
@@ -137,6 +152,10 @@ public class PathVisualizer {
       lastPoint = nextPoint;
     }
     TilePoint halfTile = tileSize.divBy(2);
+    if (skipLast) {
+      goingX = points.indexOf(points.size() - 1) != points.indexOf(points.size() - 2);
+      shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
+    }
     if (goingX) {
       int sign = (points.get(points.size() - 1).x - points.get(points.size() - 2).x < 0) ? -1 : 1;
       shapeRenderer.triangle(
