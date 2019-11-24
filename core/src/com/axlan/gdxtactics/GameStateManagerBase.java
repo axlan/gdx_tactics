@@ -3,7 +3,6 @@ package com.axlan.gdxtactics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,7 +19,7 @@ public abstract class GameStateManagerBase<T> {
   private static final String SAVE_PREF_NAME = "save_slots";
   private static final String SAVE_SLOT_NAME = "slot_";
   private static final String SAVE_SLOT_TIME_NAME = "slot_time_";
-  protected final GsonBuilder gsonBuilder;
+  protected final Gson gson;
 
   /**
    * Active GameState
@@ -38,8 +37,11 @@ public abstract class GameStateManagerBase<T> {
   private long[] slotsTimes = null;
 
   public GameStateManagerBase() {
-    gsonBuilder = new GsonBuilder();
+    gson = buildGson();
+    fetchSavesFromPrefs();
   }
+
+  protected abstract Gson buildGson();
 
 
   /**
@@ -68,7 +70,6 @@ public abstract class GameStateManagerBase<T> {
     slots = newGameStateArray(NUM_SLOTS);
     slotsTimes = new long[NUM_SLOTS];
     Preferences prefs = Gdx.app.getPreferences(SAVE_PREF_NAME);
-    Gson gson = gsonBuilder.create();
     for (int i = 0; i < NUM_SLOTS; i++) {
       String slotString = prefs.getString(SAVE_SLOT_NAME + i, "");
       if (!slotString.isEmpty()) {
@@ -116,7 +117,6 @@ public abstract class GameStateManagerBase<T> {
     Preferences prefs = Gdx.app.getPreferences(SAVE_PREF_NAME);
     // enableComplexMapKeySerialization needed to properly serialize TilePoint key in
     // playerUnitPlacements
-    Gson gson = gsonBuilder.create();
     prefs.putString(SAVE_SLOT_NAME + slot, gson.toJson(gameState));
     prefs.putLong(SAVE_SLOT_TIME_NAME + slot, slotsTimes[slot]);
     prefs.flush();
