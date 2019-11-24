@@ -7,6 +7,7 @@ import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -106,8 +107,10 @@ public class OverWorldMap extends TiledScreen {
     if (cities.containsKey(curMouseTile)) {
       if (cityLabel == null) {
         cityLabel = new VisLabel(cities.get(curMouseTile).name);
-        cityLabel.setColor(Color.DARK_GRAY);
-        cityLabel.setFontScale(1.5f);
+        //TODO-P2 clean up font. consider using https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
+        cityLabel.getStyle().font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
+        cityLabel.setStyle(cityLabel.getStyle());
+        cityLabel.setFontScale(0.5f);
         cityLabel.setAlignment(Align.center);
         Vector2 cityScreenLoc = tileToScreen(curMouseTile);
         cityLabel.setPosition(cityScreenLoc.x, cityScreenLoc.y);

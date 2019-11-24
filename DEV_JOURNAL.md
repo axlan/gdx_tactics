@@ -1,3 +1,9 @@
+# 11/23 Working on overworld map
+
+Spent the last few days putting a little work into adding features to the overworld map.
+
+Hit some issues getting the overlay elements looking alright and had trouble getting a readable font. I should consider looking into https://github.com/libgdx/libgdx/wiki/Distance-field-fonts for making more flexible scalable fonts.
+
 # 11/20 Working on idea of campaign
 
 I spent some time trying to figure out what a simple campaign mode would look like. I built a map using the same sprites as the actual battle that seems like a good starting point.
