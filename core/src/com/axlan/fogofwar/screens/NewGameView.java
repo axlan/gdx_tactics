@@ -1,7 +1,7 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.campaigns.CampaignBase;
-import com.axlan.fogofwar.campaigns.TutorialCampaign;
+import com.axlan.fogofwar.campaigns.CampaignSet;
 import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.CompletionObserver;
@@ -13,16 +13,10 @@ import com.kotcrab.vis.ui.widget.VisSelectBox;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
- * Title screen to start/load game and set options
+ * Menu for selecting campaign for a new game
  */
 public class NewGameView extends StageBasedScreen {
-
-  static private final ArrayList<CampaignBase> CAMPAIGNS = new ArrayList<>(Arrays.asList(new TutorialCampaign()));
-  static private final String[] CAMPAIGN_NAMES = CAMPAIGNS.stream().map(c -> c.getName()).toArray(String[]::new);
   private CompletionObserver observer;
 
   public NewGameView(CompletionObserver observer) {
@@ -36,7 +30,7 @@ public class NewGameView extends StageBasedScreen {
 
     root.add(new VisLabel("Select Campaign: "));
     final VisSelectBox<String> resolutionSelect = new VisSelectBox<>();
-    resolutionSelect.setItems(CAMPAIGN_NAMES);
+    resolutionSelect.setItems(CampaignSet.CAMPAIGN_NAMES.toArray(new String[0]));
     root.add(resolutionSelect);
     root.row();
     root.row();
@@ -46,7 +40,7 @@ public class NewGameView extends StageBasedScreen {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            CampaignBase campaign = CAMPAIGNS.get(resolutionSelect.getSelectedIndex());
+            CampaignBase campaign = CampaignSet.newCampaignByName(resolutionSelect.getSelected());
             LoadedResources.getGameStateManager().gameState = new GameState(campaign);
             observer.onDone();
           }

@@ -41,8 +41,12 @@ public abstract class GameStateManagerBase<T> {
     fetchSavesFromPrefs();
   }
 
+  /**
+   * Construct a Gson instance that can (de)serialize instances of gameState T
+   *
+   * @return the configured Gson instance
+   */
   protected abstract Gson buildGson();
-
 
   /**
    * Generate a new array of instances of game state T with no params

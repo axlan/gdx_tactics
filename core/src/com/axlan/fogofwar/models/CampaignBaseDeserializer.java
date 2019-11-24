@@ -1,7 +1,7 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.campaigns.CampaignBase;
-import com.axlan.fogofwar.campaigns.TutorialCampaign;
+import com.axlan.fogofwar.campaigns.CampaignSet;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -10,13 +10,15 @@ import java.lang.reflect.Type;
 public class CampaignBaseDeserializer implements JsonDeserializer<CampaignBase> {
   @Override
   public CampaignBase deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    Type type = null;
     if (json.isJsonObject()) {
       JsonObject object = (JsonObject) json;
-      //TODO-P2 Avoid needing to update this file for each Campaign class
-      if (object.get("type").getAsString().equals(TutorialCampaign.NAME)) {
-        return new TutorialCampaign();
-      }
+      type = CampaignSet.getType(object.get("type").getAsString());
+      object.remove("type");
     }
-    throw new JsonSyntaxException("Unknown Campaign Type");
+    if (type == null) {
+      throw new JsonSyntaxException("Unknown Campaign Type");
+    }
+    return context.deserialize(json, type);
   }
 }
