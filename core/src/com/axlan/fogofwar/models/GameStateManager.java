@@ -1,5 +1,6 @@
 package com.axlan.fogofwar.models;
 
+import com.axlan.fogofwar.campaigns.CampaignBase;
 import com.axlan.gdxtactics.GameStateManagerBase;
 
 /**
@@ -8,9 +9,12 @@ import com.axlan.gdxtactics.GameStateManagerBase;
  */
 public class GameStateManager extends GameStateManagerBase<GameState> {
 
-  @Override
-  protected GameState newGameState() {
-    return new GameState();
+  public GameStateManager() {
+    super();
+    gsonBuilder.registerTypeAdapter(CampaignBase.class, new CampaignBaseDeserializer());
+    gsonBuilder.registerTypeAdapter(CampaignBase.class, new CampaignBaseSerializer());
+    gsonBuilder.enableComplexMapKeySerialization();
+    fetchSavesFromPrefs();
   }
 
   @Override

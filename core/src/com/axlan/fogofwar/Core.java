@@ -40,7 +40,7 @@ public class Core extends Game {
           public void onDone(TitleSelection selection) {
             switch (selection) {
               case NEW_GAME:
-                showBriefing();
+                showNewGame();
                 break;
               case QUIT:
                 Gdx.app.exit();
@@ -102,6 +102,26 @@ public class Core extends Game {
     BriefingView briefingView = new BriefingView(observer);
     this.setScreen(briefingView);
   }
+
+  /**
+   * Switch the screen to the {@link BriefingView}
+   */
+  private void showNewGame() {
+    CompletionObserver observer =
+        new CompletionObserver() {
+          @Override
+          public void onDone() {
+            if (LoadedResources.getGameStateManager().gameState != null) {
+              showBriefing();
+            } else {
+              showTitle();
+            }
+          }
+        };
+    NewGameView newGameView = new NewGameView(observer);
+    this.setScreen(newGameView);
+  }
+
 
   /**
    * Switch the screen to the {@link DeployView}

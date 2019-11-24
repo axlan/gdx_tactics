@@ -18,6 +18,10 @@ buildscript {
 allprojects {
 
     version = '1.0'
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
     ext {
         appName = "gdx-tactics"
         gdxVersion = '1.9.10'

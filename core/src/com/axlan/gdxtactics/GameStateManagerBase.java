@@ -20,11 +20,12 @@ public abstract class GameStateManagerBase<T> {
   private static final String SAVE_PREF_NAME = "save_slots";
   private static final String SAVE_SLOT_NAME = "slot_";
   private static final String SAVE_SLOT_TIME_NAME = "slot_time_";
+  protected final GsonBuilder gsonBuilder;
 
   /**
    * Active GameState
    */
-  public T gameState;
+  public T gameState = null;
 
   /**
    * Cache of saved game states. Null if unused
@@ -37,16 +38,9 @@ public abstract class GameStateManagerBase<T> {
   private long[] slotsTimes = null;
 
   public GameStateManagerBase() {
-    gameState = newGameState();
-    fetchSavesFromPrefs();
+    gsonBuilder = new GsonBuilder();
   }
 
-  /**
-   * Generate a new instance of game state T with no params
-   *
-   * @return new instance of class T
-   */
-  protected abstract T newGameState();
 
   /**
    * Generate a new array of instances of game state T with no params
@@ -74,7 +68,7 @@ public abstract class GameStateManagerBase<T> {
     slots = newGameStateArray(NUM_SLOTS);
     slotsTimes = new long[NUM_SLOTS];
     Preferences prefs = Gdx.app.getPreferences(SAVE_PREF_NAME);
-    Gson gson = new GsonBuilder().create();
+    Gson gson = gsonBuilder.create();
     for (int i = 0; i < NUM_SLOTS; i++) {
       String slotString = prefs.getString(SAVE_SLOT_NAME + i, "");
       if (!slotString.isEmpty()) {
@@ -122,7 +116,7 @@ public abstract class GameStateManagerBase<T> {
     Preferences prefs = Gdx.app.getPreferences(SAVE_PREF_NAME);
     // enableComplexMapKeySerialization needed to properly serialize TilePoint key in
     // playerUnitPlacements
-    Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+    Gson gson = gsonBuilder.create();
     prefs.putString(SAVE_SLOT_NAME + slot, gson.toJson(gameState));
     prefs.putLong(SAVE_SLOT_TIME_NAME + slot, slotsTimes[slot]);
     prefs.flush();
