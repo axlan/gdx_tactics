@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 import java.util.ArrayList;
@@ -74,10 +75,15 @@ public class OverWorldMap extends TiledScreen {
 
   @Override
   protected void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+  @Override
+  protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
     shapeRenderer.setColor(Color.BLUE);
     for (ArrayList<TilePoint> path : shownPaths) {
-      pathVisualizer.drawArrow(shapeRenderer, path, true);
+      pathVisualizer.drawArrow(shapeRenderer, path);
     }
     shapeRenderer.end();
   }
@@ -100,7 +106,9 @@ public class OverWorldMap extends TiledScreen {
     if (cities.containsKey(curMouseTile)) {
       if (cityLabel == null) {
         cityLabel = new VisLabel(cities.get(curMouseTile).name);
-        cityLabel.setColor(Color.BLACK);
+        cityLabel.setColor(Color.DARK_GRAY);
+        cityLabel.setFontScale(1.5f);
+        cityLabel.setAlignment(Align.center);
         Vector2 cityScreenLoc = tileToScreen(curMouseTile);
         cityLabel.setPosition(cityScreenLoc.x, cityScreenLoc.y);
         centerLabel(cityLabel);

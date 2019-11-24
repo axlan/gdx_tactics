@@ -85,6 +85,16 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
       float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   /**
+   * Draw on top of background and foreground, but below UI elements
+   *
+   * @param delta         time since last update
+   * @param batch         batch to draw on. Begin must be called before use.
+   * @param shapeRenderer shape render to draw on. Begin must be called before use.
+   */
+  protected abstract void renderAboveForeground(
+      float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
+
+  /**
    * Update state before drawing
    *
    * @param delta time since last update
@@ -258,6 +268,8 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     renderScreen(delta, this.batch, this.shapeRenderer);
     renderer.render(foregroundLayers);
+
+    renderAboveForeground(delta, this.batch, this.shapeRenderer);
 
     stage.act(delta);
     stage.draw();

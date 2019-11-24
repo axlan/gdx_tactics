@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.List;
 
+import static com.axlan.gdxtactics.Utilities.listGetTail;
+
 /**
  * Class for drawing a path on top of a 2D TileMap
  */
@@ -38,7 +40,20 @@ public class PathVisualizer {
    * @return The pixel location of the middle of the tile
    */
   private TilePoint tileToPixelCenter(TilePoint point) {
-    return point.add(tileSize.divBy(2));
+    return point.mult(tileSize).add(tileSize.divBy(2));
+  }
+
+  /**
+   * Convert a tile index to a pixel location of the center of the edge closest to a neighboring tile
+   *
+   * @param point    the 2D index of a tile on the map
+   * @param neighbor the 2D index of a neighboring tile
+   * @return The pixel location of the middle edge of the tile
+   */
+  private TilePoint tileToClosestEdge(TilePoint point, TilePoint neighbor) {
+    point = tileToPixelCenter(point);
+    neighbor = tileToPixelCenter(neighbor);
+    return neighbor.add(point.sub(neighbor).divBy(2));
   }
 
   /**
@@ -116,33 +131,19 @@ public class PathVisualizer {
    * Draw an arrow along a path.
    *
    * @param shapeRenderer shapeRenderer to draw arrow onto. ShapeRenderer is expected to already
-   *                      have called begin, and to be set with the desired color.
-   * @param points        List of tile indexes that make up the path to draw the sprite along. Each point *
-   *                      must be adjacent to the last.
-   */
-  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points) {
-    drawArrow(shapeRenderer, points, false);
-  }
-
-//TODO-P1 Fix to make arrow point to center of target tile
-  /**
-   * Draw an arrow along a path.
-   *
-   * @param shapeRenderer shapeRenderer to draw arrow onto. ShapeRenderer is expected to already
    *     have called begin, and to be set with the desired color.
    * @param points List of tile indexes that make up the path to draw the sprite along. Each point *
    *     must be adjacent to the last.
-   * @param skipLast End the line one tile early and point toward the remaining tile
    */
-  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points, boolean skipLast) {
+  public void drawArrow(ShapeRenderer shapeRenderer, List<TilePoint> points) {
     if (points.size() < 2) {
       return;
     }
-    TilePoint lastPoint = tileToPixelCenter(points.get(0).mult(tileSize));
+    TilePoint lastPoint = tileToPixelCenter(points.get(0));
     boolean goingX = false;
-    int endPoint = (skipLast) ? points.size() - 1 : points.size();
+    int endPoint = points.size() - 1;
     for (TilePoint nextPoint : points.subList(1, endPoint)) {
-      nextPoint = tileToPixelCenter(nextPoint.mult(tileSize));
+      nextPoint = tileToPixelCenter(nextPoint);
       Boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (nextGoingX != goingX) {
         shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
@@ -152,24 +153,32 @@ public class PathVisualizer {
       lastPoint = nextPoint;
     }
     TilePoint halfTile = tileSize.divBy(2);
-    if (skipLast) {
-      goingX = points.indexOf(points.size() - 1) != points.indexOf(points.size() - 2);
+
+
+    TilePoint nextPoint = tileToClosestEdge(listGetTail(points), points.get(points.size() - 2));
+    Boolean nextGoingX = lastPoint.x != nextPoint.x;
+    if (nextGoingX != goingX) {
       shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
     }
+    shapeRenderer.rectLine(lastPoint.x, lastPoint.y, nextPoint.x, nextPoint.y, lineWith);
+    goingX = nextGoingX;
+    lastPoint = nextPoint;
+
+
     if (goingX) {
-      int sign = (points.get(points.size() - 1).x - points.get(points.size() - 2).x < 0) ? -1 : 1;
+      int sign = (listGetTail(points).x - points.get(points.size() - 2).x < 0) ? -1 : 1;
       shapeRenderer.triangle(
-          lastPoint.x + sign * lineWith,
+          lastPoint.x + sign * lineWith * 2,
           lastPoint.y,
           lastPoint.x,
           lastPoint.y + halfTile.y,
           lastPoint.x,
           lastPoint.y - halfTile.y);
     } else {
-      int sign = (points.get(points.size() - 1).y - points.get(points.size() - 2).y < 0) ? -1 : 1;
+      int sign = (listGetTail(points).y - points.get(points.size() - 2).y < 0) ? -1 : 1;
       shapeRenderer.triangle(
           lastPoint.x,
-          lastPoint.y + sign * lineWith,
+          lastPoint.y + sign * lineWith * 2,
           lastPoint.x + halfTile.x,
           lastPoint.y,
           lastPoint.x - halfTile.x,

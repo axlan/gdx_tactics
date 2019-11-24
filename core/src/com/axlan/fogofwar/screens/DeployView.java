@@ -257,6 +257,11 @@ public class DeployView extends TiledScreen {
   }
 
   @Override
+  protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+  @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
 
     Color spawnColor = getTransparentColor(Color.PURPLE, 0.75f);

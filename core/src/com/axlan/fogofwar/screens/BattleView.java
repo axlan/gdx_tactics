@@ -374,6 +374,12 @@ public class BattleView extends TiledScreen {
     shapeRenderer.end();
   }
 
+  @Override
+  protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+
   @SuppressWarnings("DuplicateBranchesInSwitch")
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
