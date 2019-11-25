@@ -1,9 +1,7 @@
 package com.axlan.fogofwar;
 
-import com.axlan.fogofwar.models.BattleState;
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.fogofwar.campaigns.TutorialCampaign;
+import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.screens.BattleView;
 import com.axlan.gdxtactics.GameMenuBar;
 import com.axlan.gdxtactics.TilePoint;
@@ -25,6 +23,7 @@ public class BattleDemo extends Game {
     LoadedResources.initializeGlobal();
     LoadedResources.initializeLevel();
     LevelData levelData = LoadedResources.getLevelData();
+    LoadedResources.getGameStateManager().gameState = new GameState(new TutorialCampaign());
     PlayerResources playerResources =
         LoadedResources.getGameStateManager().gameState.playerResources;
     playerResources.addMoney((int) 1e10);
