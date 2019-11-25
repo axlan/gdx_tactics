@@ -67,7 +67,7 @@ public class BattleView extends TiledScreen {
   /**
    * Current state for state machine that controls UI
    */
-  private BattleViewState state = BattleViewState.IDLE;
+  private BattleViewState state = BattleViewState.ENEMY_IDLE;
   /**
    * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
    * where a unit was originally selected
@@ -119,7 +119,9 @@ public class BattleView extends TiledScreen {
 
     stage.addActor(propertyWindow);
 
-    changeTurn(levelData.doesPlayerGoFirst);
+    //TODO-P2 fix levelData.doesPlayerGoFirst, this breaks the load logic since turn isn't saved
+    //changeTurn(levelData.doesPlayerGoFirst);
+    changeTurn(true);
   }
 
   /**

@@ -114,7 +114,7 @@ public abstract class GameStateManagerBase<T> {
    *
    * @param slot index of slot to use. Must be less then {@link #NUM_SLOTS}
    */
-  void save(int slot) {
+  public void save(int slot) {
     assert slot < NUM_SLOTS;
     slots[slot] = newGameState(gameState);
     slotsTimes[slot] = System.currentTimeMillis();

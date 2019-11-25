@@ -4,6 +4,7 @@ import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
 import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.GameMenuBar;
+import com.axlan.gdxtactics.StringObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -23,12 +24,27 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
+  static final String SCENE_NAME_BATTLE = "battle";
+  static final String SCENE_NAME_DEPLOY = "deploy";
+
   /**
    * Screen to return to after settings menu closes
    */
   private Screen hiddenScreen = null;
 
   private GameMenuBar menuBar;
+
+  private final String forceLoadSaveFile;
+
+  public Core() {
+    super();
+    forceLoadSaveFile = null;
+  }
+
+  public Core(String forceLoadSaveFile) {
+    super();
+    this.forceLoadSaveFile = forceLoadSaveFile;
+  }
 
   /**
    * Switch the screen to the {@link TitleScreen}
@@ -127,6 +143,7 @@ public class Core extends Game {
    * Switch the screen to the {@link DeployView}
    */
   private void showDeployMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SCENE_NAME_DEPLOY;
     CompletionObserver observer =
         new CompletionObserver() {
           @Override
@@ -140,14 +157,38 @@ public class Core extends Game {
 
   /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SCENE_NAME_BATTLE;
     this.setScreen(new BattleView(menuBar));
+  }
+
+  /**
+   * Switch to the correct scene after loading a save file
+   *
+   * @param scene string identifier of scene to start
+   */
+  private void resumeSceneForLoad(String scene) {
+    switch (scene) {
+      case SCENE_NAME_BATTLE:
+        showBattleMap();
+        break;
+      case SCENE_NAME_DEPLOY:
+        showDeployMap();
+        break;
+      default:
+        throw new RuntimeException("Invalid scene name");
+    }
   }
 
   @Override
   public void create() {
     VisUI.load();
     // TODO-P2 load custom skin
-    LoadedResources.initializeGlobal();
+    LoadedResources.initializeGlobal(new StringObserver() {
+      @Override
+      public void processString(String str) {
+        resumeSceneForLoad(str);
+      }
+    });
     LoadedResources.initializeLevel();
     // Set to callback to be able to show the settings menu from other screens
     CompletionObserver menuSettingsCallback =
@@ -158,6 +199,10 @@ public class Core extends Game {
           }
         };
     menuBar = new GameMenuBar(menuSettingsCallback, LoadedResources.getGameStateManager());
-    this.showTitle();
+    if (forceLoadSaveFile == null) {
+      this.showTitle();
+    } else {
+      LoadedResources.getGameStateManager().loadFile(forceLoadSaveFile);
+    }
   }
 }

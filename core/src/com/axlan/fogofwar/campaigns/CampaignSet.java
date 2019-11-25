@@ -28,7 +28,7 @@ public class CampaignSet {
    * Takes a string identifier and returns a new instance of the corresponding campaign
    *
    * @param name campaign identifier
-   * @return new instance of the corresponding campaign
+   * @return new instance of the corresponding campaign, or null if invalid
    */
   public static CampaignBase newCampaignByName(String name) {
     for (int i = 0; i < CAMPAIGN_NAMES.size(); i++) {
@@ -36,14 +36,14 @@ public class CampaignSet {
         return CAMPAIGNS.get(i).makeNew();
       }
     }
-    throw new RuntimeException("Invalid Campaign Name");
+    return null;
   }
 
   /**
    * Get Class types for deserializing Campaign objects
    *
    * @param name campaign identifier
-   * @return class for that campaign
+   * @return class for that campaign, or null if invalid
    */
   public static Type getType(String name) {
     for (int i = 0; i < CAMPAIGN_NAMES.size(); i++) {
@@ -51,7 +51,7 @@ public class CampaignSet {
         return CAMPAIGNS.get(i).getClass();
       }
     }
-    throw new RuntimeException("Invalid Campaign Name");
+    return null;
   }
 
 }

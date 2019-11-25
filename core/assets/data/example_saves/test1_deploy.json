@@ -1,0 +1,27 @@
+{
+  "playerResources": {
+    "purchases": [
+      {
+        "name": "Farmer",
+        "cost": 10,
+        "description": "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible.",
+        "effects": [
+          {
+            "formationSpottedIdx": 0,
+            "numberOfUnits": 1,
+            "spotType": "RANDOM"
+          }
+        ]
+      }
+    ],
+    "money": 10
+  },
+  "battleState": {
+    "playerUnits": [],
+    "enemyUnits": []
+  },
+  "campaign": {
+    "type": "Tutorial"
+  },
+  "scene": "deploy"
+}

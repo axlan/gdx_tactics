@@ -4,6 +4,7 @@ import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.axlan.gdxtactics.StringObserver;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
@@ -88,7 +89,7 @@ public final class LoadedResources {
   }
 
   /** Load the resources used across all levels */
-  public static void initializeGlobal() {
+  public static void initializeGlobal(StringObserver observer) {
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();
@@ -96,7 +97,7 @@ public final class LoadedResources {
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
         Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
-    gameStateManager = new GameStateManager();
+    gameStateManager = new GameStateManager(observer);
   }
 
   // TODO-P1 Add concept of multiple levels

@@ -22,6 +22,11 @@ public class GameState {
    */
   public final CampaignBase campaign;
 
+  /**
+   * String identifier for current scene
+   */
+  public String scene;
+
   public GameState(CampaignBase campaign) {
     playerResources = new PlayerResources();
     this.campaign = campaign;
@@ -31,5 +36,6 @@ public class GameState {
     playerResources = new PlayerResources(other.playerResources);
     battleState = new BattleState(other.battleState);
     campaign = other.campaign.makeCopy();
+    scene = other.scene;
   }
 }
