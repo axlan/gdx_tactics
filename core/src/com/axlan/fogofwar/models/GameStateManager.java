@@ -7,6 +7,8 @@ import com.badlogic.gdx.Gdx;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 
 /**
@@ -45,7 +47,10 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
 
   @Override
   protected void fetchSavesFromPrefs() {
-    fetchSavesFromPrefs(GameState.class);
+    //TODO-P2 use injection to make missing resources easier to replace
+    if (Gdx.app != null) {
+      fetchSavesFromPrefs(GameState.class);
+    }
   }
 
   /**
@@ -54,7 +59,18 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
    * @param filepath external path to JSON file
    */
   public void loadFile(String filepath) {
-    Reader handle = Gdx.files.absolute(filepath).reader();
+    Reader handle;
+    //TODO-P2 use injection to make missing resources easier to replace
+    if (Gdx.app != null) {
+      handle = Gdx.files.absolute(filepath).reader();
+    } else {
+      try {
+        handle = new FileReader(filepath);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        handle = null;
+      }
+    }
     gameState = gson.fromJson(handle, GameState.class);
     loadSceneCallback.processString(gameState.scene);
   }
