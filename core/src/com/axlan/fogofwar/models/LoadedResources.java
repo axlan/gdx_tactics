@@ -28,7 +28,6 @@ public final class LoadedResources {
   private static EditableSettings editableSettings;
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
-  private static LevelData levelData;
   private static GameStateManager gameStateManager;
 
   /**
@@ -83,11 +82,6 @@ public final class LoadedResources {
     return unitStats;
   }
 
-  /** Get the description of the current level */
-  public static LevelData getLevelData() {
-    return levelData;
-  }
-
   /** Load the resources used across all levels */
   public static void initializeGlobal(StringObserver observer) {
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
@@ -100,10 +94,4 @@ public final class LoadedResources {
     gameStateManager = new GameStateManager(observer);
   }
 
-  // TODO-P1 Add concept of multiple levels
-
-  /** Load the resources for the current level */
-  public static void initializeLevel() {
-    levelData = LevelData.loadFromJson(readOnlySettings.levelDataFile);
-  }
 }

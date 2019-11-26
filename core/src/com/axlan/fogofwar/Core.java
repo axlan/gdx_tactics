@@ -189,7 +189,6 @@ public class Core extends Game {
         resumeSceneForLoad(str);
       }
     });
-    LoadedResources.initializeLevel();
     // Set to callback to be able to show the settings menu from other screens
     CompletionObserver menuSettingsCallback =
         new CompletionObserver() {

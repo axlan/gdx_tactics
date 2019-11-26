@@ -99,11 +99,11 @@ public class BattleView extends TiledScreen {
 
   public BattleView(GameMenuBar gameMenuBar) {
     super(
-        "maps/" + LoadedResources.getLevelData().mapName + ".tmx",
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
-    levelData = LoadedResources.getLevelData();
+    levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     battleMap = new BattleMap(map);
 

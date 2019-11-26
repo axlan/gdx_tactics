@@ -1,15 +1,32 @@
 package com.axlan.fogofwar.campaigns;
 
 import com.axlan.fogofwar.models.BriefingData;
-import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.ShopItem;
+import com.axlan.gdxtactics.TilePoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+//TODO-P1 Make the attributes returned by these functions respond to game state
 
 public class TutorialCampaign implements CampaignBase {
 
   public static final String NAME = "Tutorial";
+
+  private static final List<ShopItem> ITEMS = Collections.unmodifiableList(Arrays.asList(
+      new ShopItem("Farmer",
+          10,
+          "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible.",
+          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM)))),
+      new ShopItem("Spy Sat",
+          100000000,
+          "Top of the line spy sattelite.\nCapable of 10m resolution imaging.",
+          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM))))
+  ));
+
 
   public TutorialCampaign() {
   }
@@ -29,16 +46,18 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public CampaignBase makeCopy() {
-    return new TutorialCampaign();
+    return new TutorialCampaign(this);
   }
 
   @Override
-  public List<LevelData.ShopItem> getItems(GameState gameState) {
-    return null;
+  public List<ShopItem> getItems() {
+    ArrayList<ShopItem> items = new ArrayList<>(ITEMS);
+
+    return items;
   }
 
   @Override
-  public BriefingData getMapBriefing(GameState gameState) {
+  public BriefingData getMapBriefing() {
     List<BriefingData.BriefPage> pages = new ArrayList<>();
     String setting = "";
 
@@ -57,7 +76,39 @@ public class TutorialCampaign implements CampaignBase {
   }
 
   @Override
-  public BriefingData getLevelBriefing(GameState gameState) {
+  public LevelData getLevelData() {
+    return new LevelData(
+        new TilePoint(8, 4),
+        Collections.unmodifiableList(Arrays.asList(
+            new LevelData.UnitAllotment("tank", 2)
+        )),
+        Collections.unmodifiableList(Arrays.asList(
+            new TilePoint(3, 6),
+            new TilePoint(4, 6),
+            new TilePoint(8, 6),
+            new TilePoint(12, 6),
+            new TilePoint(13, 6)
+        )),
+        Collections.unmodifiableList(Arrays.asList(
+            new LevelData.Formation(
+                Collections.unmodifiableList(Arrays.asList(
+                    new TilePoint(4, 2),
+                    new TilePoint(12, 2)
+                )),
+                Collections.unmodifiableList(Arrays.asList(
+                    new LevelData.UnitStart("scout", new TilePoint(0, 0))
+                ))
+            )
+        )),
+        "advanced1",
+        new LevelData.UnitBehavior(LevelData.UnitBehaviorType.MOVE, "{\"target\": {\"x\": 8, \"y\": 7}}"),
+        null,
+        new LevelData.AlternativeWinConditions(new TilePoint(8, 7))
+    );
+  }
+
+  @Override
+  public BriefingData getLevelBriefing() {
     return null;
   }
 }

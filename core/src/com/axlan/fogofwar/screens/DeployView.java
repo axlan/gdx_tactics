@@ -1,10 +1,8 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.BattleState;
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LevelData.*;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.PlayerResources;
+import com.axlan.fogofwar.models.*;
+import com.axlan.fogofwar.models.LevelData.Formation;
+import com.axlan.fogofwar.models.LevelData.UnitAllotment;
 import com.axlan.gdxtactics.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
@@ -79,11 +77,11 @@ public class DeployView extends TiledScreen {
   /** @param observer observer to call when briefing is finished */
   public DeployView(CompletionObserver observer) {
     super(
-        "maps/" + LoadedResources.getLevelData().mapName + ".tmx",
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
-    this.levelData = LoadedResources.getLevelData();
+    this.levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     this.observer = observer;
     this.playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
     enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
@@ -181,13 +179,16 @@ public class DeployView extends TiledScreen {
       table.add(intelCheckBoxes[i]);
       table.row();
 
-      for (Intel intel : resource.effects) {
-        Formation formation = levelData.enemyFormations.get(intel.formationSpottedIdx);
-        int spawnSelection = enemySpawnSelections[intel.formationSpottedIdx];
+      for (ShopItem.Intel intel : resource.effects) {
+        //TODO-P1 Figure out new way to correspond intel to formations
+        int formationSpottedIdx = rand.nextInt(levelData.enemyFormations.size());
+
+        Formation formation = levelData.enemyFormations.get(formationSpottedIdx);
+        int spawnSelection = enemySpawnSelections[formationSpottedIdx];
 
         int numSpotted = Math.min(formation.units.size(), intel.numberOfUnits);
         Array<Integer> unitIds;
-        if (intel.spotType == SpotType.RANDOM) {
+        if (intel.spotType == ShopItem.SpotType.RANDOM) {
           unitIds = Utilities.getNElements(rand, numSpotted, formation.units.size());
         } else {
           unitIds = Utilities.getIntRange(0, numSpotted, 1);

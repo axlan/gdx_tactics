@@ -1,8 +1,8 @@
 package com.axlan.fogofwar.campaigns;
 
 import com.axlan.fogofwar.models.BriefingData;
-import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.ShopItem;
 
 import java.util.List;
 
@@ -33,26 +33,30 @@ public interface CampaignBase {
   /**
    * Based on the current game state get the items for sale in the shop
    *
-   * @param gameState current game state
    * @return List of items that can be purchased.
    */
-  List<LevelData.ShopItem> getItems(GameState gameState);
+  List<ShopItem> getItems();
 
   /**
    * Based on the current game state get the briefing to show for the overworld map
    *
-   * @param gameState current game state
    * @return data for briefing to show. null if no briefing
    */
-  BriefingData getMapBriefing(GameState gameState);
+  BriefingData getMapBriefing();
 
   /**
    * Based on the current game state get the briefing to show when entering a level
    *
-   * @param gameState current game state
    * @return data for briefing to show. null if no briefing
    */
-  BriefingData getLevelBriefing(GameState gameState);
+  BriefingData getLevelBriefing();
+
+  /**
+   * Based on the current game state get the data for the selected level
+   *
+   * @return data for level. null if there's an error
+   */
+  LevelData getLevelData();
 
 
 }

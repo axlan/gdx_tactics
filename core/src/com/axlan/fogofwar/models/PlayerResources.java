@@ -1,7 +1,5 @@
 package com.axlan.fogofwar.models;
 
-import com.axlan.fogofwar.models.LevelData.ShopItem;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
