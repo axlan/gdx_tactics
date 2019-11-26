@@ -114,6 +114,7 @@ public class Utilities {
    * @param <T> Class of Enum
    * @return mapping of enums to buttons with text corresponding to the enums names
    */
+  @SuppressWarnings("unchecked")
   public static <T> Map<T, VisTextButton> enumToButtons(T[] enumList) {
     LinkedHashMap<T, VisTextButton> buttons = new LinkedHashMap<>();
     for (T val : enumList) {
@@ -127,7 +128,6 @@ public class Utilities {
           name.append(' ');
         }
       }
-      //noinspection unchecked
       buttons.put((T) enumVal, new VisTextButton(name.toString()));
     }
     return buttons;

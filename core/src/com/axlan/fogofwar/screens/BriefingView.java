@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.LevelData;
+import com.axlan.fogofwar.models.BriefingData;
+import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
@@ -23,7 +24,7 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
  */
 public class BriefingView extends StageBasedScreen {
 
-  private final LevelData levelData;
+  private final BriefingData briefingData;
   private final VisLabel dialogue;
   private final VisLabel avatarLabel;
   private final VisImage avatar;
@@ -40,14 +41,15 @@ public class BriefingView extends StageBasedScreen {
     this.avatarLabel = new VisLabel();
     this.avatar = new VisImage();
     this.settingLabel = new VisLabel();
-    this.levelData = LoadedResources.getLevelData();
-    this.settingLabel.setText(levelData.briefSetting);
+    GameState gameState = LoadedResources.getGameStateManager().gameState;
+    this.briefingData = gameState.campaign.getMapBriefing(gameState);
+    this.settingLabel.setText(this.briefingData.briefSetting);
     this.stage.addActor(this.makeBriefingView());
     this.updatePage(0);
   }
 
   private boolean isDone() {
-    return this.levelData == null || this.curPage >= this.levelData.briefPages.size() - 1;
+    return this.briefingData == null || this.curPage >= this.briefingData.briefPages.size() - 1;
   }
 
   /**
@@ -57,9 +59,9 @@ public class BriefingView extends StageBasedScreen {
    */
   private void updatePage(int newPage) {
     this.curPage = newPage;
-    if (this.levelData != null && this.curPage < this.levelData.briefPages.size()) {
-      this.dialogue.setText(this.levelData.briefPages.get(this.curPage).dialogue);
-      this.avatarLabel.setText(this.levelData.briefPages.get(this.curPage).speaker);
+    if (this.briefingData != null && this.curPage < this.briefingData.briefPages.size()) {
+      this.dialogue.setText(this.briefingData.briefPages.get(this.curPage).dialogue);
+      this.avatarLabel.setText(this.briefingData.briefPages.get(this.curPage).speaker);
       // TODO-P2 load speaker font and avatar based on name from map
       // TODO-P3 add drawables to image atlas
       this.avatar.setDrawable(new Texture(Gdx.files.internal("images/avatars/img_avatar.png")));
