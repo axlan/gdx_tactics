@@ -3,9 +3,16 @@ package com.axlan.fogofwar.models;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data describing the world map
+ */
 @SuppressWarnings("WeakerAccess")
 public class WorldData {
+  /**
+   * Identifier for map file
+   */
   public final String mapName;
+  /** Data for cities on map */
   public final List<CityData> cities;
 
   public WorldData(String mapName, List<CityData> cities) {
@@ -21,11 +28,19 @@ public class WorldData {
     }
   }
 
+  /**
+   * Data for a city in the world map
+   */
   public static class CityData {
+    /** Identifier for city */
     public final String name;
+    /** Number of spawn points for player */
     public final int maxFriendlyTroops;
+    /** Number of spawn points for enemy */
     public final int maxEnemyTroops;
+    /** Number of troops currently allocated to deploy to city */
     public int stationedFriendlyTroops;
+    /** Number of enemy troops currently allocated to deploy to city */
     public int stationedEnemyTroops;
 
     public CityData(String name, int stationedFriendlyTroops, int maxFriendlyTroops, int stationedEnemyTroops, int maxEnemyTroops) {

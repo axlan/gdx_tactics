@@ -1,5 +1,8 @@
 package com.axlan.fogofwar.screens;
 
+/**
+ * Used to identify the active scene
+ */
 public enum SceneLabel {
   PRE_MAP_BRIEF,
   PRE_BATTLE_BRIEF,

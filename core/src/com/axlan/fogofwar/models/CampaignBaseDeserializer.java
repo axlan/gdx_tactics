@@ -6,7 +6,9 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-
+/**
+ * Class for Deserializing CampaignBase for Gson
+ */
 public class CampaignBaseDeserializer implements JsonDeserializer<CampaignBase> {
   @Override
   public CampaignBase deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

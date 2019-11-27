@@ -10,6 +10,9 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
+/**
+ * Class for Serializing CampaignBase for Gson
+ */
 public class CampaignBaseSerializer implements JsonSerializer<CampaignBase> {
   @Override
   public JsonElement serialize(CampaignBase src, Type typeOfSrc, JsonSerializationContext context) {
