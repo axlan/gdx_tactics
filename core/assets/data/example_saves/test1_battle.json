@@ -7,7 +7,6 @@
         "description": "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible.",
         "effects": [
           {
-            "formationSpottedIdx": 0,
             "numberOfUnits": 1,
             "spotType": "RANDOM"
           }
@@ -44,12 +43,12 @@
     "enemyUnits": [
       [
         {
-          "x": 8,
-          "y": 3
+          "x": 4,
+          "y": 2
         },
         {
           "type": "scout",
-          "state": "DONE",
+          "state": "IDLE",
           "currentHealth": 5
         }
       ]
