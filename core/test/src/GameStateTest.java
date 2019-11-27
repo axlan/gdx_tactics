@@ -1,5 +1,6 @@
 import com.axlan.fogofwar.models.GameStateManager;
-import com.axlan.gdxtactics.StringObserver;
+import com.axlan.fogofwar.screens.SceneLabel;
+import com.axlan.gdxtactics.ValueObserver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,9 +23,10 @@ public class GameStateTest {
 
   @Test
   void testSerialization() {
-    GameStateManager gameStateManager = new GameStateManager(new StringObserver() {
+    GameStateManager gameStateManager = new GameStateManager(new ValueObserver<SceneLabel>() {
       @Override
-      public void processString(String str) {
+      public void processValue(SceneLabel val) {
+
       }
     });
     gameStateManager.loadFile("data/example_saves/test1_battle.json");

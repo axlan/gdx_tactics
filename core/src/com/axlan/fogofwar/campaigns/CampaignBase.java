@@ -19,6 +19,13 @@ public interface CampaignBase {
   String getName();
 
   /**
+   * Get the string identifier for campaign map
+   *
+   * @return campaign map identifier
+   */
+  String getOverWorldMap();
+
+  /**
    * used to construct new instance of a campaign
    * @return new instance of campaign
    */

@@ -2,7 +2,7 @@ package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.campaigns.CampaignBase;
 import com.axlan.gdxtactics.GameStateManagerBase;
-import com.axlan.gdxtactics.StringObserver;
+import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Gdx;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,9 +20,9 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
   /**
    * Callback for updating the scene after a load
    */
-  private final StringObserver loadSceneCallback;
+  private final ValueObserver loadSceneCallback;
 
-  public GameStateManager(StringObserver loadSceneCallback) {
+  public GameStateManager(ValueObserver loadSceneCallback) {
     this.loadSceneCallback = loadSceneCallback;
   }
 
@@ -72,12 +72,12 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
       }
     }
     gameState = gson.fromJson(handle, GameState.class);
-    loadSceneCallback.processString(gameState.scene);
+    loadSceneCallback.processValue(gameState.scene);
   }
 
   @Override
   public void load(int slot) {
     super.load(slot);
-    loadSceneCallback.processString(gameState.scene);
+    loadSceneCallback.processValue(gameState.scene);
   }
 }

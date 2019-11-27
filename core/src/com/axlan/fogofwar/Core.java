@@ -4,7 +4,7 @@ import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
 import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.GameMenuBar;
-import com.axlan.gdxtactics.StringObserver;
+import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -23,9 +23,6 @@ import com.kotcrab.vis.ui.VisUI;
  * Main class for game. Supervises switching between the views and handling shared resources.
  */
 public class Core extends Game {
-
-  static final String SCENE_NAME_BATTLE = "battle";
-  static final String SCENE_NAME_DEPLOY = "deploy";
 
   /**
    * Screen to return to after settings menu closes
@@ -105,6 +102,24 @@ public class Core extends Game {
   }
 
   /**
+   * Switch the screen to the {@link OverWorldMap}
+   */
+  private void showCampaignMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
+    CompletionObserver observer =
+        new CompletionObserver() {
+          @Override
+          public void onDone() {
+            LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
+            showBriefing();
+          }
+        };
+    OverWorldMap overWorldMap = new OverWorldMap();
+    this.setScreen(overWorldMap);
+  }
+
+
+  /**
    * Switch the screen to the {@link BriefingView}
    */
   private void showBriefing() {
@@ -112,7 +127,15 @@ public class Core extends Game {
         new CompletionObserver() {
           @Override
           public void onDone() {
-            showStore();
+            switch (LoadedResources.getGameStateManager().gameState.scene) {
+              case PRE_BATTLE_BRIEF:
+                showBattleMap();
+                break;
+              case PRE_MAP_BRIEF:
+              default:
+                showCampaignMap();
+                break;
+            }
           }
         };
     BriefingView briefingView = new BriefingView(observer);
@@ -128,6 +151,7 @@ public class Core extends Game {
           @Override
           public void onDone() {
             if (LoadedResources.getGameStateManager().gameState != null) {
+              LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
               showBriefing();
             } else {
               showTitle();
@@ -143,7 +167,7 @@ public class Core extends Game {
    * Switch the screen to the {@link DeployView}
    */
   private void showDeployMap() {
-    LoadedResources.getGameStateManager().gameState.scene = SCENE_NAME_DEPLOY;
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.DEPLOY_MAP;
     CompletionObserver observer =
         new CompletionObserver() {
           @Override
@@ -157,7 +181,7 @@ public class Core extends Game {
 
   /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
-    LoadedResources.getGameStateManager().gameState.scene = SCENE_NAME_BATTLE;
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.BATTLE_MAP;
     this.setScreen(new BattleView(menuBar));
   }
 
@@ -166,16 +190,21 @@ public class Core extends Game {
    *
    * @param scene string identifier of scene to start
    */
-  private void resumeSceneForLoad(String scene) {
+  private void resumeSceneForLoad(SceneLabel scene) {
     switch (scene) {
-      case SCENE_NAME_BATTLE:
+      case BATTLE_MAP:
         showBattleMap();
         break;
-      case SCENE_NAME_DEPLOY:
+      case DEPLOY_MAP:
         showDeployMap();
         break;
-      default:
-        throw new RuntimeException("Invalid scene name");
+      case PRE_MAP_BRIEF:
+      case PRE_BATTLE_BRIEF:
+        showBriefing();
+        break;
+      case CAMPAIGN_MAP:
+        showCampaignMap();
+        break;
     }
   }
 
@@ -183,10 +212,10 @@ public class Core extends Game {
   public void create() {
     VisUI.load();
     // TODO-P2 load custom skin
-    LoadedResources.initializeGlobal(new StringObserver() {
+    LoadedResources.initializeGlobal(new ValueObserver<SceneLabel>() {
       @Override
-      public void processString(String str) {
-        resumeSceneForLoad(str);
+      public void processValue(SceneLabel val) {
+        resumeSceneForLoad(val);
       }
     });
     // Set to callback to be able to show the settings menu from other screens

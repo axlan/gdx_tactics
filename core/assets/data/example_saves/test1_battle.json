@@ -57,5 +57,5 @@
   "campaign": {
     "type": "Tutorial"
   },
-  "scene": "battle"
+  "scene": "BATTLE_MAP"
 }

@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.campaigns.CampaignBase;
+import com.axlan.fogofwar.screens.SceneLabel;
 
 /**
  * Class for storing the state of the current game session. State should be complete for saving and
@@ -23,9 +24,9 @@ public class GameState {
   public final CampaignBase campaign;
 
   /**
-   * String identifier for current scene
+   * Identifier for current scene
    */
-  public String scene;
+  public SceneLabel scene;
 
   public GameState(CampaignBase campaign) {
     playerResources = new PlayerResources();

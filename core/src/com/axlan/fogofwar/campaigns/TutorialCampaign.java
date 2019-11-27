@@ -14,7 +14,8 @@ import java.util.List;
 
 public class TutorialCampaign implements CampaignBase {
 
-  public static final String NAME = "Tutorial";
+  private static final String NAME = "Tutorial";
+  private static final String MAP_NAME = "tutorial_overworld";
 
   private static final List<ShopItem> ITEMS = Collections.unmodifiableList(Arrays.asList(
       new ShopItem("Farmer",
@@ -111,4 +112,10 @@ public class TutorialCampaign implements CampaignBase {
   public BriefingData getLevelBriefing() {
     return null;
   }
+
+  @Override
+  public String getOverWorldMap() {
+    return MAP_NAME;
+  }
+
 }

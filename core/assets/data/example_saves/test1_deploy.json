@@ -22,5 +22,5 @@
   "campaign": {
     "type": "Tutorial"
   },
-  "scene": "deploy"
+  "scene": "DEPLOY_MAP"
 }

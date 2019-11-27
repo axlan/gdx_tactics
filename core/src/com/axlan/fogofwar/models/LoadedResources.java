@@ -4,7 +4,7 @@ import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
-import com.axlan.gdxtactics.StringObserver;
+import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
@@ -83,7 +83,7 @@ public final class LoadedResources {
   }
 
   /** Load the resources used across all levels */
-  public static void initializeGlobal(StringObserver observer) {
+  public static void initializeGlobal(ValueObserver observer) {
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();

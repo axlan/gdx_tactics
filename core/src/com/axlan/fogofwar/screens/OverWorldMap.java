@@ -1,6 +1,5 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.Campaign;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.TilePoint;
@@ -35,9 +34,9 @@ public class OverWorldMap extends TiledScreen {
   private final PathVisualizer pathVisualizer;
   private VisLabel cityLabel = null;
 
-  public OverWorldMap(Campaign campaign) {
+  public OverWorldMap() {
     super(
-        "maps/" + campaign.worldMap.mapName + ".tmx",
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldMap() + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
