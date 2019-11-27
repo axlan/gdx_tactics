@@ -47,11 +47,11 @@ public class Core extends Game {
    * Switch the screen to the {@link TitleScreen}
    */
   private void showTitle() {
-    TitleSelectionObserver observer =
-        new TitleSelectionObserver() {
+    ValueObserver<TitleScreen.TitleSelection> observer =
+        new ValueObserver<TitleScreen.TitleSelection>() {
           @Override
-          public void onDone(TitleSelection selection) {
-            switch (selection) {
+          public void processValue(TitleScreen.TitleSelection val) {
+            switch (val) {
               case NEW_GAME:
                 showNewGame();
                 break;
@@ -114,7 +114,7 @@ public class Core extends Game {
             showBriefing();
           }
         };
-    OverWorldMap overWorldMap = new OverWorldMap();
+    OverWorldMap overWorldMap = new OverWorldMap(observer);
     this.setScreen(overWorldMap);
   }
 

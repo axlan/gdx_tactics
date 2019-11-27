@@ -1,7 +1,7 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.screens.TitleSelectionObserver.TitleSelection;
 import com.axlan.gdxtactics.StageBasedScreen;
+import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,9 +23,9 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
  */
 public class TitleScreen extends StageBasedScreen {
 
-  private TitleSelectionObserver observer;
+  private ValueObserver<TitleSelection> observer;
 
-  public TitleScreen(TitleSelectionObserver observer) {
+  public TitleScreen(ValueObserver<TitleSelection> observer) {
     this.observer = observer;
     this.stage.addActor(this.makeTitleScreen());
   }
@@ -53,7 +53,7 @@ public class TitleScreen extends StageBasedScreen {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              observer.onDone(val);
+              observer.processValue(val);
             }
           });
       root.add(button);
@@ -61,5 +61,12 @@ public class TitleScreen extends StageBasedScreen {
     }
 
     return root;
+  }
+
+  public enum TitleSelection {
+    NEW_GAME,
+    LOAD_GAME,
+    SETTINGS,
+    QUIT
   }
 }
