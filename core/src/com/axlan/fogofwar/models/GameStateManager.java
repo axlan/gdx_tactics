@@ -69,7 +69,7 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
         handle = new FileReader(filepath);
       } catch (FileNotFoundException e) {
         e.printStackTrace();
-        handle = null;
+        throw new RuntimeException("File not found");
       }
     }
     gameState = gson.fromJson(handle, GameState.class);

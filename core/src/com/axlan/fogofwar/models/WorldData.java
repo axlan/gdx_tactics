@@ -1,7 +1,9 @@
 package com.axlan.fogofwar.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class WorldData {
   public final String mapName;
   public final List<CityData> cities;
@@ -13,7 +15,10 @@ public class WorldData {
 
   public WorldData(WorldData other) {
     this.mapName = other.mapName;
-    this.cities = other.cities;
+    this.cities = new ArrayList<>();
+    for (CityData city : other.cities) {
+      this.cities.add(new CityData(city));
+    }
   }
 
   public static class CityData {

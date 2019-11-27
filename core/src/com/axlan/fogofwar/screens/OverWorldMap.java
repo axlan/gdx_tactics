@@ -36,6 +36,7 @@ public class OverWorldMap extends TiledScreen {
   private final ArrayList<ArrayList<TilePoint>> shownPaths = new ArrayList<>();
   private final PathVisualizer pathVisualizer;
   private VisLabel cityLabel = null;
+  @SuppressWarnings("FieldCanBeLocal")
   private final Runnable completionObserver;
 
   public OverWorldMap(Runnable completionObserver, MenuBar gameMenuBar) {

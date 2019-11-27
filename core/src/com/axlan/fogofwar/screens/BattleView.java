@@ -194,12 +194,13 @@ public class BattleView extends TiledScreen {
         LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
         LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
         levelData.enemyWinConditions)) {
+      System.out.println("Player Loses!");
       // TODO-P1 complete logic for winning / losing
     } else if (checkVictory(
         LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
         LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
         levelData.playerWinConditions)) {
-
+      System.out.println("Player Wins!");
     }
   }
 

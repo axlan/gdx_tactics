@@ -36,7 +36,7 @@ public abstract class GameStateManagerBase<T> {
    */
   private long[] slotsTimes = null;
 
-  public GameStateManagerBase() {
+  protected GameStateManagerBase() {
     gson = buildGson();
     fetchSavesFromPrefs();
   }
@@ -114,7 +114,7 @@ public abstract class GameStateManagerBase<T> {
    *
    * @param slot index of slot to use. Must be less then {@link #NUM_SLOTS}
    */
-  public void save(int slot) {
+  void save(int slot) {
     assert slot < NUM_SLOTS;
     slots[slot] = newGameState(gameState);
     slotsTimes[slot] = System.currentTimeMillis();

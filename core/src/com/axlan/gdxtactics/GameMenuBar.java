@@ -78,7 +78,7 @@ public class GameMenuBar extends MenuBar {
     updateDataButtons();
   }
 
-  protected Menu makeOptionsMenu() {
+  private Menu makeOptionsMenu() {
     Menu optionsMenu = new Menu("Options");
 
     MenuItem saveItem = new MenuItem("Save");

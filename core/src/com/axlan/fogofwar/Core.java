@@ -50,22 +50,19 @@ public class Core extends Game {
    */
   private void showTitle() {
     Consumer<TitleScreen.TitleSelection> observer =
-        new Consumer<TitleScreen.TitleSelection>() {
-          @Override
-          public void accept(TitleScreen.TitleSelection val) {
-            switch (val) {
-              case NEW_GAME:
-                showNewGame();
-                break;
-              case QUIT:
-                Gdx.app.exit();
-                break;
-              case SETTINGS:
-                showSettings();
-                break;
-              case LOAD_GAME:
-                // TODO-P1 Load game Menu
-            }
+        val -> {
+          switch (val) {
+            case NEW_GAME:
+              showNewGame();
+              break;
+            case QUIT:
+              Gdx.app.exit();
+              break;
+            case SETTINGS:
+              showSettings();
+              break;
+            case LOAD_GAME:
+              // TODO-P1 Load game Menu
           }
         };
     TitleScreen titleScreen = new TitleScreen(observer);
@@ -94,13 +91,10 @@ public class Core extends Game {
    */
   private void showCampaignMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
-    Runnable observer = new Runnable() {
-          @Override
-          public void run() {
-            LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
-            showBriefing();
-          }
-        };
+    Runnable observer = () -> {
+      LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
+      showBriefing();
+    };
     OverWorldMap overWorldMap = new OverWorldMap(observer, menuBar);
     this.setScreen(overWorldMap);
   }
@@ -111,18 +105,15 @@ public class Core extends Game {
    */
   private void showBriefing() {
     Runnable observer =
-        new Runnable() {
-          @Override
-          public void run() {
-            switch (LoadedResources.getGameStateManager().gameState.scene) {
-              case PRE_BATTLE_BRIEF:
-                showBattleMap();
-                break;
-              case PRE_MAP_BRIEF:
-              default:
-                showCampaignMap();
-                break;
-            }
+        () -> {
+          switch (LoadedResources.getGameStateManager().gameState.scene) {
+            case PRE_BATTLE_BRIEF:
+              showBattleMap();
+              break;
+            case PRE_MAP_BRIEF:
+            default:
+              showCampaignMap();
+              break;
           }
         };
     BriefingView briefingView = new BriefingView(observer);
@@ -134,15 +125,12 @@ public class Core extends Game {
    */
   private void showNewGame() {
     Runnable observer =
-        new Runnable() {
-          @Override
-          public void run() {
-            if (LoadedResources.getGameStateManager().gameState != null) {
-              LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
-              showBriefing();
-            } else {
-              showTitle();
-            }
+        () -> {
+          if (LoadedResources.getGameStateManager().gameState != null) {
+            LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
+            showBriefing();
+          } else {
+            showTitle();
           }
         };
     NewGameView newGameView = new NewGameView(observer);

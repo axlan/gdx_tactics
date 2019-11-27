@@ -3,7 +3,7 @@ import com.axlan.fogofwar.screens.SceneLabel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GameStateTest {
+class GameStateTest {
 
 //  @BeforeAll
 //  static void setup(){
@@ -25,7 +25,7 @@ public class GameStateTest {
     GameStateManager gameStateManager = new GameStateManager((SceneLabel a) -> {
     });
     gameStateManager.loadFile("data/example_saves/test1_battle.json");
-    Assertions.assertEquals(gameStateManager.gameState.scene, "battle");
+    Assertions.assertEquals(gameStateManager.gameState.scene, SceneLabel.BATTLE_MAP);
     //TODO-P2 Make test more robust
   }
 

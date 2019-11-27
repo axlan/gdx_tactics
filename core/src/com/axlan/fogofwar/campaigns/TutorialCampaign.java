@@ -13,6 +13,7 @@ import java.util.List;
 
 //TODO-P1 Make the attributes returned by these functions respond to game state
 
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class TutorialCampaign implements CampaignBase {
 
   private static final String NAME = "Tutorial";
@@ -32,7 +33,7 @@ public class TutorialCampaign implements CampaignBase {
   ));
 
 
-  public TutorialCampaign() {
+  TutorialCampaign() {
     worldData = new WorldData(
         MAP_NAME,
         Collections.unmodifiableList(Arrays.asList(
@@ -54,8 +55,8 @@ public class TutorialCampaign implements CampaignBase {
     );
   }
 
-  public TutorialCampaign(TutorialCampaign other) {
-    this.worldData = other.worldData;
+  private TutorialCampaign(TutorialCampaign other) {
+    this.worldData = new WorldData(other.worldData);
   }
 
   @Override
@@ -75,17 +76,13 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public List<ShopItem> getItems() {
-    ArrayList<ShopItem> items = new ArrayList<>(ITEMS);
-
-    return items;
+    return new ArrayList<>(ITEMS);
   }
 
   @Override
   public BriefingData getMapBriefing() {
     List<BriefingData.BriefPage> pages = new ArrayList<>();
-    String setting = "";
-
-    setting = "SpyVSpy Training Camp";
+    String setting = "SpyVSpy Training Camp";
     pages.add(new BriefingData.BriefPage("Commander",
         "Hello class!\nWhile the situation on the front is dire, we still have our standards.\nThis is what separates us from the animals."
     ));
