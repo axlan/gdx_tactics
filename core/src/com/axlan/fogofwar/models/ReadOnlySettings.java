@@ -15,32 +15,34 @@ import com.google.gson.JsonSyntaxException;
 @SuppressWarnings({"WeakerAccess"})
 public final class ReadOnlySettings {
 
-    /**
-     * JSON file to load level data from
-     */
+  /**
+   * JSON file to load level data from
+   */
   public final String levelDataFile;
   /** JSON file to load unit stats from */
   public final String unitStatsDataFile;
-    /**
-     * The number of tiles that are show horizontally on map screen. Sets resolution.
-     */
+  /**
+   * The number of tiles that are show horizontally on map screen. Sets resolution.
+   */
   public final int tilesPerScreenWidth;
-    /**
-     * How many pixels should the camera pan per second when scrolling across the map.
-     */
+  /**
+   * How many pixels should the camera pan per second when scrolling across the map.
+   */
   public final float cameraSpeed;
-    /** When the mouse is closer then this many pixels from the edge, scroll the map. */
+  /**
+   * When the mouse is closer then this many pixels from the edge, scroll the map.
+   */
   public final int edgeScrollSize;
-    /** Settings controlling how sprites are drawn */
+  /** Settings controlling how sprites are drawn */
   public final SpritesSettings sprites;
 
-    private ReadOnlySettings(
-            String levelDataFile,
-            String unitStatsDataFile,
-            SpritesSettings sprites,
-            int tilesPerScreenWidth,
-            float cameraSpeed,
-            int edgeScrollSize) {
+  private ReadOnlySettings(
+      String levelDataFile,
+      String unitStatsDataFile,
+      SpritesSettings sprites,
+      int tilesPerScreenWidth,
+      float cameraSpeed,
+      int edgeScrollSize) {
     this.levelDataFile = levelDataFile;
     this.unitStatsDataFile = unitStatsDataFile;
     this.sprites = sprites;
@@ -59,17 +61,17 @@ public final class ReadOnlySettings {
    */
   @SuppressWarnings("SameParameterValue")
   static ReadOnlySettings loadFromJson(String projectPath) {
-      return JsonLoader.loadFromJsonFileInternal(projectPath, ReadOnlySettings.class);
+    return JsonLoader.loadFromJsonFileInternal(projectPath, ReadOnlySettings.class);
   }
 
-    /** Settings controlling how sprites are drawn */
+  /** Settings controlling how sprites are drawn */
   public static final class SpritesSettings {
 
-        /** Atlas file containing sprites */
+    /** Atlas file containing sprites */
     public final String atlasFile;
-        /** Seconds to show each frame in animated sprite */
+    /** Seconds to show each frame in animated sprite */
     public final float frameDuration;
-        /** How many seconds should it take the sprite to cross each tile during movement */
+    /** How many seconds should it take the sprite to cross each tile during movement */
     public final float movementDurationPerTile;
 
     @SuppressWarnings("unused")

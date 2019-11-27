@@ -1,7 +1,5 @@
 package com.axlan.fogofwar.models;
 
-import com.axlan.fogofwar.models.LevelData.ShopItem;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,9 +22,9 @@ public class PlayerResources {
     purchases = new ArrayList<>(other.purchases);
   }
 
-    /**
-     * @return Money available to the player
-     */
+  /**
+   * @return Money available to the player
+   */
   public int getMoney() {
     return money;
   }
@@ -40,9 +38,9 @@ public class PlayerResources {
     money += income;
   }
 
-    /**
-     * @return An unmodifiable List of ShopItem available to the player
-     */
+  /**
+   * @return An unmodifiable List of ShopItem available to the player
+   */
   public List<ShopItem> getPurchases() {
     return Collections.unmodifiableList(purchases);
   }

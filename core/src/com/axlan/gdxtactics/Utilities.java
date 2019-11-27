@@ -1,6 +1,7 @@
 package com.axlan.gdxtactics;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
@@ -96,6 +97,15 @@ public class Utilities {
   }
 
   /**
+   * Move the label so so it's center is at it's current specified position
+   *
+   * @param label the label to adjust
+   */
+  public static void centerLabel(Label label) {
+    label.moveBy(-label.getWidth() / 2, -label.getHeight() / 2);
+  }
+
+  /**
    * Method to generate buttons that map to the possible values of an enum type.
    *
    * <p>Names convert from Upper snake case to capitalized spaced words.
@@ -104,10 +114,11 @@ public class Utilities {
    * @param <T> Class of Enum
    * @return mapping of enums to buttons with text corresponding to the enums names
    */
+  @SuppressWarnings("unchecked")
   public static <T> Map<T, VisTextButton> enumToButtons(T[] enumList) {
     LinkedHashMap<T, VisTextButton> buttons = new LinkedHashMap<>();
     for (T val : enumList) {
-      Enum enumVal = (Enum) val;
+      Enum<?> enumVal = (Enum<?>) val;
       String[] words = enumVal.name().toLowerCase().split("_");
       StringBuilder name = new StringBuilder();
       for (String word : words) {
@@ -117,7 +128,6 @@ public class Utilities {
           name.append(' ');
         }
       }
-      //noinspection unchecked
       buttons.put((T) enumVal, new VisTextButton(name.toString()));
     }
     return buttons;

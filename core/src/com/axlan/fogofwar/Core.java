@@ -2,12 +2,12 @@ package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
-import com.axlan.gdxtactics.CompletionObserver;
-import com.axlan.gdxtactics.GameMenuBar;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.kotcrab.vis.ui.VisUI;
+
+import java.util.function.Consumer;
 
 // TODO-P2 Add campaign component. You have set pool of troops and decide how many to commit to each
 // battle. They will take time to be usable again or have penalty of fuel.
@@ -23,117 +23,175 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
-    /**
-     * Screen to return to after settings menu closes
-     */
-    private Screen hiddenScreen = null;
-  private GameMenuBar menuBar;
+  private FogGameMenuBar menuBar;
 
-    /**
-     * Switch the screen to the {@link TitleScreen}
-     */
-    private void showTitle() {
-        TitleSelectionObserver observer =
-                new TitleSelectionObserver() {
-                    @Override
-                    public void onDone(TitleSelection selection) {
-                        switch (selection) {
-                            case NEW_GAME:
-                                showBriefing();
-                                break;
-                            case QUIT:
-                                Gdx.app.exit();
-                                break;
-                            case SETTINGS:
-                                showSettings();
-                                break;
-                            case LOAD_GAME:
-                                // TODO-P1 Load game Menu
-                        }
-                    }
-                };
-        TitleScreen titleScreen = new TitleScreen(observer);
-        this.setScreen(titleScreen);
-    }
+  private final String forceLoadSaveFile;
 
-    /**
-     * Switch the screen to the {@link StoreView}
-     */
-    private void showSettings() {
-        hiddenScreen = this.getScreen();
-        CompletionObserver observer =
-                new CompletionObserver() {
-                    @Override
-                    public void onDone() {
-                        setScreen(hiddenScreen);
-                    }
-                };
-        SettingsScreen storeView = new SettingsScreen(observer);
-        this.setScreen(storeView);
-    }
-
-    /**
-     * Switch the screen to the {@link StoreView}
-     */
-  private void showStore() {
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showDeployMap();
-          }
-        };
-    StoreView storeView = new StoreView(observer);
-      this.setScreen(storeView);
+  public Core() {
+    super();
+    forceLoadSaveFile = null;
   }
 
-    /**
-     * Switch the screen to the {@link BriefingView}
-     */
+  public Core(String forceLoadSaveFile) {
+    super();
+    this.forceLoadSaveFile = forceLoadSaveFile;
+  }
+
+  /**
+   * Switch the screen to the {@link SettingsScreen}
+   */
+  private void showSettings() {
+    SettingsScreen storeView = new SettingsScreen(getResumeCompletionObserver());
+    this.setScreen(storeView);
+  }
+
+  /**
+   * Switch the screen to the {@link TitleScreen}
+   */
+  private void showTitle() {
+    Consumer<TitleScreen.TitleSelection> observer =
+        val -> {
+          switch (val) {
+            case NEW_GAME:
+              showNewGame();
+              break;
+            case QUIT:
+              Gdx.app.exit();
+              break;
+            case SETTINGS:
+              showSettings();
+              break;
+            case LOAD_GAME:
+              // TODO-P1 Load game Menu
+          }
+        };
+    TitleScreen titleScreen = new TitleScreen(observer);
+    this.setScreen(titleScreen);
+  }
+
+  /**
+   * Factory for Runnable that will return to the current screen
+   * @return generated Runnable
+   */
+  private Runnable getResumeCompletionObserver() {
+    Screen hiddenScreen = this.getScreen();
+    return () -> setScreen(hiddenScreen);
+  }
+
+  /**
+   * Switch the screen to the {@link StoreView}
+   */
+  private void showStore() {
+    StoreView storeView = new StoreView(getResumeCompletionObserver());
+    this.setScreen(storeView);
+  }
+
+  /**
+   * Switch the screen to the {@link OverWorldMap}
+   */
+  private void showCampaignMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
+    Runnable observer = () -> {
+      LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
+      showBriefing();
+    };
+    OverWorldMap overWorldMap = new OverWorldMap(observer, menuBar);
+    this.setScreen(overWorldMap);
+  }
+
+
+  /**
+   * Switch the screen to the {@link BriefingView}
+   */
   private void showBriefing() {
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showStore();
+    Runnable observer =
+        () -> {
+          switch (LoadedResources.getGameStateManager().gameState.scene) {
+            case PRE_BATTLE_BRIEF:
+              showBattleMap();
+              break;
+            case PRE_MAP_BRIEF:
+            default:
+              showCampaignMap();
+              break;
           }
         };
     BriefingView briefingView = new BriefingView(observer);
-      this.setScreen(briefingView);
+    this.setScreen(briefingView);
   }
 
-    /** Switch the screen to the {@link DeployView} */
-  private void showDeployMap() {
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showBattleMap();
+  /**
+   * Switch the screen to the {@link BriefingView}
+   */
+  private void showNewGame() {
+    Runnable observer =
+        () -> {
+          if (LoadedResources.getGameStateManager().gameState != null) {
+            LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
+            showBriefing();
+          } else {
+            showTitle();
           }
         };
-    DeployView deployView = new DeployView(observer);
-      this.setScreen(deployView);
+    NewGameView newGameView = new NewGameView(observer);
+    this.setScreen(newGameView);
   }
 
-    /** Switch the screen to the {@link BattleView} */
+
+  /**
+   * Switch the screen to the {@link DeployView}
+   */
+  private void showDeployMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.DEPLOY_MAP;
+    Runnable observer = this::showBattleMap;
+    DeployView deployView = new DeployView(observer);
+    this.setScreen(deployView);
+  }
+
+  /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.BATTLE_MAP;
     this.setScreen(new BattleView(menuBar));
+  }
+
+  /**
+   * Switch to the correct scene after loading a save file
+   *
+   * @param scene string identifier of scene to start
+   */
+  private void resumeSceneForLoad(SceneLabel scene) {
+    switch (scene) {
+      case BATTLE_MAP:
+        showBattleMap();
+        break;
+      case DEPLOY_MAP:
+        showDeployMap();
+        break;
+      case PRE_MAP_BRIEF:
+      case PRE_BATTLE_BRIEF:
+        showBriefing();
+        break;
+      case CAMPAIGN_MAP:
+        showCampaignMap();
+        break;
+    }
   }
 
   @Override
   public void create() {
+
     VisUI.load();
     // TODO-P2 load custom skin
-    LoadedResources.initializeGlobal();
-    LoadedResources.initializeLevel();
+    LoadedResources.initializeGlobal(this::resumeSceneForLoad);
     // Set to callback to be able to show the settings menu from other screens
-    CompletionObserver menuSettingsCallback = new CompletionObserver() {
-      @Override
-      public void onDone() {
-        showSettings();
-      }
-    };
-    menuBar = new GameMenuBar(menuSettingsCallback, LoadedResources.getGameStateManager());
-    this.showTitle();
+    Runnable menuSettingsCallback = this::showSettings;
+    // Set to callback to be able to show the settings menu from other screens
+    Runnable menuShopCallback = this::showStore;
+    menuBar = new FogGameMenuBar(menuSettingsCallback, menuShopCallback, LoadedResources.getGameStateManager());
+    if (forceLoadSaveFile == null) {
+      this.showTitle();
+    } else {
+      LoadedResources.getGameStateManager().loadFile(forceLoadSaveFile);
+    }
   }
 }

@@ -1,12 +1,13 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.BattleState;
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LevelData.*;
-import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.fogofwar.models.PlayerResources;
-import com.axlan.gdxtactics.*;
+import com.axlan.fogofwar.models.*;
+import com.axlan.fogofwar.models.LevelData.Formation;
+import com.axlan.fogofwar.models.LevelData.UnitAllotment;
+import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.axlan.gdxtactics.TilePoint;
+import com.axlan.gdxtactics.TiledScreen;
+import com.axlan.gdxtactics.Utilities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,9 +33,9 @@ import static com.axlan.gdxtactics.Utilities.getTransparentColor;
  */
 public class DeployView extends TiledScreen {
 
-    /**
-     * List of colors to differentiate intel sources
-     */
+  /**
+   * List of colors to differentiate intel sources
+   */
   private static final java.util.List<Color> COLOR_LIST =
       Collections.unmodifiableList(
           Arrays.asList(
@@ -45,43 +46,45 @@ public class DeployView extends TiledScreen {
               Color.MAGENTA,
               Color.YELLOW,
               Color.BLACK,
-                  Color.WHITE));
-    /**
-     * The set of enemy spawn points randomly selected
-     */
+              Color.WHITE));
+  /**
+   * The set of enemy spawn points randomly selected
+   */
   private final Integer[] enemySpawnSelections;
-    /**
-     * Labels describing how many units of each type are still available to deploy
-     */
+  /**
+   * Labels describing how many units of each type are still available to deploy
+   */
   private final VisLabel[] remainingLabels;
-    // TODO-P3 allow for determinism
+  // TODO-P3 allow for determinism
   private final Random rand = new Random();
   /** Check boxes to select intel to display */
   private final VisCheckBox[] intelCheckBoxes;
 
   private final LevelData levelData;
   private final PlayerResources playerResources;
-    /** Mapping of map points to the unit type deployed there */
+  /**
+   * Mapping of map points to the unit type deployed there
+   */
   private final HashMap<TilePoint, String> placements = new HashMap<>();
   /** Animations for intel that can be shown on the map */
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
-    /** Button to finalize deployment */
+  /** Button to finalize deployment */
   private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
 
-  private final CompletionObserver observer;
-    /** The type of unit currently selected to deploy. null for removing previous deployments. */
+  private final Runnable observer;
+  /** The type of unit currently selected to deploy. null for removing previous deployments. */
   private String selectedUnit;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
 
-    /** @param observer observer to call when briefing is finished */
-  public DeployView(CompletionObserver observer) {
-      super(
-              "maps/" + LoadedResources.getLevelData().mapName + ".tmx",
-              LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
-              LoadedResources.getReadOnlySettings().cameraSpeed,
-              LoadedResources.getReadOnlySettings().edgeScrollSize);
-    this.levelData = LoadedResources.getLevelData();
+  /** @param observer observer to call when briefing is finished */
+  public DeployView(Runnable observer) {
+    super(
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
+        LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
+        LoadedResources.getReadOnlySettings().cameraSpeed,
+        LoadedResources.getReadOnlySettings().edgeScrollSize);
+    this.levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     this.observer = observer;
     this.playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
     enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
@@ -99,28 +102,28 @@ public class DeployView extends TiledScreen {
     intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
     stage.addActor(createIntelSelectWindow());
 
-      // TODO-P2 Add property window to deploy view
+    // TODO-P2 Add property window to deploy view
 
   }
 
-    // TODO-P2 fix window so resize works
+  // TODO-P2 fix window so resize works
 
-    /** @return Create a window for selecting units to deploy */
+  /** @return Create a window for selecting units to deploy */
   private VisWindow createUnitSelectWindow() {
 
     final VisWindow unitSelection = new VisWindow("Unit Selection");
     unitSelection.setPosition(0, 0);
     VisTable table = new VisTable();
-      // table.setDebug(true);
+    // table.setDebug(true);
     unitSelection.add(table).fill().expand();
 
     for (int i = 0; i < levelData.playerUnits.size(); i++) {
       final UnitAllotment unit = levelData.playerUnits.get(i);
-        // TODO-P3 Make button react to hover, press
-        // TODO-P3 Clean up drawable generation
-        Button button =
-                new Button(
-                        LoadedResources.getSpriteLookup().getTextureRegionDrawable(unit.type, Poses.IDLE));
+      // TODO-P3 Make button react to hover, press
+      // TODO-P3 Clean up drawable generation
+      Button button =
+          new Button(
+              LoadedResources.getSpriteLookup().getTextureRegionDrawable(unit.type, Poses.IDLE));
       button.addListener(
           new ChangeListener() {
             @Override
@@ -136,34 +139,34 @@ public class DeployView extends TiledScreen {
       table.row();
     }
     VisTextButton eraseButton = new VisTextButton("Eraser");
-      eraseButton.addListener(
-              new ChangeListener() {
-                  @Override
-                  public void changed(ChangeEvent event, Actor actor) {
-                      selectedUnit = null;
-                  }
+    eraseButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            selectedUnit = null;
+          }
         });
     table.add(eraseButton);
     table.row();
     doneButton.setDisabled(true);
-      doneButton.addListener(
-              new ChangeListener() {
-                  @Override
-                  public void changed(ChangeEvent event, Actor actor) {
-                      ArrayList<Integer> enemyList = new ArrayList<>();
-                      Collections.addAll(enemyList, enemySpawnSelections);
-                      List<Formation> enemyFormations = levelData.enemyFormations;
-                    LoadedResources.getGameStateManager().gameState.battleState =
-                              new BattleState(enemyList, placements, enemyFormations);
-                      observer.onDone();
-                  }
+    doneButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            ArrayList<Integer> enemyList = new ArrayList<>();
+            Collections.addAll(enemyList, enemySpawnSelections);
+            List<Formation> enemyFormations = levelData.enemyFormations;
+            LoadedResources.getGameStateManager().gameState.battleState =
+                new BattleState(enemyList, placements, enemyFormations);
+            observer.run();
+          }
         });
     table.add(doneButton).colspan(2);
 
     return unitSelection;
   }
 
-    /** @return Create a window for selecting which intel sources to show */
+  /** @return Create a window for selecting which intel sources to show */
   private VisWindow createIntelSelectWindow() {
     VisWindow intelSelection = new VisWindow("Intel Selection");
     VisTable table = new VisTable();
@@ -179,13 +182,16 @@ public class DeployView extends TiledScreen {
       table.add(intelCheckBoxes[i]);
       table.row();
 
-      for (Intel intel : resource.effects) {
-        Formation formation = levelData.enemyFormations.get(intel.formationSpottedIdx);
-        int spawnSelection = enemySpawnSelections[intel.formationSpottedIdx];
+      for (ShopItem.Intel intel : resource.effects) {
+        //TODO-P1 Figure out new way to correspond intel to formations
+        int formationSpottedIdx = rand.nextInt(levelData.enemyFormations.size());
+
+        Formation formation = levelData.enemyFormations.get(formationSpottedIdx);
+        int spawnSelection = enemySpawnSelections[formationSpottedIdx];
 
         int numSpotted = Math.min(formation.units.size(), intel.numberOfUnits);
         Array<Integer> unitIds;
-        if (intel.spotType == SpotType.RANDOM) {
+        if (intel.spotType == ShopItem.SpotType.RANDOM) {
           unitIds = Utilities.getNElements(rand, numSpotted, formation.units.size());
         } else {
           unitIds = Utilities.getIntRange(0, numSpotted, 1);
@@ -193,8 +199,8 @@ public class DeployView extends TiledScreen {
         for (int unitId : unitIds) {
           String spottedType = formation.units.get(unitId).unitType;
           TilePoint spottedTilePos = formation.getUnitPos(spawnSelection, unitId);
-            AnimatedSprite<AtlasRegion> sprite =
-                    LoadedResources.getAnimation(spottedType, Poses.IDLE);
+          AnimatedSprite<AtlasRegion> sprite =
+              LoadedResources.getAnimation(spottedType, Poses.IDLE);
           sprite.setColor(COLOR_LIST.get(i));
           sprite.setAlpha(0.5f);
           TilePoint worldPos = tileToWorld(spottedTilePos);
@@ -255,6 +261,11 @@ public class DeployView extends TiledScreen {
   }
 
   @Override
+  protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+  @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
 
     Color spawnColor = getTransparentColor(Color.PURPLE, 0.75f);
@@ -270,8 +281,8 @@ public class DeployView extends TiledScreen {
 
     for (TilePoint point : placements.keySet()) {
       TilePoint worldPos = tileToWorld(point);
-        AnimatedSprite<AtlasRegion> img =
-                LoadedResources.getAnimation(placements.get(point), Poses.IDLE);
+      AnimatedSprite<AtlasRegion> img =
+          LoadedResources.getAnimation(placements.get(point), Poses.IDLE);
       img.setPosition(worldPos.x, worldPos.y);
       img.draw(batch, elapsedTime);
     }

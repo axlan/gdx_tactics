@@ -6,7 +6,7 @@ import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kotcrab.vis.ui.widget.*;
 
-class PropertyWindow extends VisWindow {
+class CityWindow extends VisWindow {
 
   /**
    * BattleView that keeps track of unit states and map information
@@ -17,7 +17,7 @@ class PropertyWindow extends VisWindow {
    */
   private final BattleMap battleMap;
 
-  PropertyWindow(BattleState battleState, BattleMap battleMap) {
+  CityWindow(BattleState battleState, BattleMap battleMap) {
     super("Properties");
     this.battleState = battleState;
     this.battleMap = battleMap;

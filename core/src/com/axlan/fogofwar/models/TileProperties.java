@@ -4,7 +4,7 @@ import com.badlogic.gdx.maps.MapProperties;
 
 public class TileProperties {
 
-    private static final String passableKey = "passable";
+  private static final String passableKey = "passable";
 
   public final boolean passable;
 

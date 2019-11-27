@@ -16,7 +16,7 @@ public class GameMenuBar extends MenuBar {
   /**
    * Callback to replace the current screen with the settings menu
    */
-  private CompletionObserver showSettings;
+  private final Runnable showSettings;
 
   /**
    * GameStateManager for handling saves and loads
@@ -27,22 +27,10 @@ public class GameMenuBar extends MenuBar {
    * Submenu to select save slot
    */
   private PopupMenu saveSubMenu;
-  /**
-   * Submenu to select load slot
-   */
+  /** Submenu to select load slot */
   private PopupMenu loadSubMenu;
 
-  public GameMenuBar(CompletionObserver showSettings, GameStateManagerBase<?> gameStateManager) {
-    super();
-    this.showSettings = showSettings;
-    this.gameStateManager = gameStateManager;
-    this.addMenu(makeOptionsMenu());
-    updateDataButtons();
-  }
-
-  /**
-   * Generate save/load menu items and callbacks based on current save slots
-   */
+  /** Generate save/load menu items and callbacks based on current save slots */
   private void updateDataButtons() {
     String[] slotLabels = gameStateManager.getSlotLabels();
 
@@ -82,6 +70,14 @@ public class GameMenuBar extends MenuBar {
     }
   }
 
+  public GameMenuBar(Runnable showSettings, GameStateManagerBase<?> gameStateManager) {
+    super();
+    this.showSettings = showSettings;
+    this.gameStateManager = gameStateManager;
+    this.addMenu(makeOptionsMenu());
+    updateDataButtons();
+  }
+
   private Menu makeOptionsMenu() {
     Menu optionsMenu = new Menu("Options");
 
@@ -101,12 +97,11 @@ public class GameMenuBar extends MenuBar {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              showSettings.onDone();
+              showSettings.run();
             }
           });
       optionsMenu.addItem(settingsItem);
     }
-
     MenuItem quitItem = new MenuItem("Quit");
     quitItem.addListener(
         new ChangeListener() {

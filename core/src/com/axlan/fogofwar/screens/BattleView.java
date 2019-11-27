@@ -50,59 +50,65 @@ import static com.axlan.gdxtactics.Utilities.listGetTail;
  */
 public class BattleView extends TiledScreen {
 
-    /**
-     * Class for accessing map data for pathing
-     */
-    private final BattleMap battleMap;
-    private final LevelData levelData;
-    /**
-     * Used to draw potential paths and movement animations on the map
-     */
-    private final PathVisualizer pathVisualizer;
-    /**
-     * Window to display properties of selected objects on map
-     */
-    private final PropertyWindow propertyWindow;
-    /**
-     * Current state for state machine that controls UI
-     */
-    private BattleViewState state = BattleViewState.IDLE;
-    /**
-     * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
-     * where a unit was originally selected
-     */
-    private TilePoint startLocation = null;
-    /**
-     * Path from {@link #startLocation} to the mouse location
-     */
+  /**
+   * Class for accessing map data for pathing
+   */
+  private final BattleMap battleMap;
+
+  private final LevelData levelData;
+  /**
+   * Used to draw potential paths and movement animations on the map
+   */
+  private final PathVisualizer pathVisualizer;
+  /**
+   * Window to display properties of selected objects on map
+   */
+  private final PropertyWindow propertyWindow;
+  /**
+   * Current state for state machine that controls UI
+   */
+  private BattleViewState state = BattleViewState.ENEMY_IDLE;
+  /**
+   * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
+   * where a unit was originally selected
+   */
+  private TilePoint startLocation = null;
+  /**
+   * Path from {@link #startLocation} to the mouse location
+   */
   private List<TilePoint> selectedUnitPath = null;
-    /** Path from {@link #startLocation} to the last valid mouse position */
+  /**
+   * Path from {@link #startLocation} to the last valid mouse position
+   */
   private List<TilePoint> shownUnitPath = null;
-    /** List of tiles that selected unit can move to */
+  /**
+   * List of tiles that selected unit can move to
+   */
   private List<TilePoint> reachableTiles = null;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
-    /** AI for controlling enemy turn */
+  /** AI for controlling enemy turn */
   private EnemyAi enemyAi;
-    /** Targets for an attack */
+  /** Targets for an attack */
   private List<TilePoint> targetSelection = null;
-    /**
-     * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
-     * where the unit moves to
+  /**
+   * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
+   * where the unit moves to
    */
   private TilePoint endLocation = null;
 
   public BattleView(GameMenuBar gameMenuBar) {
-        super(
-                "maps/" + LoadedResources.getLevelData().mapName + ".tmx",
-                LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
-                LoadedResources.getReadOnlySettings().cameraSpeed,
-                LoadedResources.getReadOnlySettings().edgeScrollSize);
-    levelData = LoadedResources.getLevelData();
+    super(
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
+        LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
+        LoadedResources.getReadOnlySettings().cameraSpeed,
+        LoadedResources.getReadOnlySettings().edgeScrollSize);
+    levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     battleMap = new BattleMap(map);
 
-    propertyWindow = new PropertyWindow(LoadedResources.getGameStateManager().gameState.battleState, battleMap);
+    propertyWindow =
+        new PropertyWindow(LoadedResources.getGameStateManager().gameState.battleState, battleMap);
     propertyWindow.setPosition(0, 0);
 
     final VisTable root = new VisTable();
@@ -113,7 +119,9 @@ public class BattleView extends TiledScreen {
 
     stage.addActor(propertyWindow);
 
-    changeTurn(levelData.doesPlayerGoFirst);
+    //TODO-P2 fix levelData.doesPlayerGoFirst, this breaks the load logic since turn isn't saved
+    //changeTurn(levelData.doesPlayerGoFirst);
+    changeTurn(true);
   }
 
   /**
@@ -129,17 +137,20 @@ public class BattleView extends TiledScreen {
     } else {
       state = BattleViewState.ENEMY_IDLE;
       unitList = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.values();
-      enemyAi = new EnemyAi(levelData, LoadedResources.getGameStateManager().gameState.battleState, battleMap);
+      enemyAi =
+          new EnemyAi(
+              levelData, LoadedResources.getGameStateManager().gameState.battleState, battleMap);
     }
     for (FieldedUnit unit : unitList) {
-        unit.state = State.IDLE;
+      unit.state = State.IDLE;
     }
   }
 
-    /** Check if all player units are done and start enemy turn if they have. */
+  /** Check if all player units are done and start enemy turn if they have. */
   private void checkTurnDone() {
     boolean done = true;
-    for (FieldedUnit unit : LoadedResources.getGameStateManager().gameState.battleState.playerUnits.values()) {
+    for (FieldedUnit unit :
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits.values()) {
       done &= unit.state == State.DONE;
     }
     if (done) {
@@ -158,9 +169,9 @@ public class BattleView extends TiledScreen {
    * @return true if the player of interest meets a victory condition
    */
   private boolean checkVictory(
-          HashMap<TilePoint, FieldedUnit> units,
-          HashMap<TilePoint, FieldedUnit> opponentUnits,
-          AlternativeWinConditions conditions) {
+      HashMap<TilePoint, FieldedUnit> units,
+      HashMap<TilePoint, FieldedUnit> opponentUnits,
+      AlternativeWinConditions conditions) {
     if (opponentUnits.size() == 0) {
       return true;
     }
@@ -172,23 +183,24 @@ public class BattleView extends TiledScreen {
         }
       }
     }
-      return false;
+    return false;
   }
 
-    /**
-     * Check if either player meets their victory conditions
-     */
-    private void checkVictory() {
-        if (checkVictory(
-            LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
-            LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
-                levelData.enemyWinConditions)) {
-            // TODO-P1 complete logic for winning / losing
-        } else if (checkVictory(
-            LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
-            LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
+  /**
+   * Check if either player meets their victory conditions
+   */
+  private void checkVictory() {
+    if (checkVictory(
+        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
+        levelData.enemyWinConditions)) {
+      System.out.println("Player Loses!");
+      // TODO-P1 complete logic for winning / losing
+    } else if (checkVictory(
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
+        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
         levelData.playerWinConditions)) {
-
+      System.out.println("Player Wins!");
     }
   }
 
@@ -198,13 +210,15 @@ public class BattleView extends TiledScreen {
    * @param unitPos the position of the acting unit
    */
   private void createActionDialogue(final TilePoint unitPos) {
-    final FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(unitPos);
+    final FieldedUnit unit =
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(unitPos);
     final VisDialog actionDialogue = new VisDialog("Choose Action");
     final ArrayList<TilePoint> targets = new ArrayList<>();
-    for (TilePoint enemyPos : LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
+    for (TilePoint enemyPos :
+        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
       int distance = unitPos.absDiff(enemyPos);
-        if (distance >= unit.getStats().minAttackRange
-                && distance <= unit.getStats().minAttackRange) {
+      if (distance >= unit.getStats().minAttackRange
+          && distance <= unit.getStats().minAttackRange) {
         targets.add(enemyPos);
       }
     }
@@ -222,29 +236,29 @@ public class BattleView extends TiledScreen {
       actionDialogue.getButtonsTable().row();
     }
     VisTextButton waitButton = new VisTextButton("Wait");
-      waitButton.addListener(
-              new ChangeListener() {
-                  @Override
-                  public void changed(ChangeEvent event, Actor actor) {
-                      unit.state = State.DONE;
-                      checkTurnDone();
-                  }
+    waitButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            unit.state = State.DONE;
+            checkTurnDone();
+          }
         });
     actionDialogue.button(waitButton);
     actionDialogue.getButtonsTable().row();
     VisTextButton cancelButton = new VisTextButton("Cancel");
-      cancelButton.addListener(
-              new ChangeListener() {
-                  @Override
-                  public void changed(ChangeEvent event, Actor actor) {
-                      unit.state = State.IDLE;
-                      movePlayerUnit(endLocation, startLocation);
-                      state = BattleViewState.IDLE;
-                  }
+    cancelButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            unit.state = State.IDLE;
+            movePlayerUnit(endLocation, startLocation);
+            state = BattleViewState.IDLE;
+          }
         });
     actionDialogue.button(cancelButton);
     Vector2 screenPos = tileToScreen(unitPos);
-      // TODO-P2 Make dialogue less likely to block relevant map space
+    // TODO-P2 Make dialogue less likely to block relevant map space
     actionDialogue.setPosition(screenPos.x, screenPos.y);
     stage.addActor(actionDialogue);
     state = BattleViewState.CHOOSE_ACTION;
@@ -257,7 +271,8 @@ public class BattleView extends TiledScreen {
    * @param newPos new unit position
    */
   private void movePlayerUnit(TilePoint oldPos, TilePoint newPos) {
-    final FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(oldPos);
+    final FieldedUnit unit =
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(oldPos);
     LoadedResources.getGameStateManager().gameState.battleState.playerUnits.remove(oldPos);
     LoadedResources.getGameStateManager().gameState.battleState.playerUnits.put(newPos, unit);
   }
@@ -269,7 +284,8 @@ public class BattleView extends TiledScreen {
    * @param newPos new unit position
    */
   private void moveEnemyUnit(TilePoint oldPos, TilePoint newPos) {
-    final FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(oldPos);
+    final FieldedUnit unit =
+        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(oldPos);
     LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.remove(oldPos);
     LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.put(newPos, unit);
   }
@@ -277,13 +293,15 @@ public class BattleView extends TiledScreen {
   @Override
   public void renderScreen(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
     batch.begin();
-    for (TilePoint point : LoadedResources.getGameStateManager().gameState.battleState.playerUnits.keySet()) {
-      FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(point);
+    for (TilePoint point :
+        LoadedResources.getGameStateManager().gameState.battleState.playerUnits.keySet()) {
+      FieldedUnit unit =
+          LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(point);
       AnimatedSprite<AtlasRegion> sprite = null;
-        if (unit.state == State.SELECTED) {
-            sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.LEFT);
+      if (unit.state == State.SELECTED) {
+        sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.LEFT);
       } else if (unit.state == State.IDLE || unit.state == State.DONE) {
-            sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
+        sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
       }
       if (sprite != null) {
         TilePoint worldPos = tileToWorld(point);
@@ -294,11 +312,13 @@ public class BattleView extends TiledScreen {
         sprite.draw(batch, elapsedTime);
       }
     }
-    for (TilePoint point : LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
-      FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(point);
+    for (TilePoint point :
+        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
+      FieldedUnit unit =
+          LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(point);
       AnimatedSprite<AtlasRegion> sprite = null;
       if (unit.state == State.IDLE || unit.state == State.DONE) {
-          sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
+        sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
       }
       if (sprite != null) {
         TilePoint worldPos = tileToWorld(point);
@@ -312,13 +332,19 @@ public class BattleView extends TiledScreen {
     }
     if (state == BattleViewState.MOVING) {
       if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
-        FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(endLocation);
+        FieldedUnit unit =
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .playerUnits
+                .get(endLocation);
         unit.state = State.SELECTED;
         createActionDialogue(endLocation);
       }
     } else if (state == BattleViewState.ENEMY_MOVING) {
       if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
-        FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(endLocation);
+        FieldedUnit unit =
+            LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(endLocation);
         unit.state = State.DONE;
         state = BattleViewState.ENEMY_IDLE;
       }
@@ -326,8 +352,8 @@ public class BattleView extends TiledScreen {
     batch.end();
     shapeRenderer.begin(ShapeType.Filled);
     // Get back to the correct alpha blend mode
-      Gdx.gl.glEnable(GL20.GL_BLEND);
-      Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+    Gdx.gl.glEnable(GL20.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     if (state == BattleViewState.CHOOSE_MOVE) {
       Color moveColor = getTransparentColor(Color.BLUE, 0.5f);
       shapeRenderer.setColor(moveColor);
@@ -351,23 +377,38 @@ public class BattleView extends TiledScreen {
     shapeRenderer.end();
   }
 
+  @Override
+  protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+
+  }
+
+
   @SuppressWarnings("DuplicateBranchesInSwitch")
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     TilePoint clickedTile = screenToTile(new Vector2(screenX, screenY));
     switch (state) {
       case IDLE:
-        if (LoadedResources.getGameStateManager().gameState.battleState.playerUnits.containsKey(clickedTile)) {
-          FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(clickedTile);
+        if (LoadedResources.getGameStateManager()
+            .gameState
+            .battleState
+            .playerUnits
+            .containsKey(clickedTile)) {
+          FieldedUnit unit =
+              LoadedResources.getGameStateManager()
+                  .gameState
+                  .battleState
+                  .playerUnits
+                  .get(clickedTile);
           if (unit.state == State.IDLE) {
             startLocation = clickedTile;
             unit.state = State.SELECTED;
-              state = BattleViewState.CHOOSE_MOVE;
-              reachableTiles =
-                      battleMap.getPointsWithinRange(
-                              clickedTile,
-                              unit.getStats().movement,
-                          LoadedResources.getGameStateManager().gameState.battleState.enemyUnits);
+            state = BattleViewState.CHOOSE_MOVE;
+            reachableTiles =
+                battleMap.getPointsWithinRange(
+                    clickedTile,
+                    unit.getStats().movement,
+                    LoadedResources.getGameStateManager().gameState.battleState.enemyUnits);
           }
         }
         break;
@@ -376,22 +417,35 @@ public class BattleView extends TiledScreen {
         if (clickedTile.equals(startLocation)) {
           createActionDialogue(clickedTile);
         } else {
-            if (shownUnitPath != null
-                && !LoadedResources.getGameStateManager().gameState.battleState.playerUnits.containsKey(clickedTile)
-                    && listGetTail(shownUnitPath).equals(clickedTile)) {
-                FieldedUnit unit =
-                    LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(startLocation);
+          if (shownUnitPath != null
+              && !LoadedResources.getGameStateManager()
+              .gameState
+              .battleState
+              .playerUnits
+              .containsKey(clickedTile)
+              && listGetTail(shownUnitPath).equals(clickedTile)) {
+            FieldedUnit unit =
+                LoadedResources.getGameStateManager()
+                    .gameState
+                    .battleState
+                    .playerUnits
+                    .get(startLocation);
             unit.state = State.MOVING;
             movePlayerUnit(startLocation, endLocation);
             state = BattleViewState.MOVING;
-                pathVisualizer.startAnimation(
-                        unit.getStats().type,
-                        shownUnitPath,
-                        LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
-                        LoadedResources.getReadOnlySettings().sprites.frameDuration);
-            } else {
-              LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(startLocation).state =
-                        State.IDLE;
+            pathVisualizer.startAnimation(
+                unit.getStats().type,
+                shownUnitPath,
+                LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+                LoadedResources.getReadOnlySettings().sprites.frameDuration);
+          } else {
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .playerUnits
+                .get(startLocation)
+                .state =
+                State.IDLE;
             state = BattleViewState.IDLE;
           }
         }
@@ -404,15 +458,33 @@ public class BattleView extends TiledScreen {
         break;
       case CHOOSE_ATTACK:
         if (targetSelection.contains(clickedTile)) {
-          FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(endLocation);
-          FieldedUnit enemy = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(clickedTile);
+          FieldedUnit unit =
+              LoadedResources.getGameStateManager()
+                  .gameState
+                  .battleState
+                  .playerUnits
+                  .get(endLocation);
+          FieldedUnit enemy =
+              LoadedResources.getGameStateManager()
+                  .gameState
+                  .battleState
+                  .enemyUnits
+                  .get(clickedTile);
           unit.fight(enemy);
           unit.state = State.DONE;
           if (unit.currentHealth <= 0) {
-            LoadedResources.getGameStateManager().gameState.battleState.playerUnits.remove(endLocation);
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .playerUnits
+                .remove(endLocation);
           }
           if (enemy.currentHealth <= 0) {
-            LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.remove(clickedTile);
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .enemyUnits
+                .remove(clickedTile);
           }
           state = BattleViewState.IDLE;
         } else {
@@ -427,7 +499,7 @@ public class BattleView extends TiledScreen {
     return super.touchDown(screenX, screenY, pointer, button);
   }
 
-    // TODO-P3 allow for tiles that require more movement for certain units
+  // TODO-P3 allow for tiles that require more movement for certain units
 
   /**
    * Add up the movement distance along a path
@@ -452,15 +524,22 @@ public class BattleView extends TiledScreen {
       }
       if (curMouseTile.equals(startLocation)) {
         selectedUnitPath = null;
-          shownUnitPath = null;
+        shownUnitPath = null;
       } else if (battleMap.isTilePassable(
           curMouseTile, LoadedResources.getGameStateManager().gameState.battleState.enemyUnits)) {
-          selectedUnitPath =
-                  battleMap.getShortestPath(
-                      startLocation, curMouseTile, LoadedResources.getGameStateManager().gameState.battleState.enemyUnits);
-        FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.playerUnits.get(startLocation);
-          if (!selectedUnitPath.isEmpty()
-                  && getDistance(selectedUnitPath, unit) <= unit.getStats().movement) {
+        selectedUnitPath =
+            battleMap.getShortestPath(
+                startLocation,
+                curMouseTile,
+                LoadedResources.getGameStateManager().gameState.battleState.enemyUnits);
+        FieldedUnit unit =
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .playerUnits
+                .get(startLocation);
+        if (!selectedUnitPath.isEmpty()
+            && getDistance(selectedUnitPath, unit) <= unit.getStats().movement) {
           shownUnitPath = selectedUnitPath;
         }
       }
@@ -479,23 +558,28 @@ public class BattleView extends TiledScreen {
         state = BattleViewState.ENEMY_MOVING;
         startLocation = moveAction.path.get(0);
         endLocation = listGetTail(moveAction.path);
-        FieldedUnit unit = LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(startLocation);
+        FieldedUnit unit =
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .enemyUnits
+                .get(startLocation);
         unit.state = State.MOVING;
         moveEnemyUnit(startLocation, endLocation);
-          pathVisualizer.startAnimation(
-                  unit.getStats().type,
-                  moveAction.path,
-                  LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
-                  LoadedResources.getReadOnlySettings().sprites.frameDuration);
+        pathVisualizer.startAnimation(
+            unit.getStats().type,
+            moveAction.path,
+            LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+            LoadedResources.getReadOnlySettings().sprites.frameDuration);
       } else {
         changeTurn(true);
       }
     }
-      checkVictory();
+    checkVictory();
   }
 
-    @Override
-    public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+  @Override
+  public void renderAboveUI(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
 
   enum BattleViewState {
     IDLE,

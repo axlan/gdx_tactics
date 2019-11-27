@@ -24,13 +24,13 @@ import com.badlogic.gdx.math.Vector3;
 public abstract class TiledScreen extends StageBasedScreen implements InputProcessor {
 
   protected final TiledMap map;
-    private final SpriteBatch batch;
+  private final SpriteBatch batch;
   private final OrthogonalTiledMapRenderer renderer;
   private final ShapeRenderer shapeRenderer;
   private final int tilesPerScreenWidth;
   private final float cameraSpeed;
   private final int edgeScrollSize;
-    private final float[] cameraBounds = new float[4];
+  private final float[] cameraBounds = new float[4];
   private boolean keyMoveCameraToLeft = false;
   private boolean keyMoveCameraToTop = false;
   private boolean keyMoveCameraToRight = false;
@@ -52,7 +52,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    *     map.
    */
   protected TiledScreen(
-          String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
+      String levelTmxFilename, int tilesPerScreenWidth, float cameraSpeed, int edgeScrollSize) {
     this.tilesPerScreenWidth = tilesPerScreenWidth;
     this.cameraSpeed = cameraSpeed;
     this.edgeScrollSize = edgeScrollSize;
@@ -82,7 +82,17 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param shapeRenderer shape render to draw on. Begin must be called before use.
    */
   protected abstract void renderAboveUI(
-          float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
+      float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
+
+  /**
+   * Draw on top of background and foreground, but below UI elements
+   *
+   * @param delta         time since last update
+   * @param batch         batch to draw on. Begin must be called before use.
+   * @param shapeRenderer shape render to draw on. Begin must be called before use.
+   */
+  protected abstract void renderAboveForeground(
+      float delta, SpriteBatch batch, ShapeRenderer shapeRenderer);
 
   /**
    * Update state before drawing
@@ -143,9 +153,8 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * @param tileCoord index of a tile in the map
    * @return pixel location of corner of tile on screen
    */
-  @SuppressWarnings("unused")
   protected Vector2 tileToScreen(TilePoint tileCoord) {
-    TilePoint worldCoordTilePoint = tileCoord.mult(getTilePixelSize());
+    TilePoint worldCoordTilePoint = tileCoord.mult(getTilePixelSize()).add(getTilePixelSize().divBy(2));
     Vector2 worldCoord = worldCoordTilePoint.toVector2();
     return worldToScreen(worldCoord);
   }
@@ -199,25 +208,25 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     return new Rectangle(worldPoint.x, worldPoint.y, getTilePixelSize().x, getTilePixelSize().y);
   }
 
-    /**
-     * @return The size of the world map in tiles
-     */
+  /**
+   * @return The size of the world map in tiles
+   */
   private TilePoint getMapTileSize() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
     return new TilePoint(layer.getWidth(), layer.getHeight());
   }
 
-    /**
-     * @return The size of a tile in pixels
-     */
+  /**
+   * @return The size of a tile in pixels
+   */
   protected TilePoint getTilePixelSize() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
     return new TilePoint(layer.getTileWidth(), layer.getTileWidth());
   }
 
-    /**
-     * @return The size of the world map in pixels
-     */
+  /**
+   * @return The size of the world map in pixels
+   */
   @SuppressWarnings("WeakerAccess")
   protected TilePoint getMapPixelSize() {
     return getMapTileSize().mult(getTilePixelSize());
@@ -250,15 +259,17 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     updateScreen(delta);
     renderer.render(backgroundLayers);
     Gdx.gl.glEnable(GL20.GL_BLEND);
-      Gdx.gl.glBlendFunc(
-              GL20.GL_SRC_ALPHA,
-              GL20.GL_ONE_MINUS_SRC_ALPHA); // <<< this line here makes the magic we're after
+    Gdx.gl.glBlendFunc(
+        GL20.GL_SRC_ALPHA,
+        GL20.GL_ONE_MINUS_SRC_ALPHA); // <<< this line here makes the magic we're after
 
     this.batch.setProjectionMatrix(camera.combined);
     this.shapeRenderer.setProjectionMatrix(camera.combined);
 
     renderScreen(delta, this.batch, this.shapeRenderer);
     renderer.render(foregroundLayers);
+
+    renderAboveForeground(delta, this.batch, this.shapeRenderer);
 
     stage.act(delta);
     stage.draw();
@@ -273,12 +284,12 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
 
     // Boundaries for the camera : left, top, right, bottom
     float horizontalMargin =
-            (width * cameraZoom > getMapPixelSize().x)
-                    ? (width * cameraZoom - getMapPixelSize().x) / 2
+        (width * cameraZoom > getMapPixelSize().x)
+            ? (width * cameraZoom - getMapPixelSize().x) / 2
             : 0;
     float verticalMargin =
-            (height * cameraZoom > getMapPixelSize().y)
-                    ? (height * cameraZoom - getMapPixelSize().y) / 2
+        (height * cameraZoom > getMapPixelSize().y)
+            ? (height * cameraZoom - getMapPixelSize().y) / 2
             : 0;
     cameraBounds[0] = ((float) width / 2 - horizontalMargin) * cameraZoom;
     cameraBounds[1] = getMapPixelSize().y - (float) height / 2 * cameraZoom + verticalMargin;
@@ -290,20 +301,21 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
     super.resize(width, height);
   }
 
-    @Override
-    public void pause() {
-    }
+  @Override
+  public void pause() {
+  }
 
-    @Override
-    public void resume() {
-    }
+  @Override
+  public void resume() {
+  }
 
-    @Override
-    public void hide() {
-    }
+  @Override
+  public void hide() {
+  }
 
-    @Override
-    public void dispose() {}
+  @Override
+  public void dispose() {
+  }
 
   /* Implemented InputProcessor Methods */
 

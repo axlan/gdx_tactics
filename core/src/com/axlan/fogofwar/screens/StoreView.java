@@ -1,10 +1,8 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.LevelData.ShopItem;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.PlayerResources;
-import com.axlan.gdxtactics.CompletionObserver;
+import com.axlan.fogofwar.models.ShopItem;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -18,51 +16,56 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
+import java.util.List;
+
 /**
  * A screen that allows the player to purchase items before a mission.
  */
 public class StoreView extends StageBasedScreen {
 
-  private final CompletionObserver observer;
+  private final Runnable observer;
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
-    private LevelData levelData;
-    private PlayerResources playerResources;
+  private PlayerResources playerResources;
+  private List<ShopItem> shopItems;
 
-    public StoreView(CompletionObserver observer) {
+  public StoreView(Runnable observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
-      setData(LoadedResources.getLevelData(), LoadedResources.getGameStateManager().gameState.playerResources);
-    }
+    setData(
+        LoadedResources.getGameStateManager().gameState.campaign.getItems(),
+        LoadedResources.getGameStateManager().gameState.playerResources);
+  }
 
-    /**
-     * Redraw labels and enable buttons based on new amount of money left after a purchase.
-     */
+  /**
+   * Redraw labels and enable buttons based on new amount of money left after a purchase.
+   */
   private void updateMoney() {
     this.moneyLabel.setText(String.format("Money Available: %d", playerResources.getMoney()));
-    for (int i = 0; i < levelData.shopItems.size(); i++) {
+    for (int i = 0; i < shopItems.size(); i++) {
       VisTextButton button = (VisTextButton) itemListWidget.getChild(i);
-      button.setDisabled(playerResources.getMoney() < levelData.shopItems.get(i).cost);
+      if (!button.isDisabled()) {
+        button.setDisabled(playerResources.getMoney() < shopItems.get(i).cost);
+      }
     }
   }
 
   /**
    * Update the UI based on data about the current level, and game state.
    *
-   * @param levelData description of current level
+   * @param shopItems list of available items
    * @param playerResources players current state
    */
   @SuppressWarnings("SameParameterValue")
-  private void setData(LevelData levelData, final PlayerResources playerResources) {
+  private void setData(List<ShopItem> shopItems, final PlayerResources playerResources) {
     this.playerResources = playerResources;
-    this.levelData = levelData;
+    this.shopItems = shopItems;
 
     this.description.setText("");
 
     this.itemListWidget.clear();
-    for (int i = 0; i < levelData.shopItems.size(); i++) {
-      final ShopItem item = levelData.shopItems.get(i);
+    for (final ShopItem item : shopItems) {
       String buttonString = String.format("%s: $%d", item.name, item.cost);
       final VisTextButton shopItemButton = new VisTextButton(buttonString);
       shopItemButton.addListener(
@@ -100,6 +103,13 @@ public class StoreView extends StageBasedScreen {
             }
           });
       this.itemListWidget.add(shopItemButton).expand().fill();
+
+      if (playerResources.getPurchases().stream().anyMatch(
+          (a) -> a.name.equals(item.name)
+      )) {
+        shopItemButton.setDisabled(true);
+        shopItemButton.setColor(Color.GREEN);
+      }
       this.itemListWidget.row();
     }
     updateMoney();
@@ -111,7 +121,7 @@ public class StoreView extends StageBasedScreen {
    * @return Root table for UI
    */
   private VisTable makeStoreView() {
-      // TODO-P3 Reskin and pretty up
+    // TODO-P3 Reskin and pretty up
     VisTable rootTable = new VisTable();
     rootTable.setFillParent(true);
     // rootTable.setDebug(true);
@@ -134,7 +144,7 @@ public class StoreView extends StageBasedScreen {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            observer.onDone();
+            observer.run();
           }
         });
 

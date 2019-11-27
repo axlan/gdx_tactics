@@ -1,3 +1,25 @@
+# 11/26 Refactoring away from LevelData
+
+With the game design clearer, I was forced to go back to how I captured the descriptions of the levels.
+
+I wanted to allocate the dialogue, shop items, and level details dynamically over the course of a campaign. I think ideally this would be a combination of static description files (Json for ex.) and Lua scripts.
+
+For now however it's a lot easier just to create a Java class that handles giving the correct dialogue when needed and hard coding text in code.
+
+# 11/25 Worked on unit test integration
+
+After hitting an issue where I forgot to manually update a field in a copy constructor, I thought it would be a good example to add as a unit test.
+
+I didn't realize that my unfamiliarity with Gradle would make this fairly time consuming. In the end it wasn't too bad, but I had to go through a lot of examples online that were either incomplete or outdated before I got something working.
+
+An additional obstacle was initializing in a testing context since my code doesn't do a good job of isolating loaded resources.
+
+# 11/23 Working on overworld map
+
+Spent the last few days putting a little work into adding features to the overworld map.
+
+Hit some issues getting the overlay elements looking alright and had trouble getting a readable font. I should consider looking into https://github.com/libgdx/libgdx/wiki/Distance-field-fonts for making more flexible scalable fonts.
+
 # 11/20 Working on idea of campaign
 
 I spent some time trying to figure out what a simple campaign mode would look like. I built a map using the same sprites as the actual battle that seems like a good starting point.

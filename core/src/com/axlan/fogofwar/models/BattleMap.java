@@ -19,17 +19,19 @@ import static com.axlan.gdxtactics.Utilities.listGet2d;
  */
 public class BattleMap {
 
-    /**
-     * The length and width of the map in tiles
-     */
+  /**
+   * The length and width of the map in tiles
+   */
   private final TilePoint mapSize;
-    /**
-     * Unmodifiable 2D list of the properties of each tile in the map
-     */
+  /**
+   * Unmodifiable 2D list of the properties of each tile in the map
+   */
   private final List<List<TileProperties>> tileProperties;
-    /** Goal for current path search */
+  /**
+   * Goal for current path search
+   */
   private TilePoint tileNodeGoal = null;
-    /** Context for current path search */
+  /** Context for current path search */
   private Object tileNodeContext = null;
 
   public BattleMap(final TiledMap map) {
@@ -57,18 +59,18 @@ public class BattleMap {
    * @return whether the tile can be passed through
    */
   public boolean isTilePassable(TilePoint point, Object context) {
-      if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
+    if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
       return false;
     }
     if (context instanceof List<?>) {
-        @SuppressWarnings("unchecked")
-        List<TilePoint> blockedTiles = (List<TilePoint>) context;
+      @SuppressWarnings("unchecked")
+      List<TilePoint> blockedTiles = (List<TilePoint>) context;
       return listGet2d(tileProperties, point.x, point.y).passable && !blockedTiles.contains(point);
     } else if (context instanceof Map<?, ?>) {
-        @SuppressWarnings("unchecked")
-        Map<TilePoint, FieldedUnit> blockedTiles = (Map<TilePoint, FieldedUnit>) context;
-        return listGet2d(tileProperties, point.x, point.y).passable
-                && !blockedTiles.containsKey(point);
+      @SuppressWarnings("unchecked")
+      Map<TilePoint, FieldedUnit> blockedTiles = (Map<TilePoint, FieldedUnit>) context;
+      return listGet2d(tileProperties, point.x, point.y).passable
+          && !blockedTiles.containsKey(point);
     }
     throw new ClassCastException("Bad type for context");
   }
@@ -104,7 +106,7 @@ public class BattleMap {
    * @return set of points that are <= distanceLimit
    */
   public List<TilePoint> getPointsWithinRange(
-          TilePoint startPos, int distanceLimit, Object context) {
+      TilePoint startPos, int distanceLimit, Object context) {
     BattleTileNode start = new BattleTileNode(startPos);
     tileNodeGoal = null;
     tileNodeContext = context;
@@ -116,15 +118,15 @@ public class BattleMap {
     return points;
   }
 
-    /** Get the properties for a given tile */
+  /** Get the properties for a given tile */
   public TileProperties getTileProperty(TilePoint point) {
-      if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
+    if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
       return null;
     }
     return listGet2d(tileProperties, point.x, point.y);
   }
 
-    /** class to wrap 2D game map tiles to search for shortest movement paths */
+  /** class to wrap 2D game map tiles to search for shortest movement paths */
   class BattleTileNode implements PathSearchNode {
 
     final TilePoint pos;
@@ -192,5 +194,5 @@ public class BattleMap {
     public int hashCode() {
       return pos.hashCode();
     }
-    }
+  }
 }

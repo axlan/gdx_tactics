@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.List;
 
+import static com.axlan.gdxtactics.Utilities.listGetTail;
+
 /**
  * Class for drawing a path on top of a 2D TileMap
  */
@@ -14,7 +16,7 @@ public class PathVisualizer {
 
   private final TilePoint tileSize;
   private final int lineWith;
-    private final SpriteLookup spriteLookup;
+  private final SpriteLookup spriteLookup;
   private float elapsedTime;
   private float tileDuration;
   private float frameDuration;
@@ -38,23 +40,36 @@ public class PathVisualizer {
    * @return The pixel location of the middle of the tile
    */
   private TilePoint tileToPixelCenter(TilePoint point) {
-    return point.add(tileSize.divBy(2));
+    return point.mult(tileSize).add(tileSize.divBy(2));
   }
 
-    /**
-     * Initialize the class to move an {@link AnimatedSprite} along path on subsequent calls to {@link
-     * PathVisualizer#drawAnimatedSpritePath(float, SpriteBatch)}
+  /**
+   * Convert a tile index to a pixel location of the center of the edge closest to a neighboring tile
+   *
+   * @param point    the 2D index of a tile on the map
+   * @param neighbor the 2D index of a neighboring tile
+   * @return The pixel location of the middle edge of the tile
+   */
+  private TilePoint tileToClosestEdge(TilePoint point, TilePoint neighbor) {
+    point = tileToPixelCenter(point);
+    neighbor = tileToPixelCenter(neighbor);
+    return neighbor.add(point.sub(neighbor).divBy(2));
+  }
+
+  /**
+   * Initialize the class to move an {@link AnimatedSprite} along path on subsequent calls to {@link
+   * PathVisualizer#drawAnimatedSpritePath(float, SpriteBatch)}
    *
    * @param spriteName String identifier of animated sprite to draw along path
    * @param points List of tile indexes that make up the path to draw the sprite along. Each point
-     *     must be adjacent to the last.
+   *     must be adjacent to the last.
    * @param tileDuration How many seconds should it take for the sprite to cross each tile along the
-     *     path.
-     * @param frameDuration How many seconds should be between each frame of the {@link
-     *     AnimatedSprite}
-     */
-    public void startAnimation(
-            String spriteName, List<TilePoint> points, float tileDuration, float frameDuration) {
+   *     path.
+   * @param frameDuration How many seconds should be between each frame of the {@link
+   *     AnimatedSprite}
+   */
+  public void startAnimation(
+      String spriteName, List<TilePoint> points, float tileDuration, float frameDuration) {
     if (points.size() < 2) {
       return;
     }
@@ -70,9 +85,9 @@ public class PathVisualizer {
     this.frameDuration = frameDuration;
   }
 
-    /**
-     * Draw the current frame of the {@link AnimatedSprite} along the path last initialized by {@link
-     * PathVisualizer#startAnimation(String, List, float, float)}
+  /**
+   * Draw the current frame of the {@link AnimatedSprite} along the path last initialized by {@link
+   * PathVisualizer#startAnimation(String, List, float, float)}
    *
    * @param delta seconds since last draw update
    * @param batch SpriteBatch to draw onto
@@ -93,8 +108,8 @@ public class PathVisualizer {
     TilePoint curPoint = this.animationPath.get(curTileIdx);
     TilePoint nextPoint = this.animationPath.get(curTileIdx + 1);
     TilePoint movement = nextPoint.sub(curPoint);
-      TilePoint drawLocation =
-              curPoint.mult(tileSize).add(movement.mult(tileSize).mult(curTileProgress));
+    TilePoint drawLocation =
+        curPoint.mult(tileSize).add(movement.mult(tileSize).mult(curTileProgress));
     AnimatedSprite<AtlasRegion> sprite;
     if (movement.x < 0) {
       sprite = spriteLookup.getAnimation(this.spriteName, Poses.LEFT, this.frameDuration, true);
@@ -124,37 +139,50 @@ public class PathVisualizer {
     if (points.size() < 2) {
       return;
     }
-    TilePoint lastPoint = tileToPixelCenter(points.get(0).mult(tileSize));
+    TilePoint lastPoint = tileToPixelCenter(points.get(0));
     boolean goingX = false;
-    for (TilePoint nextPoint : points.subList(1, points.size())) {
-      nextPoint = tileToPixelCenter(nextPoint.mult(tileSize));
+    int endPoint = points.size() - 1;
+    for (TilePoint nextPoint : points.subList(1, endPoint)) {
+      nextPoint = tileToPixelCenter(nextPoint);
       Boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (nextGoingX != goingX) {
         shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
       }
-        shapeRenderer.rectLine(lastPoint.x, lastPoint.y, nextPoint.x, nextPoint.y, lineWith);
+      shapeRenderer.rectLine(lastPoint.x, lastPoint.y, nextPoint.x, nextPoint.y, lineWith);
       goingX = nextGoingX;
       lastPoint = nextPoint;
     }
     TilePoint halfTile = tileSize.divBy(2);
+
+
+    TilePoint nextPoint = tileToClosestEdge(listGetTail(points), points.get(points.size() - 2));
+    Boolean nextGoingX = lastPoint.x != nextPoint.x;
+    if (nextGoingX != goingX) {
+      shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
+    }
+    shapeRenderer.rectLine(lastPoint.x, lastPoint.y, nextPoint.x, nextPoint.y, lineWith);
+    goingX = nextGoingX;
+    lastPoint = nextPoint;
+
+
     if (goingX) {
-      int sign = (points.get(points.size() - 1).x - points.get(points.size() - 2).x < 0) ? -1 : 1;
-        shapeRenderer.triangle(
-                lastPoint.x + sign * lineWith,
-                lastPoint.y,
-                lastPoint.x,
-                lastPoint.y + halfTile.y,
-                lastPoint.x,
-                lastPoint.y - halfTile.y);
+      int sign = (listGetTail(points).x - points.get(points.size() - 2).x < 0) ? -1 : 1;
+      shapeRenderer.triangle(
+          lastPoint.x + sign * lineWith * 2,
+          lastPoint.y,
+          lastPoint.x,
+          lastPoint.y + halfTile.y,
+          lastPoint.x,
+          lastPoint.y - halfTile.y);
     } else {
-      int sign = (points.get(points.size() - 1).y - points.get(points.size() - 2).y < 0) ? -1 : 1;
-        shapeRenderer.triangle(
-                lastPoint.x,
-                lastPoint.y + sign * lineWith,
-                lastPoint.x + halfTile.x,
-                lastPoint.y,
-                lastPoint.x - halfTile.x,
-                lastPoint.y);
+      int sign = (listGetTail(points).y - points.get(points.size() - 2).y < 0) ? -1 : 1;
+      shapeRenderer.triangle(
+          lastPoint.x,
+          lastPoint.y + sign * lineWith * 2,
+          lastPoint.x + halfTile.x,
+          lastPoint.y,
+          lastPoint.x - halfTile.x,
+          lastPoint.y);
     }
   }
 }

@@ -7,20 +7,22 @@ package com.axlan.fogofwar.models;
  */
 public class FieldedUnit implements Cloneable {
 
-    /**
-     * Unit type identifier
-     */
+  /**
+   * Unit type identifier
+   */
   public final String type;
-    /**
-     * The state of the unit in the current turn
-     */
+  /**
+   * The state of the unit in the current turn
+   */
   public State state;
-    /**
-     * Current HP for the unit
-     */
+  /**
+   * Current HP for the unit
+   */
   public int currentHealth;
 
-    /** @param type Unit type identifier */
+  /**
+   * @param type Unit type identifier
+   */
   FieldedUnit(String type) {
     this.type = type;
     this.currentHealth = getStats().maxHealth;
@@ -51,7 +53,7 @@ public class FieldedUnit implements Cloneable {
     opponent.currentHealth -= getStats().attack;
   }
 
-    /** The state of the unit in the current turn */
+  /** The state of the unit in the current turn */
   public enum State {
     /** Unit hasn't been used */
     IDLE,

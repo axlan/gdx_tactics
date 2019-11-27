@@ -1,5 +1,6 @@
 package com.axlan.fogofwar.models;
 
+import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Class for managing resources loaded from filesystem.
@@ -27,7 +29,6 @@ public final class LoadedResources {
   private static EditableSettings editableSettings;
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
-  private static LevelData levelData;
   private static GameStateManager gameStateManager;
 
   /**
@@ -74,7 +75,7 @@ public final class LoadedResources {
    */
   public static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose) {
     return spriteLookup.getAnimation(
-            sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
+        sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
   }
 
   /** Get the mapping of unit types to their corresponding stats. */
@@ -82,27 +83,16 @@ public final class LoadedResources {
     return unitStats;
   }
 
-  /** Get the description of the current level */
-  public static LevelData getLevelData() {
-    return levelData;
-  }
-
   /** Load the resources used across all levels */
-  public static void initializeGlobal() {
+  public static void initializeGlobal(Consumer<SceneLabel> observer) {
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
-            Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
-    gameStateManager = new GameStateManager();
+        Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
+    gameStateManager = new GameStateManager(observer);
   }
 
-  // TODO-P1 Add concept of multiple levels
-
-  /** Load the resources for the current level */
-  public static void initializeLevel() {
-    levelData = LevelData.loadFromJson(readOnlySettings.levelDataFile);
-  }
 }
