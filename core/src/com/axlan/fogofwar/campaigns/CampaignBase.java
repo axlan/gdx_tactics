@@ -3,6 +3,7 @@ package com.axlan.fogofwar.campaigns;
 import com.axlan.fogofwar.models.BriefingData;
 import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.ShopItem;
+import com.axlan.fogofwar.models.WorldData;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface CampaignBase {
    *
    * @return campaign map identifier
    */
-  String getOverWorldMap();
+  WorldData getOverWorldData();
 
   /**
    * used to construct new instance of a campaign

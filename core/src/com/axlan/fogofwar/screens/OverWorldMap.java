@@ -38,7 +38,7 @@ public class OverWorldMap extends TiledScreen {
 
   public OverWorldMap(CompletionObserver observer) {
     super(
-        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldMap() + ".tmx",
+        "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);

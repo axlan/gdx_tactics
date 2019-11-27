@@ -3,6 +3,7 @@ package com.axlan.fogofwar.campaigns;
 import com.axlan.fogofwar.models.BriefingData;
 import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.ShopItem;
+import com.axlan.fogofwar.models.WorldData;
 import com.axlan.gdxtactics.TilePoint;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class TutorialCampaign implements CampaignBase {
   private static final String NAME = "Tutorial";
   private static final String MAP_NAME = "tutorial_overworld";
 
+  private final WorldData worldData;
+
   private static final List<ShopItem> ITEMS = Collections.unmodifiableList(Arrays.asList(
       new ShopItem("Farmer",
           10,
@@ -30,9 +33,29 @@ public class TutorialCampaign implements CampaignBase {
 
 
   public TutorialCampaign() {
+    worldData = new WorldData(
+        MAP_NAME,
+        Collections.unmodifiableList(Arrays.asList(
+            new WorldData.CityData(
+                "Alpha",
+                2,
+                5,
+                1,
+                3
+            ),
+            new WorldData.CityData(
+                "Omega",
+                0,
+                0,
+                0,
+                0
+            )
+        ))
+    );
   }
 
   public TutorialCampaign(TutorialCampaign other) {
+    this.worldData = other.worldData;
   }
 
   @Override
@@ -114,8 +137,8 @@ public class TutorialCampaign implements CampaignBase {
   }
 
   @Override
-  public String getOverWorldMap() {
-    return MAP_NAME;
+  public WorldData getOverWorldData() {
+    return worldData;
   }
 
 }
