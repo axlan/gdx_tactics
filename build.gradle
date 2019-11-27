@@ -40,6 +40,13 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
+
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            if(project.hasProperty('strict')) options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
 }
 
 project(":desktop") {
@@ -66,6 +73,19 @@ project(":core") {
             }
         }
     }
+
+
+    task sctrictBuild(type: JavaCompile) {
+        options.compilerArgs << "-Xlint:all" << "-Werror"
+        sourceSets {
+            test {
+                java {
+                    srcDirs = ['/test/src']
+                }
+            }
+        }
+    }
+
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"

@@ -230,7 +230,7 @@ public class PathSearch {
   /**
    * Helper class to allow nodes to be sorted in priority Queue
    */
-  private static class PriorityItem implements Comparable {
+  private static class PriorityItem implements Comparable<PriorityItem> {
 
     /** The estimated total distance to the goal through the node obj */
     final Integer fScore;
@@ -253,8 +253,7 @@ public class PathSearch {
      * Sets comparison method for sorting
      */
     @Override
-    public int compareTo(Object o) {
-      PriorityItem arg0 = (PriorityItem) o;
+    public int compareTo(PriorityItem arg0) {
       if (!arg0.fScore.equals(fScore)) {
         return fScore.compareTo(arg0.fScore);
       }

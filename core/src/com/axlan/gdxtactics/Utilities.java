@@ -118,7 +118,7 @@ public class Utilities {
   public static <T> Map<T, VisTextButton> enumToButtons(T[] enumList) {
     LinkedHashMap<T, VisTextButton> buttons = new LinkedHashMap<>();
     for (T val : enumList) {
-      Enum enumVal = (Enum) val;
+      Enum<?> enumVal = (Enum<?>) val;
       String[] words = enumVal.name().toLowerCase().split("_");
       StringBuilder name = new StringBuilder();
       for (String word : words) {
