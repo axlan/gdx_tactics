@@ -45,7 +45,9 @@ public class StoreView extends StageBasedScreen {
     this.moneyLabel.setText(String.format("Money Available: %d", playerResources.getMoney()));
     for (int i = 0; i < shopItems.size(); i++) {
       VisTextButton button = (VisTextButton) itemListWidget.getChild(i);
-      button.setDisabled(playerResources.getMoney() < shopItems.get(i).cost);
+      if (!button.isDisabled()) {
+        button.setDisabled(playerResources.getMoney() < shopItems.get(i).cost);
+      }
     }
   }
 
@@ -101,6 +103,13 @@ public class StoreView extends StageBasedScreen {
             }
           });
       this.itemListWidget.add(shopItemButton).expand().fill();
+
+      if (playerResources.getPurchases().stream().anyMatch(
+          (a) -> a.name.equals(item.name)
+      )) {
+        shopItemButton.setDisabled(true);
+        shopItemButton.setColor(Color.GREEN);
+      }
       this.itemListWidget.row();
     }
     updateMoney();

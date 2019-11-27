@@ -19,11 +19,6 @@ public class GameMenuBar extends MenuBar {
   private final Runnable showSettings;
 
   /**
-   * Callback to replace the current screen with the shop menu
-   */
-  private final Runnable showShop;
-
-  /**
    * GameStateManager for handling saves and loads
    */
   private GameStateManagerBase<?> gameStateManager;
@@ -75,16 +70,15 @@ public class GameMenuBar extends MenuBar {
     }
   }
 
-  public GameMenuBar(Runnable showSettings, Runnable showShop, GameStateManagerBase<?> gameStateManager) {
+  public GameMenuBar(Runnable showSettings, GameStateManagerBase<?> gameStateManager) {
     super();
     this.showSettings = showSettings;
-    this.showShop = showShop;
     this.gameStateManager = gameStateManager;
     this.addMenu(makeOptionsMenu());
     updateDataButtons();
   }
 
-  private Menu makeOptionsMenu() {
+  protected Menu makeOptionsMenu() {
     Menu optionsMenu = new Menu("Options");
 
     MenuItem saveItem = new MenuItem("Save");
@@ -108,18 +102,6 @@ public class GameMenuBar extends MenuBar {
           });
       optionsMenu.addItem(settingsItem);
     }
-    if (showShop != null) {
-      MenuItem settingsItem = new MenuItem("Intel Shop");
-      settingsItem.addListener(
-          new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-              showShop.run();
-            }
-          });
-      optionsMenu.addItem(settingsItem);
-    }
-
     MenuItem quitItem = new MenuItem("Quit");
     quitItem.addListener(
         new ChangeListener() {

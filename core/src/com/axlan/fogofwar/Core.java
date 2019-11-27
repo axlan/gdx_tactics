@@ -2,12 +2,12 @@ package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
-import com.axlan.gdxtactics.GameMenuBar;
-import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.kotcrab.vis.ui.VisUI;
+
+import java.util.function.Consumer;
 
 // TODO-P2 Add campaign component. You have set pool of troops and decide how many to commit to each
 // battle. They will take time to be usable again or have penalty of fuel.
@@ -23,7 +23,7 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
-  private GameMenuBar menuBar;
+  private FogGameMenuBar menuBar;
 
   private final String forceLoadSaveFile;
 
@@ -49,10 +49,10 @@ public class Core extends Game {
    * Switch the screen to the {@link TitleScreen}
    */
   private void showTitle() {
-    ValueObserver<TitleScreen.TitleSelection> observer =
-        new ValueObserver<TitleScreen.TitleSelection>() {
+    Consumer<TitleScreen.TitleSelection> observer =
+        new Consumer<TitleScreen.TitleSelection>() {
           @Override
-          public void processValue(TitleScreen.TitleSelection val) {
+          public void accept(TitleScreen.TitleSelection val) {
             switch (val) {
               case NEW_GAME:
                 showNewGame();
@@ -101,7 +101,7 @@ public class Core extends Game {
             showBriefing();
           }
         };
-    OverWorldMap overWorldMap = new OverWorldMap(observer);
+    OverWorldMap overWorldMap = new OverWorldMap(observer, menuBar);
     this.setScreen(overWorldMap);
   }
 
@@ -199,7 +199,7 @@ public class Core extends Game {
     Runnable menuSettingsCallback = this::showSettings;
     // Set to callback to be able to show the settings menu from other screens
     Runnable menuShopCallback = this::showStore;
-    menuBar = new GameMenuBar(menuSettingsCallback, menuShopCallback, LoadedResources.getGameStateManager());
+    menuBar = new FogGameMenuBar(menuSettingsCallback, menuShopCallback, LoadedResources.getGameStateManager());
     if (forceLoadSaveFile == null) {
       this.showTitle();
     } else {

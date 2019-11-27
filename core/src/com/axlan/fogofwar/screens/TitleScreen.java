@@ -1,7 +1,6 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.gdxtactics.StageBasedScreen;
-import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +14,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.axlan.gdxtactics.Utilities.enumToButtons;
 
@@ -23,9 +23,9 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
  */
 public class TitleScreen extends StageBasedScreen {
 
-  private ValueObserver<TitleSelection> observer;
+  private Consumer<TitleSelection> observer;
 
-  public TitleScreen(ValueObserver<TitleSelection> observer) {
+  public TitleScreen(Consumer<TitleSelection> observer) {
     this.observer = observer;
     this.stage.addActor(this.makeTitleScreen());
   }
@@ -53,7 +53,7 @@ public class TitleScreen extends StageBasedScreen {
           new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-              observer.processValue(val);
+              observer.accept(val);
             }
           });
       root.add(button);

@@ -16,8 +16,11 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +38,7 @@ public class OverWorldMap extends TiledScreen {
   private VisLabel cityLabel = null;
   private final Runnable completionObserver;
 
-  public OverWorldMap(Runnable completionObserver) {
+  public OverWorldMap(Runnable completionObserver, MenuBar gameMenuBar) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
@@ -45,6 +48,11 @@ public class OverWorldMap extends TiledScreen {
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     loadPathsFromMap();
     loadCitiesFromMap();
+    final VisTable root = new VisTable();
+    root.setFillParent(true);
+    stage.addActor(root);
+    root.add(gameMenuBar.getTable()).expandX().fillX().row();
+    root.add().expand().fill();
   }
 
   private void loadCitiesFromMap() {
@@ -109,8 +117,9 @@ public class OverWorldMap extends TiledScreen {
       if (cityLabel == null) {
         cityLabel = new VisLabel(cities.get(curMouseTile).name);
         //TODO-P2 clean up font. consider using https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
-        cityLabel.getStyle().font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
-        cityLabel.setStyle(cityLabel.getStyle());
+        Label.LabelStyle style = new Label.LabelStyle(cityLabel.getStyle());
+        style.font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
+        cityLabel.setStyle(style);
         cityLabel.setFontScale(0.5f);
         cityLabel.setAlignment(Align.center);
         Vector2 cityScreenLoc = tileToScreen(curMouseTile);
