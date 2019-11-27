@@ -3,7 +3,6 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.PlayerResources;
 import com.axlan.fogofwar.models.ShopItem;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,14 +23,14 @@ import java.util.List;
  */
 public class StoreView extends StageBasedScreen {
 
-  private final CompletionObserver observer;
+  private final Runnable observer;
   private final VisTable itemListWidget = new VisTable();
   private final VisLabel moneyLabel = new VisLabel();
   private final VisLabel description = new VisLabel();
   private PlayerResources playerResources;
   private List<ShopItem> shopItems;
 
-  public StoreView(CompletionObserver observer) {
+  public StoreView(Runnable observer) {
     this.observer = observer;
     this.stage.addActor(this.makeStoreView());
     setData(
@@ -136,7 +135,7 @@ public class StoreView extends StageBasedScreen {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            observer.onDone();
+            observer.run();
           }
         });
 

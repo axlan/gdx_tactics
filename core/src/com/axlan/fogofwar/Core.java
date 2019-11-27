@@ -2,7 +2,6 @@ package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.screens.*;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.GameMenuBar;
 import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Game;
@@ -24,11 +23,6 @@ import com.kotcrab.vis.ui.VisUI;
  */
 public class Core extends Game {
 
-  /**
-   * Screen to return to after settings menu closes
-   */
-  private Screen hiddenScreen = null;
-
   private GameMenuBar menuBar;
 
   private final String forceLoadSaveFile;
@@ -41,6 +35,14 @@ public class Core extends Game {
   public Core(String forceLoadSaveFile) {
     super();
     this.forceLoadSaveFile = forceLoadSaveFile;
+  }
+
+  /**
+   * Switch the screen to the {@link SettingsScreen}
+   */
+  private void showSettings() {
+    SettingsScreen storeView = new SettingsScreen(getResumeCompletionObserver());
+    this.setScreen(storeView);
   }
 
   /**
@@ -71,33 +73,19 @@ public class Core extends Game {
   }
 
   /**
-   * Switch the screen to the {@link StoreView}
+   * Factory for Runnable that will return to the current screen
+   * @return generated Runnable
    */
-  private void showSettings() {
-    hiddenScreen = this.getScreen();
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            setScreen(hiddenScreen);
-          }
-        };
-    SettingsScreen storeView = new SettingsScreen(observer);
-    this.setScreen(storeView);
+  private Runnable getResumeCompletionObserver() {
+    Screen hiddenScreen = this.getScreen();
+    return () -> setScreen(hiddenScreen);
   }
 
   /**
    * Switch the screen to the {@link StoreView}
    */
   private void showStore() {
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showDeployMap();
-          }
-        };
-    StoreView storeView = new StoreView(observer);
+    StoreView storeView = new StoreView(getResumeCompletionObserver());
     this.setScreen(storeView);
   }
 
@@ -106,10 +94,9 @@ public class Core extends Game {
    */
   private void showCampaignMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
-    CompletionObserver observer =
-        new CompletionObserver() {
+    Runnable observer = new Runnable() {
           @Override
-          public void onDone() {
+          public void run() {
             LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
             showBriefing();
           }
@@ -123,10 +110,10 @@ public class Core extends Game {
    * Switch the screen to the {@link BriefingView}
    */
   private void showBriefing() {
-    CompletionObserver observer =
-        new CompletionObserver() {
+    Runnable observer =
+        new Runnable() {
           @Override
-          public void onDone() {
+          public void run() {
             switch (LoadedResources.getGameStateManager().gameState.scene) {
               case PRE_BATTLE_BRIEF:
                 showBattleMap();
@@ -146,10 +133,10 @@ public class Core extends Game {
    * Switch the screen to the {@link BriefingView}
    */
   private void showNewGame() {
-    CompletionObserver observer =
-        new CompletionObserver() {
+    Runnable observer =
+        new Runnable() {
           @Override
-          public void onDone() {
+          public void run() {
             if (LoadedResources.getGameStateManager().gameState != null) {
               LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
               showBriefing();
@@ -168,13 +155,7 @@ public class Core extends Game {
    */
   private void showDeployMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.DEPLOY_MAP;
-    CompletionObserver observer =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showBattleMap();
-          }
-        };
+    Runnable observer = this::showBattleMap;
     DeployView deployView = new DeployView(observer);
     this.setScreen(deployView);
   }
@@ -210,23 +191,15 @@ public class Core extends Game {
 
   @Override
   public void create() {
+
     VisUI.load();
     // TODO-P2 load custom skin
-    LoadedResources.initializeGlobal(new ValueObserver<SceneLabel>() {
-      @Override
-      public void processValue(SceneLabel val) {
-        resumeSceneForLoad(val);
-      }
-    });
+    LoadedResources.initializeGlobal(this::resumeSceneForLoad);
     // Set to callback to be able to show the settings menu from other screens
-    CompletionObserver menuSettingsCallback =
-        new CompletionObserver() {
-          @Override
-          public void onDone() {
-            showSettings();
-          }
-        };
-    menuBar = new GameMenuBar(menuSettingsCallback, LoadedResources.getGameStateManager());
+    Runnable menuSettingsCallback = this::showSettings;
+    // Set to callback to be able to show the settings menu from other screens
+    Runnable menuShopCallback = this::showStore;
+    menuBar = new GameMenuBar(menuSettingsCallback, menuShopCallback, LoadedResources.getGameStateManager());
     if (forceLoadSaveFile == null) {
       this.showTitle();
     } else {

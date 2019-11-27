@@ -3,8 +3,11 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.models.LevelData.Formation;
 import com.axlan.fogofwar.models.LevelData.UnitAllotment;
-import com.axlan.gdxtactics.*;
+import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.axlan.gdxtactics.TilePoint;
+import com.axlan.gdxtactics.TiledScreen;
+import com.axlan.gdxtactics.Utilities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -68,14 +71,14 @@ public class DeployView extends TiledScreen {
   /** Button to finalize deployment */
   private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
 
-  private final CompletionObserver observer;
+  private final Runnable observer;
   /** The type of unit currently selected to deploy. null for removing previous deployments. */
   private String selectedUnit;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
 
   /** @param observer observer to call when briefing is finished */
-  public DeployView(CompletionObserver observer) {
+  public DeployView(Runnable observer) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
@@ -155,7 +158,7 @@ public class DeployView extends TiledScreen {
             List<Formation> enemyFormations = levelData.enemyFormations;
             LoadedResources.getGameStateManager().gameState.battleState =
                 new BattleState(enemyList, placements, enemyFormations);
-            observer.onDone();
+            observer.run();
           }
         });
     table.add(doneButton).colspan(2);

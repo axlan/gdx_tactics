@@ -4,7 +4,6 @@ import com.axlan.fogofwar.campaigns.CampaignBase;
 import com.axlan.fogofwar.campaigns.CampaignSet;
 import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -17,9 +16,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
  * Menu for selecting campaign for a new game
  */
 public class NewGameView extends StageBasedScreen {
-  private CompletionObserver observer;
+  private Runnable observer;
 
-  public NewGameView(CompletionObserver observer) {
+  public NewGameView(Runnable observer) {
     this.observer = observer;
     this.stage.addActor(this.makeNewGameScreen());
   }
@@ -42,7 +41,7 @@ public class NewGameView extends StageBasedScreen {
           public void changed(ChangeEvent event, Actor actor) {
             CampaignBase campaign = CampaignSet.newCampaignByName(resolutionSelect.getSelected());
             LoadedResources.getGameStateManager().gameState = new GameState(campaign);
-            observer.onDone();
+            observer.run();
           }
         });
     root.add(submitButton);
@@ -53,7 +52,7 @@ public class NewGameView extends StageBasedScreen {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
             LoadedResources.getGameStateManager().gameState = null;
-            observer.onDone();
+            observer.run();
           }
         });
     root.add(cancelButton);

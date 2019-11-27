@@ -1,15 +1,16 @@
 package com.axlan.fogofwar.models;
 
+import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
-import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Class for managing resources loaded from filesystem.
@@ -83,7 +84,7 @@ public final class LoadedResources {
   }
 
   /** Load the resources used across all levels */
-  public static void initializeGlobal(ValueObserver observer) {
+  public static void initializeGlobal(Consumer<SceneLabel> observer) {
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();

@@ -1,8 +1,8 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.campaigns.CampaignBase;
+import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.GameStateManagerBase;
-import com.axlan.gdxtactics.ValueObserver;
 import com.badlogic.gdx.Gdx;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.function.Consumer;
 
 /**
  * Class for storing the state of the current game session. State should be complete for saving and
@@ -20,9 +21,9 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
   /**
    * Callback for updating the scene after a load
    */
-  private final ValueObserver loadSceneCallback;
+  private final Consumer<SceneLabel> loadSceneCallback;
 
-  public GameStateManager(ValueObserver loadSceneCallback) {
+  public GameStateManager(Consumer<SceneLabel> loadSceneCallback) {
     this.loadSceneCallback = loadSceneCallback;
   }
 
@@ -72,12 +73,12 @@ public class GameStateManager extends GameStateManagerBase<GameState> {
       }
     }
     gameState = gson.fromJson(handle, GameState.class);
-    loadSceneCallback.processValue(gameState.scene);
+    loadSceneCallback.accept(gameState.scene);
   }
 
   @Override
   public void load(int slot) {
     super.load(slot);
-    loadSceneCallback.processValue(gameState.scene);
+    loadSceneCallback.accept(gameState.scene);
   }
 }

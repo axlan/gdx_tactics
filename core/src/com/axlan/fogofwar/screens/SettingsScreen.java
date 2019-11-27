@@ -1,7 +1,6 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -28,9 +27,9 @@ public class SettingsScreen extends StageBasedScreen {
           new TilePoint(2048, 1536)
       };
 
-  private CompletionObserver observer;
+  private Runnable observer;
 
-  public SettingsScreen(CompletionObserver observer) {
+  public SettingsScreen(Runnable observer) {
     this.observer = observer;
     this.stage.addActor(this.makeSettingsScreen());
   }
@@ -75,7 +74,7 @@ public class SettingsScreen extends StageBasedScreen {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
             LoadedResources.writeEditableSettings();
-            observer.onDone();
+            observer.run();
           }
         });
     root.add(doneButton);

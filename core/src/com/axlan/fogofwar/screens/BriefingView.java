@@ -3,7 +3,6 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.models.BriefingData;
 import com.axlan.fogofwar.models.GameState;
 import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -29,13 +28,13 @@ public class BriefingView extends StageBasedScreen {
   private final VisLabel avatarLabel;
   private final VisImage avatar;
   private final VisLabel settingLabel;
-  private final CompletionObserver completionObserver;
+  private final Runnable completionObserver;
   private int curPage;
 
   /**
    * @param observer observer to call when briefing is finished
    */
-  public BriefingView(CompletionObserver observer) {
+  public BriefingView(Runnable observer) {
     this.completionObserver = observer;
     this.dialogue = new VisLabel();
     this.avatarLabel = new VisLabel();
@@ -96,7 +95,7 @@ public class BriefingView extends StageBasedScreen {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
             if (isDone()) {
-              completionObserver.onDone();
+              completionObserver.run();
             } else {
               updatePage(curPage + 1);
             }

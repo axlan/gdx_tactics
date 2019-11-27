@@ -1,7 +1,6 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.models.LoadedResources;
-import com.axlan.gdxtactics.CompletionObserver;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
@@ -34,15 +33,15 @@ public class OverWorldMap extends TiledScreen {
   private final ArrayList<ArrayList<TilePoint>> shownPaths = new ArrayList<>();
   private final PathVisualizer pathVisualizer;
   private VisLabel cityLabel = null;
-  private final CompletionObserver observer;
+  private final Runnable completionObserver;
 
-  public OverWorldMap(CompletionObserver observer) {
+  public OverWorldMap(Runnable completionObserver) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
-    this.observer = observer;
+    this.completionObserver = completionObserver;
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     loadPathsFromMap();
     loadCitiesFromMap();
