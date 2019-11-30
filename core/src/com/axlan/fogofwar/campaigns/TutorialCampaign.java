@@ -1,9 +1,7 @@
 package com.axlan.fogofwar.campaigns;
 
-import com.axlan.fogofwar.models.BriefingData;
-import com.axlan.fogofwar.models.LevelData;
-import com.axlan.fogofwar.models.ShopItem;
-import com.axlan.fogofwar.models.WorldData;
+import com.axlan.fogofwar.models.*;
+import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.TilePoint;
 
 import java.util.ArrayList;
@@ -20,6 +18,10 @@ public class TutorialCampaign implements CampaignBase {
   private static final String MAP_NAME = "tutorial_overworld";
 
   private final WorldData worldData;
+
+  private GameState getState() {
+    return LoadedResources.getGameStateManager().gameState;
+  }
 
   private static final List<ShopItem> ITEMS = Collections.unmodifiableList(Arrays.asList(
       new ShopItem("Farmer",
@@ -76,7 +78,11 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public List<ShopItem> getItems() {
-    return new ArrayList<>(ITEMS);
+    ArrayList<ShopItem> items = new ArrayList<>();
+    if (getState().scene == SceneLabel.CAMPAIGN_MAP) {
+      items.addAll(ITEMS);
+    }
+    return items;
   }
 
   @Override

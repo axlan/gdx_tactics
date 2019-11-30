@@ -187,7 +187,7 @@ public class Core extends Game {
     Runnable menuSettingsCallback = this::showSettings;
     // Set to callback to be able to show the settings menu from other screens
     Runnable menuShopCallback = this::showStore;
-    menuBar = new FogGameMenuBar(menuSettingsCallback, menuShopCallback, LoadedResources.getGameStateManager());
+    menuBar = new FogGameMenuBar(menuSettingsCallback, menuShopCallback);
     if (forceLoadSaveFile == null) {
       this.showTitle();
     } else {
