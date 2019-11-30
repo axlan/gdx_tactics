@@ -35,9 +35,11 @@ public class OverWorldMap extends TiledScreen {
   private final HashMap<TilePoint, City> cities = new HashMap<>();
   private final ArrayList<ArrayList<TilePoint>> shownPaths = new ArrayList<>();
   private final PathVisualizer pathVisualizer;
-  private VisLabel cityLabel = null;
   @SuppressWarnings("FieldCanBeLocal")
   private final Runnable completionObserver;
+  private final CityWindow cityWindow;
+
+  private boolean init = true;
 
   public OverWorldMap(Runnable completionObserver, MenuBar gameMenuBar) {
     super(
@@ -47,13 +49,17 @@ public class OverWorldMap extends TiledScreen {
         LoadedResources.getReadOnlySettings().edgeScrollSize);
     this.completionObserver = completionObserver;
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
-    loadPathsFromMap();
-    loadCitiesFromMap();
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
     root.add(gameMenuBar.getTable()).expandX().fillX().row();
     root.add().expand().fill();
+    loadPathsFromMap();
+    loadCitiesFromMap();
+    //TODO-P2 lay this out so it doesn't cover the map
+    cityWindow = new CityWindow();
+    cityWindow.setPosition(0, 0);
+    stage.addActor(cityWindow);
   }
 
   private void loadCitiesFromMap() {
@@ -106,33 +112,32 @@ public class OverWorldMap extends TiledScreen {
 
   @Override
   protected void updateScreen(float delta) {
-
-  }
-
-  @Override
-  public boolean mouseMoved(int screenX, int screenY) {
-    super.mouseMoved(screenX, screenY);
-    Vector2 rawMouseLoc = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-    TilePoint curMouseTile = screenToTile(rawMouseLoc);
-    if (cities.containsKey(curMouseTile)) {
-      if (cityLabel == null) {
-        cityLabel = new VisLabel(cities.get(curMouseTile).name);
-        //TODO-P2 clean up font. consider using https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
+    //TODO-P3 Fix the hack where I need to set the label positions here since the camera needs to be initialized correctly. Possibly switch from labels to drawing glyphs
+    if (init) {
+      for (TilePoint location : cities.keySet()) {
+        VisLabel cityLabel = new VisLabel(cities.get(location).name);
+        // TODO-P2 clean up font. consider using
+        // https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
         Label.LabelStyle style = new Label.LabelStyle(cityLabel.getStyle());
         style.font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
         cityLabel.setStyle(style);
         cityLabel.setFontScale(0.5f);
         cityLabel.setAlignment(Align.center);
-        Vector2 cityScreenLoc = tileToScreen(curMouseTile);
+        Vector2 cityScreenLoc = tileToScreen(location);
         cityLabel.setPosition(cityScreenLoc.x, cityScreenLoc.y);
         centerLabel(cityLabel);
         this.stage.addActor(cityLabel);
       }
-    } else {
-      this.stage.getActors().removeValue(cityLabel, true);
-      cityLabel = null;
+      init = false;
     }
+  }
 
+  @Override
+  public boolean mouseMoved(int screenX, int screenY) {
+    super.mouseMoved(screenX, screenY);
+//    Vector2 rawMouseLoc = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+//    TilePoint curMouseTile = screenToTile(rawMouseLoc);
+//
     return false;
   }
 
@@ -141,15 +146,18 @@ public class OverWorldMap extends TiledScreen {
     TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
     shownPaths.clear();
     if (cities.containsKey(curMouseTile)) {
+      ArrayList<String> neighbors = new ArrayList<>();
       for (ArrayList<TilePoint> path : paths) {
         if (path.contains(curMouseTile)) {
           ArrayList<TilePoint> newPath = new ArrayList<>(path);
           if (listGetTail(newPath).equals(curMouseTile)) {
             Collections.reverse(newPath);
           }
+          neighbors.add(cities.get(listGetTail(newPath)).name);
           shownPaths.add(newPath);
         }
       }
+      cityWindow.showCityProperties(cities.get(curMouseTile).name, neighbors);
     }
     return super.touchUp(screenX, screenY, pointer, button);
   }

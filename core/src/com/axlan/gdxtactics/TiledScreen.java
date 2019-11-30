@@ -151,7 +151,7 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
    * Coverts a tile index to a pixel on screen
    *
    * @param tileCoord index of a tile in the map
-   * @return pixel location of corner of tile on screen
+   * @return pixel location of center of tile on screen
    */
   protected Vector2 tileToScreen(TilePoint tileCoord) {
     TilePoint worldCoordTilePoint = tileCoord.mult(getTilePixelSize()).add(getTilePixelSize().divBy(2));
