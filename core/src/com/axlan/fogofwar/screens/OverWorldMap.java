@@ -25,6 +25,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.axlan.gdxtactics.Utilities.centerLabel;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
@@ -38,6 +39,10 @@ public class OverWorldMap extends TiledScreen {
   @SuppressWarnings("FieldCanBeLocal")
   private final Runnable completionObserver;
   private final CityWindow cityWindow;
+  private final MovementsWindow movementsWindow;
+  private final ArrayList<Movement> movements = new ArrayList<>();
+  private final List<VisLabel> cityLabels = new ArrayList<>();
+  private TilePoint lastSelected = null;
 
   private boolean init = true;
 
@@ -52,14 +57,20 @@ public class OverWorldMap extends TiledScreen {
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
-    root.add(gameMenuBar.getTable()).expandX().fillX().row();
-    root.add().expand().fill();
+    root.add(gameMenuBar.getTable()).expandX().colspan(3).fillX().row();
+    root.add().expand().colspan(3).fill();
+    root.row();
     loadPathsFromMap();
     loadCitiesFromMap();
-    //TODO-P2 lay this out so it doesn't cover the map
+    //TODO-P2 lay this out so it doesn't cover the map and doesn't need hardcoded width
     cityWindow = new CityWindow();
-    cityWindow.setPosition(0, 0);
-    stage.addActor(cityWindow);
+    root.add(cityWindow).align(Align.left).width(200);
+    root.add();
+    movementsWindow = new MovementsWindow(movements, () -> {
+      selectCity(lastSelected);
+    });
+    movementsWindow.setPosition(Gdx.graphics.getWidth(), 0);
+    root.add(movementsWindow).align(Align.right).width(250).height(400);
   }
 
   private void loadCitiesFromMap() {
@@ -114,6 +125,12 @@ public class OverWorldMap extends TiledScreen {
   protected void updateScreen(float delta) {
     //TODO-P3 Fix the hack where I need to set the label positions here since the camera needs to be initialized correctly. Possibly switch from labels to drawing glyphs
     if (init) {
+      if (!cityLabels.isEmpty()) {
+        for (VisLabel cityLabel : cityLabels) {
+          this.stage.getActors().removeValue(cityLabel, true);
+        }
+        cityLabels.clear();
+      }
       for (TilePoint location : cities.keySet()) {
         VisLabel cityLabel = new VisLabel(cities.get(location).name);
         // TODO-P2 clean up font. consider using
@@ -127,9 +144,16 @@ public class OverWorldMap extends TiledScreen {
         cityLabel.setPosition(cityScreenLoc.x, cityScreenLoc.y);
         centerLabel(cityLabel);
         this.stage.addActor(cityLabel);
+        this.cityLabels.add(cityLabel);
       }
       init = false;
     }
+  }
+
+  @Override
+  public void resize(int width, int height) {
+    super.resize(width, height);
+    init = true;
   }
 
   @Override
@@ -141,11 +165,11 @@ public class OverWorldMap extends TiledScreen {
     return false;
   }
 
-  @Override
-  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
-    shownPaths.clear();
+
+  private void selectCity(TilePoint curMouseTile) {
     if (cities.containsKey(curMouseTile)) {
+      shownPaths.clear();
+      this.lastSelected = curMouseTile;
       ArrayList<String> neighbors = new ArrayList<>();
       for (ArrayList<TilePoint> path : paths) {
         if (path.contains(curMouseTile)) {
@@ -157,8 +181,17 @@ public class OverWorldMap extends TiledScreen {
           shownPaths.add(newPath);
         }
       }
-      cityWindow.showCityProperties(cities.get(curMouseTile).name, neighbors);
+      String name = cities.get(curMouseTile).name;
+      movementsWindow.updateAddMovementButton(name, neighbors);
+      cityWindow.showCityProperties(name, movements);
     }
+  }
+
+
+  @Override
+  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
+    selectCity(curMouseTile);
     return super.touchUp(screenX, screenY, pointer, button);
   }
 
@@ -177,6 +210,18 @@ public class OverWorldMap extends TiledScreen {
       PLAYER,
       ENEMY,
       NONE
+    }
+  }
+
+  static class Movement {
+    final String to;
+    final String from;
+    final int amount;
+
+    Movement(String to, String from, int amount) {
+      this.to = to;
+      this.from = from;
+      this.amount = amount;
     }
   }
 }
