@@ -3,7 +3,9 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.WorldData;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.widget.*;
 
 import java.util.ArrayList;
@@ -45,8 +47,8 @@ class CityWindow extends VisWindow {
     root.add(new VisLabel("Scheduled Movements")).colspan(4).row();
 
     final ArrayList<String> movementButtonsItems = new ArrayList<>();
-    final VisList<String> movementButtons = new VisList<>();
-    root.add(movementButtons).colspan(4).row();
+    final VisList<String> movementsList = new VisList<>();
+    root.add(movementsList).colspan(4).row();
 
     moveBtn.addListener(new ChangeListener() {
       @Override
@@ -56,9 +58,21 @@ class CityWindow extends VisWindow {
         final Movement movement = new Movement(to, selectedCity, amount);
         movements.add(movement);
         showCityProperties(selectedCity, selectedCityNeighbors);
-        String text = String.format("Cancel: %d from %s to %s", amount, selectedCity, to);
+        String text = String.format("Cancel %d: %d from %s to %s", movementsList.getItems().size + 1, amount, selectedCity, to);
         movementButtonsItems.add(text);
-        movementButtons.setItems(movementButtonsItems.toArray(new String[0]));
+        movementsList.setItems(movementButtonsItems.toArray(new String[0]));
+      }
+    });
+
+    movementsList.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        super.clicked(event, x, y);
+        int idx = movementsList.getSelectedIndex();
+        movements.remove(idx);
+        movementButtonsItems.remove(idx);
+        movementsList.setItems(movementButtonsItems.toArray(new String[0]));
+        showCityProperties(selectedCity, selectedCityNeighbors);
       }
     });
 //    movementButtons.addListener(new ChangeListener() {
