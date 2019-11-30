@@ -2,18 +2,18 @@ package com.axlan.gdxtactics.desktop;
 
 import com.axlan.fogofwar.Core;
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+    Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
     ApplicationListener gameCore;
     if (arg.length > 0) {
       gameCore = new Core(arg[0]);
     } else {
       gameCore = new Core();
     }
-    new LwjglApplication(gameCore, config);
+    new Lwjgl3Application(gameCore, config);
 	}
 }
