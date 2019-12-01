@@ -15,13 +15,24 @@ import java.util.Optional;
 
 import static com.axlan.gdxtactics.Utilities.getIntRange;
 
+/**
+ * Window for selecting troop movements
+ */
 class MovementsWindow extends VisWindow {
 
+  /**
+   * Button to submit a troop movement
+   */
   private final VisTextButton moveBtn = new VisTextButton("Move");
+  /** Box to select number of troops */
   private final VisSelectBox<Integer> amountBox = new VisSelectBox<>();
+  /** Box to select city to move troops to */
   private final VisSelectBox<String> toBox = new VisSelectBox<>();
+  /** List of movements to modify */
   private List<Movement> movements;
+  /** City selected to move troops from */
   private String selectedCity = null;
+  /** Callback to call after updating {@link #movements} */
   private Runnable updateOthers;
 
   MovementsWindow(List<Movement> movements, Runnable updateOthers) {
@@ -90,6 +101,11 @@ class MovementsWindow extends VisWindow {
     return root;
   }
 
+  /**
+   * Regenerate window with options for the selected city
+   * @param name name of city to move troops from
+   * @param adjacent names of adjacent cities to move troops to
+   */
   void updateAddMovementButton(String name, List<String> adjacent) {
     this.selectedCity = name;
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
@@ -111,6 +127,7 @@ class MovementsWindow extends VisWindow {
       return;
     }
     moveBtn.setDisabled(false);
+    //TODO-P1 when the toBox updates, adjust the range to limit by the max allowed in a city
     amountBox.setItems(getIntRange(1, remaining + 1, 1));
     toBox.setItems(adjacent.toArray(new String[0]));
   }

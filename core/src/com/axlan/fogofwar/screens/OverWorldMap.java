@@ -1,6 +1,7 @@
 package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.WorldData;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
@@ -16,11 +17,14 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,18 +34,30 @@ import java.util.List;
 import static com.axlan.gdxtactics.Utilities.centerLabel;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
+/**
+ * View to select where to move troops for the next round of battles.
+ */
 public class OverWorldMap extends TiledScreen {
 
+  /**
+   * Paths between cities loaded from map file
+   */
   private final ArrayList<ArrayList<TilePoint>> paths = new ArrayList<>();
+  /** Map of city tile locations to the city data loaded from the map file */
   private final HashMap<TilePoint, City> cities = new HashMap<>();
+  /** Paths to draw from the selected city */
   private final ArrayList<ArrayList<TilePoint>> shownPaths = new ArrayList<>();
+  /** Utility for drawing map paths */
   private final PathVisualizer pathVisualizer;
-  @SuppressWarnings("FieldCanBeLocal")
-  private final Runnable completionObserver;
+  /** Window to show information about the selected city */
   private final CityWindow cityWindow;
+  /** Window for selecting troop movements */
   private final MovementsWindow movementsWindow;
+  /** Troop movements that have been selected for next round */
   private final ArrayList<Movement> movements = new ArrayList<>();
+  /** Labels to show city names along with current controller */
   private final List<VisLabel> cityLabels = new ArrayList<>();
+  /** Last selected city */
   private TilePoint lastSelected = null;
 
   private boolean init = true;
@@ -52,13 +68,32 @@ public class OverWorldMap extends TiledScreen {
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
-    this.completionObserver = completionObserver;
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
     root.add(gameMenuBar.getTable()).expandX().colspan(3).fillX().row();
-    root.add().expand().colspan(3).fill();
+
+    VisTextButton deployBtn = new VisTextButton("Deploy");
+    deployBtn.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
+        for (Movement movement : movements) {
+          for (WorldData.CityData city : data.cities) {
+            if (city.name.equals(movement.to)) {
+              city.stationedFriendlyTroops += movement.amount;
+            } else if (city.name.equals(movement.from)) {
+              city.stationedFriendlyTroops -= movement.amount;
+            }
+          }
+        }
+        completionObserver.run();
+      }
+    });
+
+    root.add().expand().colspan(2).fill();
+    root.add(deployBtn).align(Align.topRight);
     root.row();
     loadPathsFromMap();
     loadCitiesFromMap();
@@ -66,13 +101,12 @@ public class OverWorldMap extends TiledScreen {
     cityWindow = new CityWindow();
     root.add(cityWindow).align(Align.left).width(200);
     root.add();
-    movementsWindow = new MovementsWindow(movements, () -> {
-      selectCity(lastSelected);
-    });
+    movementsWindow = new MovementsWindow(movements, () -> selectCity(lastSelected));
     movementsWindow.setPosition(Gdx.graphics.getWidth(), 0);
     root.add(movementsWindow).align(Align.right).width(250).height(400);
   }
 
+  /** Load city information from map file */
   private void loadCitiesFromMap() {
     MapLayer pathLayer = map.getLayers().get("cities");
     MapObjects pathObjects = pathLayer.getObjects();
@@ -86,6 +120,7 @@ public class OverWorldMap extends TiledScreen {
     }
   }
 
+  /** Load path information from map file */
   private void loadPathsFromMap() {
     MapLayer pathLayer = map.getLayers().get("paths");
     MapObjects pathObjects = pathLayer.getObjects();
@@ -132,11 +167,23 @@ public class OverWorldMap extends TiledScreen {
         cityLabels.clear();
       }
       for (TilePoint location : cities.keySet()) {
-        VisLabel cityLabel = new VisLabel(cities.get(location).name);
+        City cityData = cities.get(location);
+        VisLabel cityLabel = new VisLabel(cityData.name);
         // TODO-P2 clean up font. consider using
         // https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
         Label.LabelStyle style = new Label.LabelStyle(cityLabel.getStyle());
         style.font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
+        switch (cityData.controller) {
+          case PLAYER:
+            style.fontColor = Color.GREEN;
+            break;
+          case ENEMY:
+            style.fontColor = Color.RED;
+            break;
+          case NONE:
+            style.fontColor = Color.WHITE;
+            break;
+        }
         cityLabel.setStyle(style);
         cityLabel.setFontScale(0.5f);
         cityLabel.setAlignment(Align.center);
@@ -153,6 +200,7 @@ public class OverWorldMap extends TiledScreen {
   @Override
   public void resize(int width, int height) {
     super.resize(width, height);
+    //Recalculate city label positions
     init = true;
   }
 
@@ -165,23 +213,25 @@ public class OverWorldMap extends TiledScreen {
     return false;
   }
 
-
-  private void selectCity(TilePoint curMouseTile) {
-    if (cities.containsKey(curMouseTile)) {
+  /**
+   * Update the Movement and City window for the city at cityTile
+   */
+  private void selectCity(TilePoint cityTile) {
+    if (cities.containsKey(cityTile)) {
       shownPaths.clear();
-      this.lastSelected = curMouseTile;
+      this.lastSelected = cityTile;
       ArrayList<String> neighbors = new ArrayList<>();
       for (ArrayList<TilePoint> path : paths) {
-        if (path.contains(curMouseTile)) {
+        if (path.contains(cityTile)) {
           ArrayList<TilePoint> newPath = new ArrayList<>(path);
-          if (listGetTail(newPath).equals(curMouseTile)) {
+          if (listGetTail(newPath).equals(cityTile)) {
             Collections.reverse(newPath);
           }
           neighbors.add(cities.get(listGetTail(newPath)).name);
           shownPaths.add(newPath);
         }
       }
-      String name = cities.get(curMouseTile).name;
+      String name = cities.get(cityTile).name;
       movementsWindow.updateAddMovementButton(name, neighbors);
       cityWindow.showCityProperties(name, movements);
     }
@@ -213,9 +263,15 @@ public class OverWorldMap extends TiledScreen {
     }
   }
 
+  /**
+   * Class to keep track of troop movements for the next round of battles
+   */
   static class Movement {
+    /** Identifier of city to move troops to */
     final String to;
+    /** Identifier of city to move troops from */
     final String from;
+    /** number of troops to move */
     final int amount;
 
     Movement(String to, String from, int amount) {
