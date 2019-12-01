@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.*;
 import com.kotcrab.vis.ui.widget.VisCheckBox.VisCheckBoxStyle;
@@ -94,13 +95,20 @@ public class DeployView extends TiledScreen {
       enemySpawnSelections[i] = selection;
     }
 
+    VisTable root = new VisTable();
+    root.setFillParent(true);
+    stage.addActor(root);
+    root.add().expand();
+
     remainingLabels = new VisLabel[levelData.playerUnits.size()];
-    stage.addActor(createUnitSelectWindow());
+    root.add(createUnitSelectWindow()).align(Align.topRight);
     updateRemainingLabels();
+
+    root.row();
 
     sightings = new Array<>(playerResources.getPurchases().size());
     intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
-    stage.addActor(createIntelSelectWindow());
+    root.add(createIntelSelectWindow()).align(Align.bottomLeft);
 
     // TODO-P2 Add property window to deploy view
 

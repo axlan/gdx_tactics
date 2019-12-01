@@ -104,6 +104,9 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public LevelData getLevelData() {
+    //TODO-P1 make this different for different contested city.
+    //TODO-P1 make it use the deployment data for the city
+    //TODO-P1 allow deploying different unit types
     return new LevelData(
         new TilePoint(8, 4),
         Collections.unmodifiableList(Arrays.asList(

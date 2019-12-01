@@ -1,3 +1,11 @@
+# 11/30 Working on campaign map functionality
+
+I've been slowly implementing the functionality to control troop movements on the campaign map.
+
+The interface is extremely clunky, but I've resigned myself that it's mostly going to be a proof of concept for now.
+
+This pretty much completes the bones of the project. There's still a lot of logic to fill in, but I should have a pretty set path towards implementing the tutorial campaign.
+
 # 11/26 Refactoring away from LevelData
 
 With the game design clearer, I was forced to go back to how I captured the descriptions of the levels.

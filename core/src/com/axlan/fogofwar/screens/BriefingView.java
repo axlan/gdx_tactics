@@ -37,6 +37,7 @@ public class BriefingView extends StageBasedScreen {
   public BriefingView(Runnable observer) {
     this.completionObserver = observer;
     this.dialogue = new VisLabel();
+    this.dialogue.setWrap(true);
     this.avatarLabel = new VisLabel();
     this.avatar = new VisImage();
     this.settingLabel = new VisLabel();
