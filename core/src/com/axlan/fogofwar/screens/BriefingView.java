@@ -41,7 +41,12 @@ public class BriefingView extends StageBasedScreen {
     this.avatar = new VisImage();
     this.settingLabel = new VisLabel();
     GameState gameState = LoadedResources.getGameStateManager().gameState;
-    this.briefingData = gameState.campaign.getMapBriefing();
+    if (LoadedResources.getGameStateManager().gameState.scene == SceneLabel.PRE_BATTLE_BRIEF) {
+      this.briefingData = gameState.campaign.getLevelBriefing();
+    } else {
+      this.briefingData = gameState.campaign.getMapBriefing();
+    }
+
     this.settingLabel.setText(this.briefingData.briefSetting);
     this.stage.addActor(this.makeBriefingView());
     this.updatePage(0);

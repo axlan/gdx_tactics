@@ -22,6 +22,10 @@ public class GameState {
    * Selected campaign with campaign state
    */
   public final CampaignBase campaign;
+  /**
+   * Current battle ground city
+   */
+  public String contestedCity = null;
 
   /**
    * Identifier for current scene
@@ -38,5 +42,6 @@ public class GameState {
     battleState = new BattleState(other.battleState);
     campaign = other.campaign.makeCopy();
     scene = other.scene;
+    contestedCity = other.contestedCity;
   }
 }

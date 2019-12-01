@@ -136,7 +136,18 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public BriefingData getLevelBriefing() {
-    return null;
+    List<BriefingData.BriefPage> pages = new ArrayList<>();
+    String setting;
+    if (getState().contestedCity.equals("Alpha")) {
+      setting = "Alpha city";
+      pages.add(
+          new BriefingData.BriefPage(
+              "Commander",
+              "Your command center is under attack!"));
+    } else {
+      return null;
+    }
+    return new BriefingData(setting, pages);
   }
 
   @Override

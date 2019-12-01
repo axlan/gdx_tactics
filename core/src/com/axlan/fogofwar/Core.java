@@ -1,6 +1,7 @@
 package com.axlan.fogofwar;
 
 import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.WorldData;
 import com.axlan.fogofwar.screens.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -79,6 +80,21 @@ public class Core extends Game {
   }
 
   /**
+   * Schedule battles based on world state
+   */
+  private void manageBattles() {
+    WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
+    for (WorldData.CityData city : data.cities) {
+      if (city.stationedEnemyTroops > 0 && city.stationedFriendlyTroops > 0) {
+        LoadedResources.getGameStateManager().gameState.contestedCity = city.name;
+        LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
+        showBriefing();
+        break;
+      }
+    }
+  }
+
+  /**
    * Switch the screen to the {@link StoreView}
    */
   private void showStore() {
@@ -91,10 +107,7 @@ public class Core extends Game {
    */
   private void showCampaignMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
-    Runnable observer = () -> {
-      LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
-      showBriefing();
-    };
+    Runnable observer = this::manageBattles;
     OverWorldMap overWorldMap = new OverWorldMap(observer, menuBar);
     this.setScreen(overWorldMap);
   }
@@ -108,7 +121,7 @@ public class Core extends Game {
         () -> {
           switch (LoadedResources.getGameStateManager().gameState.scene) {
             case PRE_BATTLE_BRIEF:
-              showBattleMap();
+              showDeployMap();
               break;
             case PRE_MAP_BRIEF:
             default:
