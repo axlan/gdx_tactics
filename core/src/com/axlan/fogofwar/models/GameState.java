@@ -3,6 +3,9 @@ package com.axlan.fogofwar.models;
 import com.axlan.fogofwar.campaigns.CampaignBase;
 import com.axlan.fogofwar.screens.SceneLabel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class for storing the state of the current game session. State should be complete for saving and
  * reloading.
@@ -26,6 +29,11 @@ public class GameState {
    * Current battle ground city
    */
   public String contestedCity = null;
+
+  /**
+   * Player that controls each city
+   */
+  public final Map<String, City.Controller> controlledCities = new HashMap<>();
 
   /**
    * Identifier for current scene

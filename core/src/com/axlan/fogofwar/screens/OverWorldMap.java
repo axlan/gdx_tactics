@@ -1,5 +1,6 @@
 package com.axlan.fogofwar.screens;
 
+import com.axlan.fogofwar.models.City;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.WorldData;
 import com.axlan.gdxtactics.PathVisualizer;
@@ -26,10 +27,7 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.axlan.gdxtactics.Utilities.centerLabel;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
@@ -112,8 +110,15 @@ public class OverWorldMap extends TiledScreen {
     MapObjects pathObjects = pathLayer.getObjects();
     for (MapObject pathObj : pathObjects) {
       MapProperties properties = pathObj.getProperties();
-      City.Controller controller = City.Controller.valueOf((String) properties.get("controller"));
       String name = pathObj.getName();
+      Map<String, City.Controller> controllers = LoadedResources.getGameStateManager().gameState.controlledCities;
+      City.Controller controller;
+      if (controllers.containsKey(name)) {
+        controller = controllers.get(name);
+      } else {
+        controller = City.Controller.valueOf((String) properties.get("controller"));
+        controllers.put(name, controller);
+      }
       TilePoint location = new TilePoint((float) properties.get("x"), (float) properties.get("y"));
       location = location.divBy(getTilePixelSize());
       cities.put(location, new City(name, location, controller));
@@ -243,24 +248,6 @@ public class OverWorldMap extends TiledScreen {
     TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
     selectCity(curMouseTile);
     return super.touchUp(screenX, screenY, pointer, button);
-  }
-
-  private static class City {
-    final String name;
-    final TilePoint location;
-    Controller controller;
-
-    City(String name, TilePoint location, Controller controller) {
-      this.name = name;
-      this.location = location;
-      this.controller = controller;
-    }
-
-    enum Controller {
-      PLAYER,
-      ENEMY,
-      NONE
-    }
   }
 
   /**

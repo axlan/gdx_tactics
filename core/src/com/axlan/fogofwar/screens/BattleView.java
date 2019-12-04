@@ -3,12 +3,9 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.logic.EnemyAi;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyAction;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyMoveAction;
-import com.axlan.fogofwar.models.BattleMap;
-import com.axlan.fogofwar.models.FieldedUnit;
+import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.models.FieldedUnit.State;
-import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.AlternativeWinConditions;
-import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
@@ -26,10 +23,7 @@ import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
@@ -39,6 +33,7 @@ import static com.axlan.gdxtactics.Utilities.listGetTail;
 // TODO-P2 Move info windows to not block relevant map tiles
 // TODO-P2 Add fog of war mechanic
 // TODO-P2 Add overlay when unit is selected attack range
+// TODO-P2 Add retreat/reinforcement mechanism
 // TODO-P3 Add intel view
 // TODO-P3 Add end turn button / Give option to end turn when no active units left.
 // TODO-P3 Add support for more then one enemy or ally AI/Commander
@@ -87,9 +82,13 @@ public class BattleView extends TiledScreen {
   private List<TilePoint> reachableTiles = null;
   /** Keeps track of time for selecting frames for animations */
   private float elapsedTime = 0;
-  /** AI for controlling enemy turn */
+  /**
+   * AI for controlling enemy turn
+   */
   private EnemyAi enemyAi;
-  /** Targets for an attack */
+  /**
+   * Targets for an attack
+   */
   private List<TilePoint> targetSelection = null;
   /**
    * Key to {@link com.axlan.fogofwar.models.GameStateManager#gameState#battleState#playerUnits} for
@@ -97,12 +96,18 @@ public class BattleView extends TiledScreen {
    */
   private TilePoint endLocation = null;
 
-  public BattleView(GameMenuBar gameMenuBar) {
+  /**
+   * Callback for when the screen completes
+   */
+  private final Runnable completionObserver;
+
+  public BattleView(Runnable completionObserver, GameMenuBar gameMenuBar) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
         LoadedResources.getReadOnlySettings().cameraSpeed,
         LoadedResources.getReadOnlySettings().edgeScrollSize);
+    this.completionObserver = completionObserver;
     levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     pathVisualizer = new PathVisualizer(getTilePixelSize(), LoadedResources.getSpriteLookup());
     battleMap = new BattleMap(map);
@@ -187,21 +192,39 @@ public class BattleView extends TiledScreen {
   }
 
   /**
-   * Check if either player meets their victory conditions
+   * Check if either player meets their victory conditions. Finalize the results and end the screen if done.
    */
   private void checkVictory() {
+    GameState gameState = LoadedResources.getGameStateManager().gameState;
+    boolean victory = false;
     if (checkVictory(
-        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
-        LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
+        gameState.battleState.enemyUnits,
+        gameState.battleState.playerUnits,
         levelData.enemyWinConditions)) {
-      System.out.println("Player Loses!");
-      // TODO-P1 complete logic for winning / losing
+      gameState.controlledCities.put(gameState.contestedCity, City.Controller.ENEMY);
+      gameState.battleState.playerUnits.clear();
+      victory = true;
     } else if (checkVictory(
-        LoadedResources.getGameStateManager().gameState.battleState.playerUnits,
-        LoadedResources.getGameStateManager().gameState.battleState.enemyUnits,
+        gameState.battleState.playerUnits,
+        gameState.battleState.enemyUnits,
         levelData.playerWinConditions)) {
-      System.out.println("Player Wins!");
+      gameState.controlledCities.put(gameState.contestedCity, City.Controller.PLAYER);
+      gameState.battleState.enemyUnits.clear();
+      victory = true;
     }
+    if (victory) {
+      Optional<WorldData.CityData> optionalCityData = gameState.campaign.getOverWorldData().getCity(gameState.contestedCity);
+      if (!optionalCityData.isPresent()) {
+        throw new RuntimeException("Invalid city name");
+      }
+      WorldData.CityData cityData = optionalCityData.get();
+
+      //TODO-P2 allow units to have a point value (some units are worth more points then others)
+      cityData.stationedEnemyTroops = gameState.battleState.enemyUnits.size();
+      cityData.stationedFriendlyTroops = gameState.battleState.playerUnits.size();
+      completionObserver.run();
+    }
+
   }
 
   /**

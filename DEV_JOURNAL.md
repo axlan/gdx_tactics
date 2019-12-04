@@ -1,3 +1,9 @@
+# 12/3 Finishing the win/lose conditions
+
+Need close the loop on finishing battles. I'll make it so that losing your command center, loses the game. Otherwise losing your troops loses the battle.
+
+I need to add some sort of retreat/reinforcement mechanic. 
+
 # 11/30 Working on campaign map functionality
 
 I've been slowly implementing the functionality to control troop movements on the campaign map.

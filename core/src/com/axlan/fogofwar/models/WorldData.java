@@ -2,6 +2,7 @@ package com.axlan.fogofwar.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Data describing the world map
@@ -12,8 +13,21 @@ public class WorldData {
    * Identifier for map file
    */
   public final String mapName;
-  /** Data for cities on map */
+  /**
+   * Data for cities on map
+   */
   public final List<CityData> cities;
+
+  /**
+   * Get a city in the world city list by name
+   *
+   * @param name name of city to return
+   * @return Optional CityData with matching name if found
+   */
+  public Optional<CityData> getCity(String name) {
+    //TODO-P3 for places with this find pattern, override the equality check to use built in functions.
+    return cities.stream().filter((a) -> a.name.equals(name)).findAny();
+  }
 
   public WorldData(String mapName, List<CityData> cities) {
     this.mapName = mapName;

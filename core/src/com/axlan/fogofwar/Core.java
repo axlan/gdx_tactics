@@ -84,14 +84,16 @@ public class Core extends Game {
    */
   private void manageBattles() {
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
+    //TODO-P1 add behavior for game victory
+    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
     for (WorldData.CityData city : data.cities) {
       if (city.stationedEnemyTroops > 0 && city.stationedFriendlyTroops > 0) {
         LoadedResources.getGameStateManager().gameState.contestedCity = city.name;
         LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
-        showBriefing();
         break;
       }
     }
+    showBriefing();
   }
 
   /**
@@ -164,7 +166,8 @@ public class Core extends Game {
   /** Switch the screen to the {@link BattleView} */
   private void showBattleMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.BATTLE_MAP;
-    this.setScreen(new BattleView(menuBar));
+    Runnable observer = this::manageBattles;
+    this.setScreen(new BattleView(observer, menuBar));
   }
 
   /**
