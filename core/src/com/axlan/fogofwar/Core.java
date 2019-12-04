@@ -63,10 +63,10 @@ public class Core extends Game {
               showSettings();
               break;
             case LOAD_GAME:
-              // TODO-P1 Load game Menu
+              break;
           }
         };
-    TitleScreen titleScreen = new TitleScreen(observer);
+    TitleScreen titleScreen = new TitleScreen(observer, menuBar);
     this.setScreen(titleScreen);
   }
 

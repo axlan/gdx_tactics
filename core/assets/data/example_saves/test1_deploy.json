@@ -20,7 +20,31 @@
     "enemyUnits": []
   },
   "campaign": {
+    "worldData": {
+      "mapName": "tutorial_overworld",
+      "cities": [
+        {
+          "name": "Alpha",
+          "maxFriendlyTroops": 5,
+          "maxEnemyTroops": 3,
+          "stationedFriendlyTroops": 2,
+          "stationedEnemyTroops": 1
+        },
+        {
+          "name": "Omega",
+          "maxFriendlyTroops": 0,
+          "maxEnemyTroops": 0,
+          "stationedFriendlyTroops": 0,
+          "stationedEnemyTroops": 0
+        }
+      ]
+    },
     "type": "Tutorial"
+  },
+  "contestedCity": "Alpha",
+  "controlledCities": {
+    "Alpha": "PLAYER",
+    "Omega": "ENEMY"
   },
   "scene": "DEPLOY_MAP"
 }

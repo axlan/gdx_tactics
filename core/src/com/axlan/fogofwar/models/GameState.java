@@ -51,5 +51,6 @@ public class GameState {
     campaign = other.campaign.makeCopy();
     scene = other.scene;
     contestedCity = other.contestedCity;
+    controlledCities.putAll(other.controlledCities);
   }
 }

@@ -1,5 +1,6 @@
 package com.axlan.fogofwar.screens;
 
+import com.axlan.gdxtactics.GameMenuBar;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -24,9 +25,14 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
 public class TitleScreen extends StageBasedScreen {
 
   private Consumer<TitleSelection> observer;
+  /**
+   * Menubar with submenu to handle loading
+   */
+  private GameMenuBar menuBar;
 
-  public TitleScreen(Consumer<TitleSelection> observer) {
+  public TitleScreen(Consumer<TitleSelection> observer, GameMenuBar menuBar) {
     this.observer = observer;
+    this.menuBar = menuBar;
     this.stage.addActor(this.makeTitleScreen());
   }
 
@@ -48,15 +54,25 @@ public class TitleScreen extends StageBasedScreen {
 
     Map<TitleSelection, VisTextButton> buttons = enumToButtons(TitleSelection.values());
     for (final TitleSelection val : buttons.keySet()) {
-      VisTextButton button = buttons.get(val);
-      button.addListener(
-          new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-              observer.accept(val);
-            }
-          });
+      final VisTextButton button = buttons.get(val);
       root.add(button);
+      if (val == TitleSelection.LOAD_GAME) {
+        button.addListener(
+            new ChangeListener() {
+              @Override
+              public void changed(ChangeEvent event, Actor actor) {
+                menuBar.getLoadMenu().showMenu(stage, button.getX(), button.getY());
+              }
+            });
+      } else {
+        button.addListener(
+            new ChangeListener() {
+              @Override
+              public void changed(ChangeEvent event, Actor actor) {
+                observer.accept(val);
+              }
+            });
+      }
       root.row();
     }
 
