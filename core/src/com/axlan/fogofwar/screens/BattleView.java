@@ -11,6 +11,7 @@ import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,8 +19,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.widget.VisDialog;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
@@ -34,7 +39,6 @@ import static com.axlan.gdxtactics.Utilities.listGetTail;
 // TODO-P2 Add fog of war mechanic
 // TODO-P2 Add overlay when unit is selected attack range
 // TODO-P2 Add retreat/reinforcement mechanism
-// TODO-P3 Add intel view
 // TODO-P3 Add end turn button / Give option to end turn when no active units left.
 // TODO-P3 Add support for more then one enemy or ally AI/Commander
 // TODO-P3 Add touch screen support
@@ -196,23 +200,26 @@ public class BattleView extends TiledScreen {
    */
   private void checkVictory() {
     GameState gameState = LoadedResources.getGameStateManager().gameState;
-    boolean victory = false;
+    String endingText = null;
+    Color endingColor = null;
     if (checkVictory(
         gameState.battleState.enemyUnits,
         gameState.battleState.playerUnits,
         levelData.enemyWinConditions)) {
       gameState.controlledCities.put(gameState.contestedCity, City.Controller.ENEMY);
       gameState.battleState.playerUnits.clear();
-      victory = true;
+      endingText = "DEFEAT";
+      endingColor = Color.RED;
     } else if (checkVictory(
         gameState.battleState.playerUnits,
         gameState.battleState.enemyUnits,
         levelData.playerWinConditions)) {
       gameState.controlledCities.put(gameState.contestedCity, City.Controller.PLAYER);
       gameState.battleState.enemyUnits.clear();
-      victory = true;
+      endingText = "VICTORY";
+      endingColor = Color.GREEN;
     }
-    if (victory) {
+    if (endingText != null) {
       Optional<WorldData.CityData> optionalCityData = gameState.campaign.getOverWorldData().getCity(gameState.contestedCity);
       if (!optionalCityData.isPresent()) {
         throw new RuntimeException("Invalid city name");
@@ -222,7 +229,22 @@ public class BattleView extends TiledScreen {
       //TODO-P2 allow units to have a point value (some units are worth more points then others)
       cityData.stationedEnemyTroops = gameState.battleState.enemyUnits.size();
       cityData.stationedFriendlyTroops = gameState.battleState.playerUnits.size();
-      completionObserver.run();
+
+      BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
+      Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, endingColor);
+      VisLabel victoryLabel = new VisLabel(endingText, titleStyle);
+      //noinspection IntegerDivisionInFloatingPointContext
+      victoryLabel.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+      Utilities.centerLabel(victoryLabel);
+      this.stage.addActor(victoryLabel);
+      this.stage.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+          super.clicked(event, x, y);
+          completionObserver.run();
+        }
+      });
+
     }
 
   }
@@ -598,7 +620,9 @@ public class BattleView extends TiledScreen {
         changeTurn(true);
       }
     }
-    checkVictory();
+    if (state != BattleViewState.ENEMY_MOVING && state != BattleViewState.MOVING) {
+      checkVictory();
+    }
   }
 
   @Override
