@@ -4,12 +4,7 @@ import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.TilePoint;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-//TODO-P1 Make the attributes returned by these functions respond to game state
+import java.util.*;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class TutorialCampaign implements CampaignBase {
@@ -43,15 +38,15 @@ public class TutorialCampaign implements CampaignBase {
                 "Alpha",
                 2,
                 5,
-                1,
+                2,
                 3
             ),
             new WorldData.CityData(
                 "Omega",
                 0,
-                0,
-                0,
-                0
+                5,
+                2,
+                3
             )
         ))
     );
@@ -104,37 +99,82 @@ public class TutorialCampaign implements CampaignBase {
 
   @Override
   public LevelData getLevelData() {
-    //TODO-P1 make this different for different contested city.
-    //TODO-P1 make it use the deployment data for the city
     //TODO-P1 allow deploying different unit types
-    return new LevelData(
-        new TilePoint(8, 4),
-        Collections.unmodifiableList(Arrays.asList(
-            new LevelData.UnitAllotment("tank", 2)
-        )),
-        Collections.unmodifiableList(Arrays.asList(
-            new TilePoint(3, 6),
-            new TilePoint(4, 6),
-            new TilePoint(8, 6),
-            new TilePoint(12, 6),
-            new TilePoint(13, 6)
-        )),
-        Collections.unmodifiableList(Arrays.asList(
-            new LevelData.Formation(
-                Collections.unmodifiableList(Arrays.asList(
-                    new TilePoint(4, 2),
-                    new TilePoint(12, 2)
-                )),
-                Collections.unmodifiableList(Arrays.asList(
-                    new LevelData.UnitStart("scout", new TilePoint(0, 0))
-                ))
-            )
-        )),
-        "advanced1",
-        new LevelData.UnitBehavior(LevelData.UnitBehaviorType.MOVE, "{\"target\": {\"x\": 8, \"y\": 7}}"),
-        null,
-        new LevelData.AlternativeWinConditions(new TilePoint(8, 7))
-    );
+    //TODO-P2 allow multiple instances of a formation to take additional spawn points from the random set
+    HashMap<String, LevelData> levels = new HashMap<>();
+    Optional<WorldData.CityData> cityDataOptional = getState().campaign.getOverWorldData().getCity(getState().contestedCity);
+    if (!cityDataOptional.isPresent()) {
+      throw new RuntimeException("City name not valid");
+    }
+    WorldData.CityData cityData = cityDataOptional.get();
+
+    List<LevelData.UnitStart> enemyPos = new ArrayList<>();
+    for (int i = 0; i < cityData.stationedEnemyTroops; i++) {
+      enemyPos.add(new LevelData.UnitStart("scout", new TilePoint(i, 0)));
+    }
+    levels.put("Alpha",
+        new LevelData(
+            new TilePoint(8, 4),
+            Collections.unmodifiableList(Arrays.asList(
+                new LevelData.UnitAllotment("tank", cityData.stationedFriendlyTroops)
+            )),
+            Collections.unmodifiableList(Arrays.asList(
+                new TilePoint(3, 6),
+                new TilePoint(4, 6),
+                new TilePoint(8, 6),
+                new TilePoint(12, 6),
+                new TilePoint(13, 6)
+            )),
+            Collections.unmodifiableList(Arrays.asList(
+                new LevelData.Formation(
+                    Collections.unmodifiableList(Arrays.asList(
+                        new TilePoint(4, 2),
+                        new TilePoint(12, 2)
+                    )),
+                    Collections.unmodifiableList(enemyPos)
+                )
+            )),
+            "advanced1",
+            new LevelData.UnitBehavior(LevelData.UnitBehaviorType.MOVE, "{\"target\": {\"x\": 8, \"y\": 7}}"),
+            null,
+            new LevelData.AlternativeWinConditions(new TilePoint(8, 7), new TilePoint(8, 7))
+        ));
+
+    List<LevelData.Formation> enemyFormations = new ArrayList<>();
+    for (int i = 0; i < cityData.stationedEnemyTroops; i++) {
+      enemyFormations.add(new LevelData.Formation(
+          Collections.unmodifiableList(Arrays.asList(
+              new TilePoint(3, 6),
+              new TilePoint(8, 6),
+              new TilePoint(12, 6)
+          )),
+          Collections.unmodifiableList(Arrays.asList(
+              new LevelData.UnitStart("tank", new TilePoint(0, 0))
+          ))
+      ));
+    }
+    levels.put("Omega",
+        new LevelData(
+            new TilePoint(8, 4),
+            Collections.unmodifiableList(Arrays.asList(
+                new LevelData.UnitAllotment("scout", cityData.stationedFriendlyTroops)
+            )),
+            Collections.unmodifiableList(Arrays.asList(
+                new TilePoint(3, 2),
+                new TilePoint(4, 2),
+                new TilePoint(5, 2),
+                new TilePoint(8, 2),
+                new TilePoint(11, 2),
+                new TilePoint(12, 2),
+                new TilePoint(13, 2)
+            )),
+            Collections.unmodifiableList(enemyFormations),
+            "advanced1",
+            new LevelData.UnitBehavior(LevelData.UnitBehaviorType.MOVE, "{\"target\": {\"x\": 8, \"y\": 7}}"),
+            new LevelData.AlternativeWinConditions(new TilePoint(8, 7), null),
+            null
+        ));
+    return levels.get(getState().contestedCity);
   }
 
   @Override
@@ -147,6 +187,12 @@ public class TutorialCampaign implements CampaignBase {
           new BriefingData.BriefPage(
               "Commander",
               "Your command center is under attack!"));
+    } else if (getState().contestedCity.equals("Omega")) {
+      setting = "Omega city";
+      pages.add(
+          new BriefingData.BriefPage(
+              "Commander",
+              "Capture the enemy command center!"));
     } else {
       return null;
     }

@@ -1,3 +1,9 @@
+# 12/5 Working toward making the tutorial "interesting"
+
+With the basic logic in place, I'm working on adding the features to  make the tutorial take some strategy.
+
+This is mostly filling in some more of logic around determining how units deploy in the campaign.
+
 # 12/3 Finishing the win/lose conditions
 
 Need close the loop on finishing battles. I'll make it so that losing your command center, loses the game. Otherwise losing your troops loses the battle.

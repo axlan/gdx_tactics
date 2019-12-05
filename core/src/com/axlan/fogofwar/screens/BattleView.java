@@ -33,8 +33,6 @@ import java.util.*;
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
-// TODO-P1 Add scenario goal along with victory / failure conditions
-// FIXME-P1 fix weirdness with mouseMoved not always triggering
 // TODO-P2 Move info windows to not block relevant map tiles
 // TODO-P2 Add fog of war mechanic
 // TODO-P2 Add overlay when unit is selected attack range
@@ -181,18 +179,19 @@ public class BattleView extends TiledScreen {
       HashMap<TilePoint, FieldedUnit> units,
       HashMap<TilePoint, FieldedUnit> opponentUnits,
       AlternativeWinConditions conditions) {
+    boolean hasWon = false;
     if (opponentUnits.size() == 0) {
       return true;
     }
     if (conditions != null) {
       if (conditions.moveToPoint != null) {
-        //noinspection RedundantIfStatement
-        if (units.containsKey(conditions.moveToPoint)) {
-          return true;
-        }
+        hasWon = units.containsKey(conditions.moveToPoint);
+      }
+      if (conditions.opponentAtPoint != null) {
+        hasWon |= opponentUnits.containsKey(conditions.moveToPoint);
       }
     }
-    return false;
+    return hasWon;
   }
 
   /**

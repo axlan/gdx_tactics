@@ -27,6 +27,7 @@ import com.kotcrab.vis.ui.widget.VisCheckBox.VisCheckBoxStyle;
 import java.util.*;
 
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A screen that lets the player decide where to position their troops. They can view their intel to
@@ -89,10 +90,17 @@ public class DeployView extends TiledScreen {
     this.observer = observer;
     this.playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
     enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
+    List<TilePoint> selectedSpawns = new ArrayList<>();
     for (int i = 0; i < levelData.enemyFormations.size(); i++) {
       Formation formation = levelData.enemyFormations.get(i);
-      int selection = rand.nextInt(formation.spawnPoints.size());
-      enemySpawnSelections[i] = selection;
+      List<TilePoint> possibleSpawns = new ArrayList<>(formation.spawnPoints);
+      // Remove spawn points already occupied by other formations
+      possibleSpawns = possibleSpawns.stream().filter((s) -> !selectedSpawns.contains(s)).collect(toList());
+      assert possibleSpawns.size() > 0;
+      int selection = rand.nextInt(possibleSpawns.size());
+      TilePoint selectedPoint = possibleSpawns.get(selection);
+      enemySpawnSelections[i] = formation.spawnPoints.indexOf(selectedPoint);
+      selectedSpawns.add(selectedPoint);
     }
 
     VisTable root = new VisTable();

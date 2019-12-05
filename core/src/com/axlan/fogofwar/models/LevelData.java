@@ -82,14 +82,23 @@ public final class LevelData {
     }
   }
 
-  /** Optional alternative win conditions */
+  /**
+   * Optional alternative win conditions
+   */
   public static class AlternativeWinConditions {
 
-    /** Win if unit reaches this point */
+    /**
+     * Win if unit reaches this point
+     */
     public final TilePoint moveToPoint;
+    /**
+     * Win if oppenent reaches this point
+     */
+    public final TilePoint opponentAtPoint;
 
-    public AlternativeWinConditions(TilePoint moveToPoint) {
+    public AlternativeWinConditions(TilePoint moveToPoint, TilePoint opponentAtPoint) {
       this.moveToPoint = moveToPoint;
+      this.opponentAtPoint = opponentAtPoint;
     }
   }
 

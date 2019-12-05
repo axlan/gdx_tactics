@@ -24,6 +24,7 @@ public interface CampaignBase {
    *
    * @return campaign map identifier
    */
+  //TODO-P2 Move to gamestate instead of campaign
   WorldData getOverWorldData();
 
   /**
