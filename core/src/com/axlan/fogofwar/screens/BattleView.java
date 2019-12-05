@@ -509,7 +509,7 @@ public class BattleView extends TiledScreen {
                 .enemyUnits
                 .remove(clickedTile);
           }
-          state = BattleViewState.IDLE;
+          checkTurnDone();
         } else {
           createActionDialogue(endLocation);
         }
