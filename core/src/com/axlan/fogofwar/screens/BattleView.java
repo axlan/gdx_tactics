@@ -3,6 +3,7 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.logic.EnemyAi;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyAction;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyMoveAction;
+import com.axlan.fogofwar.logic.VisionCalc;
 import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.models.FieldedUnit.State;
 import com.axlan.fogofwar.models.LevelData.AlternativeWinConditions;
@@ -29,6 +30,7 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
@@ -99,6 +101,11 @@ public class BattleView extends TiledScreen {
   private TilePoint endLocation = null;
 
   /**
+   * Tiles that are visible to player
+   */
+  private Set<TilePoint> visibleTiles;
+
+  /**
    * Callback for when the screen completes
    */
   private final Runnable completionObserver;
@@ -129,6 +136,7 @@ public class BattleView extends TiledScreen {
     //TODO-P2 fix levelData.doesPlayerGoFirst, this breaks the load logic since turn isn't saved
     //changeTurn(levelData.doesPlayerGoFirst);
     changeTurn(true);
+    visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
   }
 
   /**
@@ -165,6 +173,7 @@ public class BattleView extends TiledScreen {
     } else {
       state = BattleViewState.IDLE;
     }
+    visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
   }
 
   /**
@@ -358,20 +367,22 @@ public class BattleView extends TiledScreen {
     }
     for (TilePoint point :
         LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
-      FieldedUnit unit =
-          LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(point);
-      AnimatedSprite<AtlasRegion> sprite = null;
-      if (unit.state == State.IDLE || unit.state == State.DONE) {
-        sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
-      }
-      if (sprite != null) {
-        TilePoint worldPos = tileToWorld(point);
-        sprite.setPosition(worldPos.x, worldPos.y);
-        if (unit.state == State.DONE) {
-          sprite.setColor(Color.GRAY);
+      if (visibleTiles.contains(point)) {
+        FieldedUnit unit =
+            LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(point);
+        AnimatedSprite<AtlasRegion> sprite = null;
+        if (unit.state == State.IDLE || unit.state == State.DONE) {
+          sprite = LoadedResources.getAnimation(unit.getStats().type, Poses.IDLE);
         }
-        sprite.setColor(Color.BLUE);
-        sprite.draw(batch, elapsedTime);
+        if (sprite != null) {
+          TilePoint worldPos = tileToWorld(point);
+          sprite.setPosition(worldPos.x, worldPos.y);
+          if (unit.state == State.DONE) {
+            sprite.setColor(Color.GRAY);
+          }
+          sprite.setColor(Color.BLUE);
+          sprite.draw(batch, elapsedTime);
+        }
       }
     }
     if (state == BattleViewState.MOVING) {
@@ -386,7 +397,7 @@ public class BattleView extends TiledScreen {
         createActionDialogue(endLocation);
       }
     } else if (state == BattleViewState.ENEMY_MOVING) {
-      if (pathVisualizer.drawAnimatedSpritePath(delta, batch)) {
+      if (pathVisualizer.drawAnimatedSpritePath(delta, batch, visibleTiles)) {
         FieldedUnit unit =
             LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.get(endLocation);
         unit.state = State.DONE;
@@ -423,7 +434,18 @@ public class BattleView extends TiledScreen {
 
   @Override
   protected void renderAboveForeground(float delta, SpriteBatch batch, ShapeRenderer shapeRenderer) {
-
+    Color fogColor = getTransparentColor(Color.BLACK, 0.5f);
+    shapeRenderer.begin(ShapeType.Filled);
+    // Get back to the correct alpha blend mode
+    Gdx.gl.glEnable(GL20.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+    shapeRenderer.setColor(fogColor);
+    List<TilePoint> hiddenTiles = getVisibleTiles().stream().filter((t) -> !visibleTiles.contains(t)).collect(Collectors.toList());
+    for (TilePoint point : hiddenTiles) {
+      Rectangle tileRect = getTileWorldRect(point);
+      shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
+    }
+    shapeRenderer.end();
   }
 
 
@@ -595,6 +617,7 @@ public class BattleView extends TiledScreen {
   @Override
   public void updateScreen(float delta) {
     elapsedTime += delta;
+    //TODO-P3 If adding an attack action, make sure to update visibleTiles
     if (state == BattleViewState.ENEMY_IDLE) {
       EnemyAction action = enemyAi.getNextAction();
       if (action instanceof EnemyMoveAction) {

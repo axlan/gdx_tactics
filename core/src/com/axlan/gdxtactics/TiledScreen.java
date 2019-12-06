@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.ArrayList;
+
 // TODO-P3 add capability for animated tiles
 
 /**
@@ -230,6 +232,27 @@ public abstract class TiledScreen extends StageBasedScreen implements InputProce
   @SuppressWarnings("WeakerAccess")
   protected TilePoint getMapPixelSize() {
     return getMapTileSize().mult(getTilePixelSize());
+  }
+
+  /**
+   * Get a list of tiles visible on the screen
+   *
+   * @return list of visible tile indexes
+   */
+  protected ArrayList<TilePoint> getVisibleTiles() {
+    TilePoint minRawTile = screenToTile(new Vector2(0, Gdx.graphics.getWidth() - 1));
+    TilePoint maxRawTile = screenToTile(new Vector2(Gdx.graphics.getWidth() - 1, 0));
+
+    TilePoint minTile = new TilePoint(Math.max(minRawTile.x, 0), Math.max(minRawTile.y, 0));
+    TilePoint maxTile = new TilePoint(Math.min(maxRawTile.x, getMapTileSize().x), Math.min(maxRawTile.y, getMapTileSize().y));
+
+    ArrayList<TilePoint> tiles = new ArrayList<>();
+    for (int x = minTile.x; x < maxTile.x; x++) {
+      for (int y = minTile.y; y < maxTile.y; y++) {
+        tiles.add(new TilePoint(x, y));
+      }
+    }
+    return tiles;
   }
 
   @Override

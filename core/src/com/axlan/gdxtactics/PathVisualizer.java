@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.axlan.gdxtactics.Utilities.listGetTail;
@@ -85,15 +86,29 @@ public class PathVisualizer {
     this.frameDuration = frameDuration;
   }
 
+
   /**
    * Draw the current frame of the {@link AnimatedSprite} along the path last initialized by {@link
-   * PathVisualizer#startAnimation(String, List, float, float)}
+   * PathVisualizer#startAnimation(String, List, float, float)} with all tiles visible
    *
    * @param delta seconds since last draw update
    * @param batch SpriteBatch to draw onto
    * @return true if the animation has completed, false if it's ongoing
    */
   public boolean drawAnimatedSpritePath(float delta, SpriteBatch batch) {
+    return drawAnimatedSpritePath(delta, batch, null);
+  }
+
+  /**
+   * Draw the current frame of the {@link AnimatedSprite} along the path last initialized by {@link
+   * PathVisualizer#startAnimation(String, List, float, float)}
+   *
+   * @param delta        seconds since last draw update
+   * @param batch        SpriteBatch to draw onto
+   * @param visibleTiles if null ignore. Otherwise only draw movement through specified tiles
+   * @return true if the animation has completed, false if it's ongoing
+   */
+  public boolean drawAnimatedSpritePath(float delta, SpriteBatch batch, Collection<TilePoint> visibleTiles) {
     if (this.spriteName == null) {
       return true;
     }
@@ -104,6 +119,9 @@ public class PathVisualizer {
     if (curTileIdx >= animationPath.size() - 1) {
       this.spriteName = null;
       return true;
+    }
+    if (visibleTiles != null && !visibleTiles.contains(this.animationPath.get(curTileIdx))) {
+      return false;
     }
     TilePoint curPoint = this.animationPath.get(curTileIdx);
     TilePoint nextPoint = this.animationPath.get(curTileIdx + 1);
@@ -144,7 +162,7 @@ public class PathVisualizer {
     int endPoint = points.size() - 1;
     for (TilePoint nextPoint : points.subList(1, endPoint)) {
       nextPoint = tileToPixelCenter(nextPoint);
-      Boolean nextGoingX = lastPoint.x != nextPoint.x;
+      boolean nextGoingX = lastPoint.x != nextPoint.x;
       if (nextGoingX != goingX) {
         shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
       }
@@ -156,7 +174,7 @@ public class PathVisualizer {
 
 
     TilePoint nextPoint = tileToClosestEdge(listGetTail(points), points.get(points.size() - 2));
-    Boolean nextGoingX = lastPoint.x != nextPoint.x;
+    boolean nextGoingX = lastPoint.x != nextPoint.x;
     if (nextGoingX != goingX) {
       shapeRenderer.circle(lastPoint.x, lastPoint.y, ((float) lineWith) / 2);
     }
