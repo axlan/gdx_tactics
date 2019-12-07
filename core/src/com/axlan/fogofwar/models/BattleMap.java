@@ -118,7 +118,44 @@ public class BattleMap {
     return points;
   }
 
-  /** Get the properties for a given tile */
+  /**
+   * Gets the distance to a point in a AStarSearchResult.
+   *
+   * @param search result to search
+   * @param point  point to get distance to
+   * @return distance if reachable {@link Integer#MAX_VALUE} otherwise
+   */
+  public int getDistance(AStarSearchResult search, TilePoint point) {
+    BattleTileNode key = new BattleTileNode(point);
+    if (search.valueMap.containsKey(key)) {
+      return search.valueMap.get(key);
+    }
+    return Integer.MAX_VALUE;
+  }
+
+  /**
+   * Get information on the distance from a point to all points that are <= distanceLimit from startPos
+   *
+   * @param startPos      point to search from
+   * @param distanceLimit distance to search. Search all reachable points if null
+   * @param context       context to determine if tiles can be passed through
+   * @return Distance information along with data needed to reconstruct paths
+   */
+  public AStarSearchResult getDistancesFromPoint(
+      TilePoint startPos, Integer distanceLimit, Object context) {
+    BattleTileNode start = new BattleTileNode(startPos);
+    tileNodeGoal = null;
+    tileNodeContext = context;
+    if (distanceLimit != null) {
+      return PathSearch.runSearchByDistance(start, distanceLimit);
+    } else {
+      return PathSearch.runSearchAll(start);
+    }
+  }
+
+  /**
+   * Get the properties for a given tile
+   */
   public TileProperties getTileProperty(TilePoint point) {
     if (point.x < 0 || point.x >= mapSize.x || point.y < 0 || point.y >= mapSize.y) {
       return null;
@@ -126,7 +163,9 @@ public class BattleMap {
     return listGet2d(tileProperties, point.x, point.y);
   }
 
-  /** class to wrap 2D game map tiles to search for shortest movement paths */
+  /**
+   * class to wrap 2D game map tiles to search for shortest movement paths
+   */
   class BattleTileNode implements PathSearchNode {
 
     final TilePoint pos;

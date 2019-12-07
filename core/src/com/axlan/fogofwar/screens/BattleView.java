@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
+// TODO-P1 Add danger and enemy movement when looking at enemy tiles
+// TODO-P1 Don't show enemy properties if enemy is hidden by fog of war
 // TODO-P2 Move info windows to not block relevant map tiles
 // TODO-P2 Add fog of war mechanic
 // TODO-P2 Add overlay when unit is selected attack range
@@ -43,6 +45,7 @@ import static com.axlan.gdxtactics.Utilities.listGetTail;
 // TODO-P3 Add support for more then one enemy or ally AI/Commander
 // TODO-P3 Add touch screen support
 // TODO-P3 Add battle animations
+// TODO-P3 Disable saving during enemy turn
 
 /**
  * A screen to play out the turn based battle. Player commands their troops against enemy AI.
@@ -109,6 +112,11 @@ public class BattleView extends TiledScreen {
    * Callback for when the screen completes
    */
   private final Runnable completionObserver;
+
+  /**
+   * Enemy move in progress
+   */
+  private EnemyMoveAction activeEnemyMove;
 
   public BattleView(Runnable completionObserver, GameMenuBar gameMenuBar) {
     super(
@@ -617,27 +625,60 @@ public class BattleView extends TiledScreen {
   @Override
   public void updateScreen(float delta) {
     elapsedTime += delta;
-    //TODO-P3 If adding an attack action, make sure to update visibleTiles
     if (state == BattleViewState.ENEMY_IDLE) {
+      if (activeEnemyMove != null) {
+        for (TilePoint attack : activeEnemyMove.attacks) {
+          endLocation = listGetTail(activeEnemyMove.path);
+          FieldedUnit enemyUnit = LoadedResources.getGameStateManager()
+              .gameState
+              .battleState
+              .enemyUnits.get(endLocation);
+          FieldedUnit playerUnit = LoadedResources.getGameStateManager()
+              .gameState
+              .battleState
+              .playerUnits.get(attack);
+          //TODO-P2 consolidate this redundant code along with other fight
+          enemyUnit.fight(playerUnit);
+          if (enemyUnit.currentHealth <= 0) {
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .enemyUnits
+                .remove(endLocation);
+          }
+          if (playerUnit.currentHealth <= 0) {
+            LoadedResources.getGameStateManager()
+                .gameState
+                .battleState
+                .playerUnits
+                .remove(attack);
+            visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
+          }
+        }
+      }
       EnemyAction action = enemyAi.getNextAction();
       if (action instanceof EnemyMoveAction) {
-        EnemyMoveAction moveAction = (EnemyMoveAction) action;
-        state = BattleViewState.ENEMY_MOVING;
-        startLocation = moveAction.path.get(0);
-        endLocation = listGetTail(moveAction.path);
+        activeEnemyMove = (EnemyMoveAction) action;
+        startLocation = activeEnemyMove.path.get(0);
         FieldedUnit unit =
             LoadedResources.getGameStateManager()
                 .gameState
                 .battleState
                 .enemyUnits
                 .get(startLocation);
-        unit.state = State.MOVING;
-        moveEnemyUnit(startLocation, endLocation);
-        pathVisualizer.startAnimation(
-            unit.getStats().type,
-            moveAction.path,
-            LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
-            LoadedResources.getReadOnlySettings().sprites.frameDuration);
+        if (activeEnemyMove.path.size() > 1) {
+          state = BattleViewState.ENEMY_MOVING;
+          endLocation = listGetTail(activeEnemyMove.path);
+          unit.state = State.MOVING;
+          moveEnemyUnit(startLocation, endLocation);
+          pathVisualizer.startAnimation(
+              unit.getStats().type,
+              activeEnemyMove.path,
+              LoadedResources.getReadOnlySettings().sprites.movementDurationPerTile,
+              LoadedResources.getReadOnlySettings().sprites.frameDuration);
+        } else {
+          unit.state = State.DONE;
+        }
       } else {
         changeTurn(true);
       }

@@ -72,7 +72,7 @@ public class PathSearch {
     AStarSearchResult newResult = new AStarSearchResult(result);
     List<PathSearchNode> nodes = new ArrayList<>(result.valueMap.keySet());
     for (PathSearchNode node : nodes) {
-      if (result.valueMap.get(node).gScore > distanceLimit) {
+      if (result.valueMap.get(node) > distanceLimit) {
         result.valueMap.remove(node);
         result.cameFrom.remove(node);
       }
@@ -208,7 +208,7 @@ public class PathSearch {
     /**
      * Mapping of nodes to their distance scores.
      */
-    public final HashMap<PathSearchNode, PriorityItem> valueMap;
+    public final HashMap<PathSearchNode, Integer> valueMap;
 
     /**
      * @param cameFrom {@link #cameFrom}
@@ -218,7 +218,10 @@ public class PathSearch {
         HashMap<PathSearchNode, PathSearchNode> cameFrom,
         HashMap<PathSearchNode, PriorityItem> valueMap) {
       this.cameFrom = cameFrom;
-      this.valueMap = valueMap;
+      this.valueMap = new HashMap<>();
+      for (PathSearchNode node : cameFrom.keySet()) {
+        this.valueMap.put(node, valueMap.get(node).gScore);
+      }
     }
 
     AStarSearchResult(AStarSearchResult result) {

@@ -170,7 +170,7 @@ public class TutorialCampaign implements CampaignBase {
             )),
             Collections.unmodifiableList(enemyFormations),
             "advanced1",
-            new LevelData.UnitBehavior(LevelData.UnitBehaviorType.MOVE, "{\"target\": {\"x\": 8, \"y\": 7}}"),
+            new LevelData.UnitBehavior(LevelData.UnitBehaviorType.ATTACK, "{\"onlyInUnitSight\": false}"),
             new LevelData.AlternativeWinConditions(new TilePoint(8, 7), null),
             null
         ));

@@ -18,11 +18,12 @@ While battles focus on a single battlefield, meta decisions need to be made abou
 Currently working towards a demo that fleshes out most of the features of the engine.
 
 ## Todo
+- [ ] Add items to reveal fog of war and enemy map presence
 - [ ] Pretty up UI with custom skin
 - [ ] Make basic functional EnemyAi
-- [ ] Basic campaign menu to connect individual battles
-- [ ] Extend save/load to work for campaign or battles
-- [ ] Add fog of war to battle screen
+- [x] Basic campaign menu to connect individual battles
+- [x] Extend save/load to work for campaign or battles
+- [x] Add fog of war to battle screen
 - [ ] Make property window in battle have all relevant information
 - [ ] Add win and loss mechanic to give the game a goal
 - [x] Basic battle map functionality
