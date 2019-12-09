@@ -1,3 +1,23 @@
+# 12/7 Working on HTML build
+
+I wanted to make sure the cross compiling was going to work before I finished things up. I generated a new project and tried to incorporate the HTML build into my main project.
+
+After messing with the Gradle files I eventually got the build to run. I hit 3 issues right away.
+
+1. GWT only supports a subset of the Java libraries so I would have to change some functions in my code.
+2. I'm using a the library Gson and it wasn't clear how to import it into GWT and whether it would actually be supported.
+3. My code was broken up into modules, and it wasn't clear how to properly capture this in teh GWT config.
+
+None of these are total deal breakers, but I started a simpler project to test how bad 2 and 3 would be to address or whether I'd need to work around them.
+
+I was able to run the basic project by running `/c/Python27/python -m SimpleHTTPServer 8081` after running the startHttpServer Gradle task. 
+
+I did a small test project, and found out that Gson wasn't supported and the GWT is generally pretty rough. I decided to pause working on the HTML5 work and move on to Android.
+
+Android was very straightforward to add. It took a little experimenting with the Gradle files, but that was mostly just because I didn't include it in the initial project.
+
+In less then 15 minutes not including the downloads I was able to have a build working and running on my phone. The main problem is that the UI elements are way to small to see, so I'd need a more sensible scaling strategy.
+
 # 12/5 Working toward making the tutorial "interesting"
 
 With the basic logic in place, I'm working on adding the features to  make the tutorial take some strategy.
