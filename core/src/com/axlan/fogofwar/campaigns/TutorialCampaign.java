@@ -84,16 +84,41 @@ public class TutorialCampaign implements CampaignBase {
   public BriefingData getMapBriefing() {
     List<BriefingData.BriefPage> pages = new ArrayList<>();
     String setting = "SpyVSpy Training Camp";
-    pages.add(new BriefingData.BriefPage("Commander",
-        "Hello class!\nWhile the situation on the front is dire, we still have our standards.\nThis is what separates us from the animals."
-    ));
-    pages.add(new BriefingData.BriefPage("Commander",
-        "While in the past you would need to take classes, pass an exam, and shadow senior officers\nfor years, you will need to complete this mock exercise before we release you to active service.\nYou will lead a battle between city Alpha and Omega, and capture Omega city"
-    ));
-    pages.add(new BriefingData.BriefPage("Commander",
-        "While you could go in guns ablazing, I recommend you take advantage\nof the intelligence available.\nI'll give  you one piece for free, defend Alpha city before leading a counter attack."
-    ));
-
+    if (isGameOver()) {
+      if (getState().controlledCities.get("Alpha") == City.Controller.ENEMY) {
+        pages.add(new BriefingData.BriefPage("Commander", "Your command center has been captured. I'm afraid you failed your training."));
+      } else {
+        pages.add(new BriefingData.BriefPage("Commander", "Congratulations, you've successfully completed your training"));
+      }
+    } else if (worldData.getCity("Alpha").isPresent() && worldData.getCity("Alpha").get().stationedEnemyTroops == 0) {
+      String dialogue = "Well that went well. Congratulations.\n" +
+          "Now you should have enough assets to pay off an enemy commander.\n" +
+          "Click on Alpha city and command your troops to move to Omega city.\n" +
+          "They will attack once you hit deploy.\n";
+      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+    } else {
+      pages.add(new BriefingData.BriefPage("Commander",
+          "Welcome class!\nWhile the situation on the front is dire, we still have our standards, and you'll be required to complete your training.\nThis is what separates us from the animals."
+      ));
+      pages.add(new BriefingData.BriefPage("Commander",
+          "While in the past you would need to take classes, pass an exam, and shadow senior officers for years, you will need to complete this mock exercise before we release you to active service.\nYou will lead a battle between city Alpha and Omega, and capture Omega city"
+      ));
+      String dialogue = "While you could go in guns ablazing, I recommend you take advantage of the intelligence available. After this briefing you'll be shown the campaign map.\n" +
+          "This map lets you see the troop presences and move your troops between cities.\n" +
+          "You can also select the items menu at the top of the screen to purchase intel that will give you information about the enemy\n";
+      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      dialogue = "Clicking on a city shows you the troops currently stationed there.\n" +
+          "The + and - indicate the troops you've commanded to move in and out of the city.\n" +
+          "Use the other window to order troops to move from the selected city to a city connected to it.\n" +
+          "You can then click on a listed troop movement to cancel it.\n" +
+          "If there are both allied and enemy troops in a city it will be marked as contested.\n" +
+          "After hitting the deploy button, battles will take place to determine the new controller of each contested city.\n";
+      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      dialogue = "I suggest you start by keeping your troops in Alpha city to defend it.\n" +
+          "You'll need some additional resources to successfully attack Omega city\n" +
+          "You collect money for each city you control after a deployment completes\n";
+      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+    }
     return new BriefingData(setting, pages);
   }
 
@@ -181,12 +206,15 @@ public class TutorialCampaign implements CampaignBase {
   public BriefingData getLevelBriefing() {
     List<BriefingData.BriefPage> pages = new ArrayList<>();
     String setting;
+
     if (getState().contestedCity.equals("Alpha")) {
       setting = "Alpha city";
+      String dialogue = "Your command center is under attack!\n" +
+          "Destroy the enemy scouts before they reach the base!\n";
       pages.add(
           new BriefingData.BriefPage(
               "Commander",
-              "Your command center is under attack!"));
+              dialogue));
     } else if (getState().contestedCity.equals("Omega")) {
       setting = "Omega city";
       pages.add(
@@ -204,4 +232,10 @@ public class TutorialCampaign implements CampaignBase {
     return worldData;
   }
 
+  @Override
+  public boolean isGameOver() {
+    return getState().controlledCities.size() > 0 &&
+        (getState().controlledCities.get("Alpha") == City.Controller.ENEMY ||
+            getState().controlledCities.get("Omega") == City.Controller.PLAYER);
+  }
 }

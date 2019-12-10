@@ -1,3 +1,15 @@
+# 12/8 Making a playable tutorial
+
+Working on adding the last few pieces of functionality to actually make the tutorial playable.
+
+# 12/8 Looking at resizing options
+
+After making the Android build, it was clear that I'd have to alter how text/button scaling worked to support that.
+
+I did a little experimenting, but it seems like the primary issue is that Bitmap fonts aren't going to scale in a sensible way. It seems like I'll need to add logic for choosing font sizes based on resolution.
+
+I can either manually generate a set of bitmap fonts or use https://github.com/libgdx/libgdx/wiki/Gdx-freetype .
+
 # 12/7 Working on HTML build
 
 I wanted to make sure the cross compiling was going to work before I finished things up. I generated a new project and tried to incorporate the HTML build into my main project.

@@ -121,14 +121,18 @@ public class Core extends Game {
   private void showBriefing() {
     Runnable observer =
         () -> {
-          switch (LoadedResources.getGameStateManager().gameState.scene) {
-            case PRE_BATTLE_BRIEF:
-              showDeployMap();
-              break;
-            case PRE_MAP_BRIEF:
-            default:
-              showCampaignMap();
-              break;
+          if (LoadedResources.getGameStateManager().gameState.campaign.isGameOver()) {
+            showTitle();
+          } else {
+            switch (LoadedResources.getGameStateManager().gameState.scene) {
+              case PRE_BATTLE_BRIEF:
+                showDeployMap();
+                break;
+              case PRE_MAP_BRIEF:
+              default:
+                showCampaignMap();
+                break;
+            }
           }
         };
     BriefingView briefingView = new BriefingView(observer);

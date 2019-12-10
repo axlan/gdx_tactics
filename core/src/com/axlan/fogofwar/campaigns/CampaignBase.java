@@ -67,5 +67,11 @@ public interface CampaignBase {
    */
   LevelData getLevelData();
 
+  /**
+   * Indicates if the game has ended
+   *
+   * @return if the game has ended
+   */
+  boolean isGameOver();
 
 }
