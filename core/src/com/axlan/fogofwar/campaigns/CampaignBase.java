@@ -74,4 +74,8 @@ public interface CampaignBase {
    */
   boolean isGameOver();
 
+  /**
+   * Update resources after all battles are complete
+   */
+  void onDeploymentDone();
 }

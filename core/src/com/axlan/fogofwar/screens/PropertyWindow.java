@@ -30,13 +30,13 @@ class PropertyWindow extends VisWindow {
    *
    * @param tile The coordinate of the tile properties to display
    */
-  void showTileProperties(TilePoint tile) {
+  void showTileProperties(TilePoint tile, boolean isVisible) {
     this.clear();
 
     FieldedUnit unit = null;
     if (battleState.playerUnits.containsKey(tile)) {
       unit = battleState.playerUnits.get(tile);
-    } else if (battleState.enemyUnits.containsKey(tile)) {
+    } else if (isVisible && battleState.enemyUnits.containsKey(tile)) {
       unit = battleState.enemyUnits.get(tile);
     }
 
@@ -45,13 +45,19 @@ class PropertyWindow extends VisWindow {
     if (unit != null) {
       VisTable unitPropertiesTable = new VisTable();
       VisSplitPane splitPane = new VisSplitPane(unitPropertiesTable, tilePropertiesTable, true);
+      splitPane.setFillParent(true);
       unitPropertiesTable.add(new VisLabel("Unit Properties")).left();
       unitPropertiesTable.row();
       // TODO-P3 Clean up drawable generation
       TextureRegionDrawable unitTexture =
           LoadedResources.getSpriteLookup()
               .getTextureRegionDrawable(unit.getStats().type, Poses.IDLE);
-      unitPropertiesTable.add(new VisImage(unitTexture)).size(32, 32);
+      unitPropertiesTable.add(new VisImage(unitTexture)).size(32, 32).row();
+      unitPropertiesTable.add(new VisLabel("HP: " + unit.currentHealth + "/" + unit.getStats().maxHealth)).row();
+      unitPropertiesTable.add(new VisLabel("Attack: " + unit.getStats().attack));
+      unitPropertiesTable.padTop(20);
+      unitPropertiesTable.padBottom(20);
+      splitPane.pack();
       this.add(splitPane);
     } else {
       this.add(tilePropertiesTable);
@@ -62,5 +68,6 @@ class PropertyWindow extends VisWindow {
       tilePropertiesTable.row();
       tilePropertiesTable.add(new VisLabel("Passable: " + tileProperties.passable));
     }
+    pack();
   }
 }

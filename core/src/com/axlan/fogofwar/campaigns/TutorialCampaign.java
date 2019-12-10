@@ -249,4 +249,10 @@ public class TutorialCampaign implements CampaignBase {
         (getState().controlledCities.get("Alpha") == City.Controller.ENEMY ||
             getState().controlledCities.get("Omega") == City.Controller.PLAYER);
   }
+
+  @Override
+  public void onDeploymentDone() {
+    getState().playerResources.addMoney(100);
+  }
+
 }

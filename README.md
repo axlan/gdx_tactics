@@ -20,12 +20,12 @@ Currently working towards a demo that fleshes out most of the features of the en
 ## Todo
 - [ ] Add items to reveal fog of war and enemy map presence
 - [ ] Pretty up UI with custom skin
-- [ ] Make basic functional EnemyAi
+- [x] Make basic functional EnemyAi
 - [x] Basic campaign menu to connect individual battles
 - [x] Extend save/load to work for campaign or battles
 - [x] Add fog of war to battle screen
 - [ ] Make property window in battle have all relevant information
-- [ ] Add win and loss mechanic to give the game a goal
+- [x] Add win and loss mechanic to give the game a goal
 - [x] Basic battle map functionality
 - [x] Basic shared UI functionality
 - [x] Menu for deploying troops

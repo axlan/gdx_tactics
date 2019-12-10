@@ -156,11 +156,9 @@ public class EnemyAi {
           path = null;
           break;
         }
-        for (TilePoint point : path.subList(1, path.size() - 1)) {
-          if (enemyUnits.containsKey(point)) {
-            path = null;
-            blockedTiles.put(point, enemyUnits.get(point));
-          }
+        if (enemyUnits.containsKey(listGetTail(path))) {
+          blockedTiles.put(listGetTail(path), enemyUnits.get(listGetTail(path)));
+          path = null;
         }
       }
       if (path == null || path.size() <= 1) {

@@ -83,15 +83,23 @@ public class Core extends Game {
    * Schedule battles based on world state
    */
   private void manageBattles() {
+    // Ignore repeated calls to function that would result in onDeploymentDone being called repeatedly
+    if (LoadedResources.getGameStateManager().gameState.scene == SceneLabel.PRE_MAP_BRIEF) {
+      return;
+    }
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
-    //TODO-P1 add behavior for game victory
-    LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
+    boolean deployDone = true;
     for (WorldData.CityData city : data.cities) {
       if (city.stationedEnemyTroops > 0 && city.stationedFriendlyTroops > 0) {
         LoadedResources.getGameStateManager().gameState.contestedCity = city.name;
         LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
+        deployDone = false;
         break;
       }
+    }
+    if (deployDone) {
+      LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_MAP_BRIEF;
+      LoadedResources.getGameStateManager().gameState.campaign.onDeploymentDone();
     }
     showBriefing();
   }

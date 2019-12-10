@@ -2,6 +2,16 @@
 
 Working on adding the last few pieces of functionality to actually make the tutorial playable.
 
+- [x] A complete set of briefing dialogue
+- [x] Some relevant items and associated functionality
+- [x] Gaining money between battles
+- [x] Hide enemy presence in properties window
+- [x] Prevent attacking into fog of war
+- [ ] Fix showing multiple formations with one item
+- [x] Fix enemies not moving through each other
+- [x] Make properties window useful
+- [ ] Making the second battle difficult without intel
+
 # 12/8 Looking at resizing options
 
 After making the Android build, it was clear that I'd have to alter how text/button scaling worked to support that.

@@ -36,16 +36,13 @@ import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
 // TODO-P1 Add danger and enemy movement when looking at enemy tiles
-// TODO-P1 Don't show enemy properties if enemy is hidden by fog of war
-// TODO-P2 Move info windows to not block relevant map tiles
-// TODO-P2 Add fog of war mechanic
 // TODO-P2 Add overlay when unit is selected attack range
 // TODO-P2 Add retreat/reinforcement mechanism
 // TODO-P3 Add end turn button / Give option to end turn when no active units left.
 // TODO-P3 Add support for more then one enemy or ally AI/Commander
 // TODO-P3 Add touch screen support
 // TODO-P3 Add battle animations
-// TODO-P3 Disable saving during enemy turn
+// TODO-P3 Disable saving during enemy turn / end screen
 
 /**
  * A screen to play out the turn based battle. Player commands their troops against enemy AI.
@@ -184,12 +181,21 @@ public class BattleView extends TiledScreen {
     visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
   }
 
+  private void movePropertyWindow() {
+    //TODO-P2 Make the portion of the screen that triggers moves a setting
+    if (Gdx.input.getX() < Gdx.graphics.getWidth() / 3) {
+      propertyWindow.setPosition(Gdx.graphics.getWidth(), 0);
+    } else if (Gdx.input.getX() > Gdx.graphics.getWidth() * 2 / 3) {
+      propertyWindow.setPosition(0, 0);
+    }
+  }
+
   /**
    * Check the victory state for sets of units and conditions
    *
-   * @param units the friendly units for the player to check
+   * @param units         the friendly units for the player to check
    * @param opponentUnits the enemy units for the player to check
-   * @param conditions the alternative victory conditions for the player to check
+   * @param conditions    the alternative victory conditions for the player to check
    * @return true if the player of interest meets a victory condition
    */
   private boolean checkVictory(
@@ -279,7 +285,8 @@ public class BattleView extends TiledScreen {
         LoadedResources.getGameStateManager().gameState.battleState.enemyUnits.keySet()) {
       int distance = unitPos.absDiff(enemyPos);
       if (distance >= unit.getStats().minAttackRange
-          && distance <= unit.getStats().minAttackRange) {
+          && distance <= unit.getStats().minAttackRange &&
+          visibleTiles.contains(enemyPos)) {
         targets.add(enemyPos);
       }
     }
@@ -618,7 +625,8 @@ public class BattleView extends TiledScreen {
         }
       }
     }
-    propertyWindow.showTileProperties(curMouseTile);
+    propertyWindow.showTileProperties(curMouseTile, visibleTiles.contains(curMouseTile));
+    movePropertyWindow();
     return false;
   }
 
@@ -683,7 +691,7 @@ public class BattleView extends TiledScreen {
         changeTurn(true);
       }
     }
-    if (state != BattleViewState.ENEMY_MOVING && state != BattleViewState.MOVING) {
+    if (state == BattleViewState.IDLE) {
       checkVictory();
     }
   }
