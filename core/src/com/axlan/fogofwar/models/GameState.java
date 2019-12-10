@@ -47,7 +47,9 @@ public class GameState {
 
   GameState(GameState other) {
     playerResources = new PlayerResources(other.playerResources);
-    battleState = new BattleState(other.battleState);
+    if (other.battleState != null) {
+      battleState = new BattleState(other.battleState);
+    }
     campaign = other.campaign.makeCopy();
     scene = other.scene;
     contestedCity = other.contestedCity;

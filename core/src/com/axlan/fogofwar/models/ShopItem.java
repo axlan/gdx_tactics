@@ -60,10 +60,20 @@ public class ShopItem {
      * How should the reveal be ordered
      */
     public final SpotType spotType;
+    /**
+     * Which cities should this apply to? All cities if null
+     */
+    public final List<String> cities;
+    /**
+     * Should this show the enemy presence on the campaign map?
+     */
+    public final boolean revealCityData;
 
-    public Intel(int numberOfUnits, SpotType spotType) {
+    public Intel(int numberOfUnits, SpotType spotType, List<String> cities, boolean revealCityData) {
       this.numberOfUnits = numberOfUnits;
       this.spotType = spotType;
+      this.cities = (cities == null) ? null : Collections.unmodifiableList(cities);
+      this.revealCityData = revealCityData;
     }
   }
 }

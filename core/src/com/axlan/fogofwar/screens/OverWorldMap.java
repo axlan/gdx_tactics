@@ -2,6 +2,7 @@ package com.axlan.fogofwar.screens;
 
 import com.axlan.fogofwar.models.City;
 import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.ShopItem;
 import com.axlan.fogofwar.models.WorldData;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.TilePoint;
@@ -238,7 +239,22 @@ public class OverWorldMap extends TiledScreen {
       }
       String name = cities.get(cityTile).name;
       movementsWindow.updateAddMovementButton(name, neighbors);
-      cityWindow.showCityProperties(name, movements);
+      //TODO-P2 update the window after buying an item
+      boolean showEnemy = false;
+      for (ShopItem item : LoadedResources.getGameStateManager().gameState.playerResources.getPurchases()) {
+        for (ShopItem.Intel intel : item.effects) {
+          if (intel.revealCityData) {
+            if (intel.cities == null) {
+              showEnemy = true;
+            } else {
+              for (String city : intel.cities) {
+                showEnemy |= city.equals(name);
+              }
+            }
+          }
+        }
+      }
+      cityWindow.showCityProperties(name, showEnemy, movements);
     }
   }
 

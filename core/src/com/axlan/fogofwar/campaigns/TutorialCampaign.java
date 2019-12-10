@@ -21,12 +21,23 @@ public class TutorialCampaign implements CampaignBase {
   private static final List<ShopItem> ITEMS = Collections.unmodifiableList(Arrays.asList(
       new ShopItem("Farmer",
           10,
-          "Old man Peters (you know the farmer)\nis a retired infantryman in the\narea. Paying for a secure call may\nreveal if there were troops visible.",
-          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM)))),
-      new ShopItem("Spy Sat",
-          100000000,
-          "Top of the line spy sattelite.\nCapable of 10m resolution imaging.",
-          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM))))
+          "Old man Peters (you know the farmer)\n" +
+              "is a retired infantryman in the\n" +
+              "area. Paying for a secure call may\n" +
+              "will reveal Alpha city troop deployment.",
+          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM, Collections.singletonList("Alpha"), false)))),
+      new ShopItem("Pay Off General",
+          100,
+          "General Rick has gambling debt.\n +" +
+              "Pay him off for info on Omega city troop deployment",
+          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM, Collections.singletonList("Omega"), false)))),
+      new ShopItem("Spy Sat Photos",
+          10,
+          "Top of the line spy satellite.\n" +
+              "Capable of 10m resolution imaging.\n" +
+              "This will show the number of enemy\n" +
+              "troops in each city.",
+          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(0, ShopItem.SpotType.RANDOM, null, true))))
   ));
 
 

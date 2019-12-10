@@ -61,10 +61,11 @@ class CityWindow extends VisWindow {
 
   /**
    * Update the window for the selected city
-   * @param name name of city to select
+   *
+   * @param name      name of city to select
    * @param movements currently selected troop movements
    */
-  void showCityProperties(String name, List<Movement> movements) {
+  void showCityProperties(String name, boolean showEnemy, List<Movement> movements) {
     getTitleLabel().setText("City Properties: " + name);
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
     Optional<WorldData.CityData> cityDataOption = data.cities.stream().filter((a) -> a.name.equals(name)).findAny();
@@ -85,10 +86,17 @@ class CityWindow extends VisWindow {
     int nextRound = cityData.stationedFriendlyTroops + added - removed;
     currentFriendlyLabel.setText(
         String.format("%d (-%d) (+%d) / %d", cityData.stationedFriendlyTroops, removed, added, cityData.maxFriendlyTroops));
-    currentEnemyLabel.setText(
-        String.format("%d / %d", cityData.stationedEnemyTroops, cityData.maxEnemyTroops));
-    //TODO-P2 use knowledge of enemy troops to suggest possible, or definite conflict
-    if (nextRound > 0 && cityData.stationedEnemyTroops > 0) {
+    if (showEnemy) {
+      currentEnemyLabel.setText(
+          String.format("%d / %d", cityData.stationedEnemyTroops, cityData.maxEnemyTroops));
+    } else {
+      currentEnemyLabel.setText(
+          String.format("?? / %d", cityData.maxEnemyTroops));
+    }
+    if (!showEnemy && nextRound > 0) {
+      setContestedColor(Color.YELLOW);
+      contestedLabel.setText("Unknown if city contested");
+    } else if (nextRound > 0 && cityData.stationedEnemyTroops > 0) {
       setContestedColor(Color.RED);
       contestedLabel.setText("Control of city contested");
     } else {
