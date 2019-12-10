@@ -1,8 +1,11 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.*;
+import com.axlan.fogofwar.models.BattleState;
+import com.axlan.fogofwar.models.LevelData;
 import com.axlan.fogofwar.models.LevelData.Formation;
 import com.axlan.fogofwar.models.LevelData.UnitAllotment;
+import com.axlan.fogofwar.models.LoadedResources;
+import com.axlan.fogofwar.models.ShopItem;
 import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.axlan.gdxtactics.TilePoint;
@@ -59,27 +62,42 @@ public class DeployView extends TiledScreen {
   private final VisLabel[] remainingLabels;
   // TODO-P3 allow for determinism
   private final Random rand = new Random();
-  /** Check boxes to select intel to display */
+  /**
+   * Check boxes to select intel to display
+   */
   private final VisCheckBox[] intelCheckBoxes;
 
   private final LevelData levelData;
-  private final PlayerResources playerResources;
   /**
    * Mapping of map points to the unit type deployed there
    */
   private final HashMap<TilePoint, String> placements = new HashMap<>();
-  /** Animations for intel that can be shown on the map */
+  /**
+   * Animations for intel that can be shown on the map
+   */
   private final Array<ArrayList<AnimatedSprite<AtlasRegion>>> sightings;
-  /** Button to finalize deployment */
+  /**
+   * Button to finalize deployment
+   */
   private final VisTextButton doneButton = new VisTextButton("Deploy Troops");
 
   private final Runnable observer;
-  /** The type of unit currently selected to deploy. null for removing previous deployments. */
+  /**
+   * List of player items that affect this view
+   */
+  private final List<ShopItem> relevantItems;
+  /**
+   * The type of unit currently selected to deploy. null for removing previous deployments.
+   */
   private String selectedUnit;
-  /** Keeps track of time for selecting frames for animations */
+  /**
+   * Keeps track of time for selecting frames for animations
+   */
   private float elapsedTime = 0;
 
-  /** @param observer observer to call when briefing is finished */
+  /**
+   * @param observer observer to call when briefing is finished
+   */
   public DeployView(Runnable observer) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
@@ -88,7 +106,17 @@ public class DeployView extends TiledScreen {
         LoadedResources.getReadOnlySettings().edgeScrollSize);
     this.levelData = LoadedResources.getGameStateManager().gameState.campaign.getLevelData();
     this.observer = observer;
-    this.playerResources = LoadedResources.getGameStateManager().gameState.playerResources;
+    this.relevantItems = new ArrayList<>();
+    for (ShopItem item : LoadedResources.getGameStateManager().gameState.playerResources.getPurchases()) {
+      for (ShopItem.Intel effect : item.effects) {
+        if (effect.cities == null || effect.cities.contains(LoadedResources.getGameStateManager().gameState.contestedCity)) {
+          if (effect.numberOfUnits > 0) {
+            this.relevantItems.add(item);
+          }
+        }
+      }
+    }
+
     enemySpawnSelections = new Integer[levelData.enemyFormations.size()];
     List<TilePoint> selectedSpawns = new ArrayList<>();
     for (int i = 0; i < levelData.enemyFormations.size(); i++) {
@@ -114,8 +142,8 @@ public class DeployView extends TiledScreen {
 
     root.row();
 
-    sightings = new Array<>(playerResources.getPurchases().size());
-    intelCheckBoxes = new VisCheckBox[playerResources.getPurchases().size()];
+    sightings = new Array<>(relevantItems.size());
+    intelCheckBoxes = new VisCheckBox[relevantItems.size()];
     root.add(createIntelSelectWindow()).align(Align.bottomLeft);
 
     // TODO-P2 Add property window to deploy view
@@ -188,8 +216,8 @@ public class DeployView extends TiledScreen {
     VisTable table = new VisTable();
     intelSelection.add(table);
     intelSelection.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    for (int i = 0; i < playerResources.getPurchases().size(); i++) {
-      ShopItem resource = playerResources.getPurchases().get(i);
+    for (int i = 0; i < relevantItems.size(); i++) {
+      ShopItem resource = relevantItems.get(i);
       ArrayList<AnimatedSprite<AtlasRegion>> spotted = new ArrayList<>();
       intelCheckBoxes[i] = new VisCheckBox(resource.name, true);
       VisCheckBoxStyle style = new VisCheckBoxStyle(intelCheckBoxes[i].getStyle());

@@ -243,15 +243,13 @@ public class OverWorldMap extends TiledScreen {
       boolean showEnemy = false;
       for (ShopItem item : LoadedResources.getGameStateManager().gameState.playerResources.getPurchases()) {
         for (ShopItem.Intel intel : item.effects) {
-          if (intel.revealCityData) {
-            if (intel.cities == null) {
-              showEnemy = true;
-            } else {
-              for (String city : intel.cities) {
-                showEnemy |= city.equals(name);
-              }
-            }
+          if (intel.revealCityData && (intel.cities == null || intel.cities.contains(name))) {
+            showEnemy = true;
+            break;
           }
+        }
+        if (showEnemy) {
+          break;
         }
       }
       cityWindow.showCityProperties(name, showEnemy, movements);
