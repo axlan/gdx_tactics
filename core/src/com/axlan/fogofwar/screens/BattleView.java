@@ -3,7 +3,7 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.logic.EnemyAi;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyAction;
 import com.axlan.fogofwar.logic.EnemyAi.EnemyMoveAction;
-import com.axlan.fogofwar.logic.VisionCalc;
+import com.axlan.fogofwar.logic.UnitRangeCalc;
 import com.axlan.fogofwar.models.*;
 import com.axlan.fogofwar.models.FieldedUnit.State;
 import com.axlan.fogofwar.models.LevelData.AlternativeWinConditions;
@@ -111,6 +111,18 @@ public class BattleView extends TiledScreen {
   private final Runnable completionObserver;
 
   /**
+   * Tiles to highlight to show potential enemy movement
+   */
+  private List<TilePoint> enemyMovementRange = null;
+  /**
+   * Tiles to highlight to show potential enemy attack
+   */
+  private List<TilePoint> enemyAttackRange = null;
+  /**
+   * Tile mouse is currently over. Used to invalidate cached processing
+   */
+  private TilePoint mouseOverTile = null;
+  /**
    * Enemy move in progress
    */
   private EnemyMoveAction activeEnemyMove;
@@ -141,7 +153,7 @@ public class BattleView extends TiledScreen {
     //TODO-P2 fix levelData.doesPlayerGoFirst, this breaks the load logic since turn isn't saved
     //changeTurn(levelData.doesPlayerGoFirst);
     changeTurn(true);
-    visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
+    visibleTiles = UnitRangeCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
   }
 
   /**
@@ -179,7 +191,7 @@ public class BattleView extends TiledScreen {
     } else {
       state = BattleViewState.IDLE;
     }
-    visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
+    visibleTiles = UnitRangeCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
   }
 
   private void movePropertyWindow() {
@@ -425,6 +437,23 @@ public class BattleView extends TiledScreen {
     // Get back to the correct alpha blend mode
     Gdx.gl.glEnable(GL20.GL_BLEND);
     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+    TilePoint mouseTile = screenToTile(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+    if (enemyAttackRange != null) {
+      Color attackColor = getTransparentColor(Color.RED, 0.5f);
+      shapeRenderer.setColor(attackColor);
+      for (TilePoint point : enemyAttackRange) {
+        Rectangle tileRect = getTileWorldRect(point);
+        shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
+      }
+    }
+    if (enemyMovementRange != null) {
+      Color moveColor = getTransparentColor(Color.BLUE, 0.5f);
+      shapeRenderer.setColor(moveColor);
+      for (TilePoint point : enemyMovementRange) {
+        Rectangle tileRect = getTileWorldRect(point);
+        shapeRenderer.rect(tileRect.x, tileRect.y, tileRect.width, tileRect.height);
+      }
+    }
     if (state == BattleViewState.CHOOSE_MOVE) {
       Color moveColor = getTransparentColor(Color.BLUE, 0.5f);
       shapeRenderer.setColor(moveColor);
@@ -599,11 +628,12 @@ public class BattleView extends TiledScreen {
   public boolean mouseMoved(int screenX, int screenY) {
     super.mouseMoved(screenX, screenY);
     TilePoint curMouseTile = screenToTile(new Vector2(screenX, screenY));
+    if (curMouseTile.equals(mouseOverTile)) {
+      return false;
+    }
+    mouseOverTile = curMouseTile;
+
     if (state == BattleViewState.CHOOSE_MOVE) {
-      // Only recalculate path when mouse has moved onto new tile.
-      if (selectedUnitPath != null && curMouseTile.equals(listGetTail(selectedUnitPath))) {
-        return false;
-      }
       if (curMouseTile.equals(startLocation)) {
         selectedUnitPath = null;
         shownUnitPath = null;
@@ -628,6 +658,29 @@ public class BattleView extends TiledScreen {
     }
     propertyWindow.showTileProperties(curMouseTile, visibleTiles.contains(curMouseTile));
     movePropertyWindow();
+    if (LoadedResources.getGameStateManager()
+        .gameState
+        .battleState
+        .enemyUnits
+        .containsKey(curMouseTile) &&
+        visibleTiles.contains(curMouseTile)) {
+      FieldedUnit unit = LoadedResources.getGameStateManager()
+          .gameState
+          .battleState
+          .enemyUnits
+          .get(curMouseTile);
+      enemyMovementRange =
+          battleMap.getPointsWithinRange(
+              curMouseTile,
+              unit.getStats().movement,
+              LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
+      enemyAttackRange = new ArrayList<>(UnitRangeCalc.getAttackTiles(enemyMovementRange, unit));
+      enemyMovementRange.remove(curMouseTile);
+      enemyAttackRange.remove(curMouseTile);
+    } else {
+      enemyMovementRange = null;
+      enemyAttackRange = null;
+    }
     return false;
   }
 
@@ -661,7 +714,7 @@ public class BattleView extends TiledScreen {
                 .battleState
                 .playerUnits
                 .remove(attack);
-            visibleTiles = VisionCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
+            visibleTiles = UnitRangeCalc.getVisibleTiles(LoadedResources.getGameStateManager().gameState.battleState.playerUnits);
           }
         }
       }

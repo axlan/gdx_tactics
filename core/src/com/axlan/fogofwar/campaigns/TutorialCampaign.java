@@ -107,11 +107,19 @@ public class TutorialCampaign implements CampaignBase {
         pages.add(new BriefingData.BriefPage("Commander", "Congratulations, you've successfully completed your training"));
       }
     } else if (worldData.getCity("Alpha").isPresent() && worldData.getCity("Alpha").get().stationedEnemyTroops == 0) {
-      String dialogue = "Well that went well. Congratulations.\n" +
-          "Now you should have enough assets to pay off an enemy commander.\n" +
-          "Click on Alpha city and command your troops to move to Omega city.\n" +
-          "They will attack once you hit deploy.\n";
-      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      if (worldData.getCity("Alpha").get().stationedFriendlyTroops == 2) {
+        String dialogue = "Well that went well. Congratulations.\n"
+            + "Now you should have enough assets to pay off an enemy commander.\n"
+            + "Click on Alpha city and command your troops to move to Omega city.\n"
+            + "They will attack once you hit deploy.\n";
+        pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      } else {
+        String dialogue = "That could have gone better...\n"
+            + "You should have enough assets to pay off an enemy commander.\n"
+            + "Click on Alpha city and command your troops to move to Omega city.\n"
+            + "They will attack once you hit deploy.\n";
+        pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      }
     } else {
       pages.add(new BriefingData.BriefPage("Commander",
           "Welcome class!\nWhile the situation on the front is dire, we still have our standards, and you'll be required to complete your training.\nThis is what separates us from the animals."

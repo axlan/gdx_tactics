@@ -12,6 +12,7 @@ Working on adding the last few pieces of functionality to actually make the tuto
 - [x] Make properties window useful
 - [x] Making the second battle difficult without intel
 - [x] Add battle and deploy view instructions to briefing
+- [x] Add overlay to show enemy movement/attack
 
 # 12/8 Looking at resizing options
 
