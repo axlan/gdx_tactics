@@ -101,6 +101,8 @@ public class TutorialCampaign implements CampaignBase {
     if (isGameOver()) {
       if (getState().controlledCities.get("Alpha") == City.Controller.ENEMY) {
         pages.add(new BriefingData.BriefPage("Commander", "Your command center has been captured. I'm afraid you failed your training."));
+      } else if (remainingTroops() == 0) {
+        pages.add(new BriefingData.BriefPage("Commander", "Your troops were wiped out. I'm afraid you failed your training."));
       } else {
         pages.add(new BriefingData.BriefPage("Commander", "Congratulations, you've successfully completed your training"));
       }
@@ -183,9 +185,9 @@ public class TutorialCampaign implements CampaignBase {
     for (int i = 0; i < cityData.stationedEnemyTroops; i++) {
       enemyFormations.add(new LevelData.Formation(
           Collections.unmodifiableList(Arrays.asList(
-              new TilePoint(3, 6),
-              new TilePoint(8, 6),
-              new TilePoint(12, 6)
+              new TilePoint(1, 7),
+              new TilePoint(8, 7),
+              new TilePoint(14, 7)
           )),
           Collections.unmodifiableList(Arrays.asList(
               new LevelData.UnitStart("tank", new TilePoint(0, 0))
@@ -199,18 +201,14 @@ public class TutorialCampaign implements CampaignBase {
                 new LevelData.UnitAllotment("scout", cityData.stationedFriendlyTroops)
             )),
             Collections.unmodifiableList(Arrays.asList(
-                new TilePoint(3, 2),
-                new TilePoint(4, 2),
-                new TilePoint(5, 2),
-                new TilePoint(8, 2),
-                new TilePoint(11, 2),
-                new TilePoint(12, 2),
-                new TilePoint(13, 2)
+                new TilePoint(1, 1),
+                new TilePoint(8, 1),
+                new TilePoint(14, 1)
             )),
             Collections.unmodifiableList(enemyFormations),
-            "advanced1",
+            "omega",
             new LevelData.UnitBehavior(LevelData.UnitBehaviorType.ATTACK, "{\"onlyInUnitSight\": false}"),
-            new LevelData.AlternativeWinConditions(new TilePoint(8, 7), null),
+            new LevelData.AlternativeWinConditions(new TilePoint(8, 8), null),
             null
         ));
     return levels.get(getState().contestedCity);
@@ -268,11 +266,16 @@ public class TutorialCampaign implements CampaignBase {
     return worldData;
   }
 
+  private int remainingTroops() {
+    return getState().campaign.getOverWorldData().cities.stream().map((c) -> c.stationedFriendlyTroops).reduce(Integer::sum).orElse(0);
+  }
+
   @Override
   public boolean isGameOver() {
     return getState().controlledCities.size() > 0 &&
         (getState().controlledCities.get("Alpha") == City.Controller.ENEMY ||
-            getState().controlledCities.get("Omega") == City.Controller.PLAYER);
+            getState().controlledCities.get("Omega") == City.Controller.PLAYER) ||
+        remainingTroops() == 0;
   }
 
   @Override

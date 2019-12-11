@@ -18,8 +18,8 @@ While battles focus on a single battlefield, meta decisions need to be made abou
 Currently working towards a demo that fleshes out most of the features of the engine.
 
 ## Todo
-- [ ] Add items to reveal fog of war and enemy map presence
 - [ ] Pretty up UI with custom skin
+- [ ] Make text readable in Android
 - [x] Make basic functional EnemyAi
 - [x] Basic campaign menu to connect individual battles
 - [x] Extend save/load to work for campaign or battles

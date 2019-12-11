@@ -174,6 +174,7 @@ public class BattleView extends TiledScreen {
       done &= unit.state == State.DONE;
     }
     if (done) {
+      checkVictory();
       changeTurn(false);
     } else {
       state = BattleViewState.IDLE;
@@ -688,6 +689,7 @@ public class BattleView extends TiledScreen {
           unit.state = State.DONE;
         }
       } else {
+        activeEnemyMove = null;
         changeTurn(true);
       }
     }
