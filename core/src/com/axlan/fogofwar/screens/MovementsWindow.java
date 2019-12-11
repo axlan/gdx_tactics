@@ -108,6 +108,7 @@ class MovementsWindow extends VisWindow {
    */
   void updateAddMovementButton(String name, List<String> adjacent) {
     this.selectedCity = name;
+    this.getTitleLabel().setText("Troop Movements From " + name);
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
     Optional<WorldData.CityData> cityDataOption = data.cities.stream().filter((a) -> a.name.equals(name)).findAny();
     if (!cityDataOption.isPresent()) {

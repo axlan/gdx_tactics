@@ -231,7 +231,7 @@ public class TutorialCampaign implements CampaignBase {
               dialogue));
       dialogue = "First you must deploy your units.\n" +
           "Select a unit type from the right hand menu and place them on a spawn point.\n" +
-          "Select \"erase\" to remove placed units.\n" +
+          "Select \"Remover\" to remove placed units.\n" +
           "Once all your units are placed, hit the \"Deploy Troops\" button." +
           "You can enable and disable intel sources in the lower left menu.";
       pages.add(
@@ -240,6 +240,8 @@ public class TutorialCampaign implements CampaignBase {
               dialogue));
       dialogue = "After that you'll start the battle.\n" +
           "Clicking a unit select it and lets you move and attack.\n" +
+          "To attack an adjacent enemy click your unit to move, then click the space it's currently in.\n" +
+          "Valid attack targets will be highlighted in red.\n" +
           "The property window will show info for units and terrain under the cursor.\n" +
           "The enemy is hidden by the fog of war, position your troops to cut them off as they approach the base.";
       pages.add(

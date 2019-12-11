@@ -183,7 +183,7 @@ public class DeployView extends TiledScreen {
       table.add(remainingLabels[i]).left().expandX();
       table.row();
     }
-    VisTextButton eraseButton = new VisTextButton("Eraser");
+    VisTextButton eraseButton = new VisTextButton("Remover");
     eraseButton.addListener(
         new ChangeListener() {
           @Override

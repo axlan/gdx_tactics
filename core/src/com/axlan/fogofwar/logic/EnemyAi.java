@@ -118,9 +118,9 @@ public class EnemyAi {
         path = battleMap.getShortestPath(enemyPos, bestMove, blockedTiles);
       }
       List<TilePoint> attacks = (bestTarget != null) ? Collections.singletonList(bestTarget) : Collections.emptyList();
-      if (path.size() > enemyUnit.getStats().movement) {
+      if (path.size() > enemyUnit.getStats().movement + 1) {
         //TODO-P3 allow for more complex path length calculation
-        path = path.subList(0, enemyUnit.getStats().movement);
+        path = path.subList(0, enemyUnit.getStats().movement + 1);
         while (path.size() > 1 && enemyUnits.containsKey(listGetTail(path))) {
           path = path.subList(0, path.size() - 1);
         }
