@@ -30,7 +30,10 @@ public class TutorialCampaign implements CampaignBase {
           100,
           "General Rick has gambling debt.\n +" +
               "Pay him off for info on Omega city troop deployment",
-          Collections.unmodifiableList(Arrays.asList(new ShopItem.Intel(1, ShopItem.SpotType.RANDOM, Collections.singletonList("Omega"), false)))),
+          Collections.unmodifiableList(Arrays.asList(
+              new ShopItem.Intel(2, ShopItem.SpotType.RANDOM, Collections.singletonList("Omega"), false),
+              new ShopItem.Intel(2, ShopItem.SpotType.RANDOM, Collections.singletonList("Omega"), false)
+          ))),
       new ShopItem("Spy Sat Photos",
           10,
           "Top of the line spy satellite.\n" +
@@ -216,22 +219,44 @@ public class TutorialCampaign implements CampaignBase {
   @Override
   public BriefingData getLevelBriefing() {
     List<BriefingData.BriefPage> pages = new ArrayList<>();
-    String setting;
-
-    if (getState().contestedCity.equals("Alpha")) {
-      setting = "Alpha city";
+    String setting = getState().contestedCity;
+    if (isGameOver()) {
+      pages.add(new BriefingData.BriefPage("Commander",
+          "You left your command center undefended and it's been captured.\n" +
+              "I'm afraid you failed your training."));
+    } else if (getState().contestedCity.equals("Alpha")) {
       String dialogue = "Your command center is under attack!\n" +
-          "Destroy the enemy scouts before they reach the base!\n";
+          "Destroy the enemy scouts before they reach the base!";
+      pages.add(
+          new BriefingData.BriefPage(
+              "Commander",
+              dialogue));
+      dialogue = "First you must deploy your units.\n" +
+          "Select a unit type from the right hand menu and place them on a spawn point.\n" +
+          "Select \"erase\" to remove placed units.\n" +
+          "Once all your units are placed, hit the \"Deploy Troops\" button." +
+          "You can enable and disable intel sources in the lower left menu.";
+      pages.add(
+          new BriefingData.BriefPage(
+              "Commander",
+              dialogue));
+      dialogue = "After that you'll start the battle.\n" +
+          "Clicking a unit select it and lets you move and attack.\n" +
+          "The property window will show info for units and terrain under the cursor.\n" +
+          "The enemy is hidden by the fog of war, position your troops to cut them off as they approach the base.";
       pages.add(
           new BriefingData.BriefPage(
               "Commander",
               dialogue));
     } else if (getState().contestedCity.equals("Omega")) {
-      setting = "Omega city";
       pages.add(
           new BriefingData.BriefPage(
               "Commander",
               "Capture the enemy command center!"));
+      pages.add(
+          new BriefingData.BriefPage(
+              "Commander",
+              "Your scout vehicles are too weak to attack the tanks, so you'll need to be sneaky."));
     } else {
       return null;
     }

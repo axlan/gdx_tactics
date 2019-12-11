@@ -112,6 +112,7 @@ public class DeployView extends TiledScreen {
         if (effect.cities == null || effect.cities.contains(LoadedResources.getGameStateManager().gameState.contestedCity)) {
           if (effect.numberOfUnits > 0) {
             this.relevantItems.add(item);
+            break;
           }
         }
       }
@@ -226,10 +227,18 @@ public class DeployView extends TiledScreen {
       table.add(intelCheckBoxes[i]);
       table.row();
 
-      for (ShopItem.Intel intel : resource.effects) {
-        //TODO-P1 Figure out new way to correspond intel to formations
-        int formationSpottedIdx = rand.nextInt(levelData.enemyFormations.size());
+      Array<Integer> formationsLeft = Utilities.getIntRange(0, levelData.enemyFormations.size(), 1);
 
+      for (ShopItem.Intel intel : resource.effects) {
+        if (formationsLeft.size == 0) {
+          break;
+        }
+        if (intel.numberOfUnits == 0) {
+          continue;
+        }
+        int idx = rand.nextInt(formationsLeft.size);
+        int formationSpottedIdx = formationsLeft.get(idx);
+        formationsLeft.removeIndex(idx);
         Formation formation = levelData.enemyFormations.get(formationSpottedIdx);
         int spawnSelection = enemySpawnSelections[formationSpottedIdx];
 

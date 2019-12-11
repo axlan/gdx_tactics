@@ -7,10 +7,11 @@ Working on adding the last few pieces of functionality to actually make the tuto
 - [x] Gaining money between battles
 - [x] Hide enemy presence in properties window
 - [x] Prevent attacking into fog of war
-- [ ] Fix showing multiple formations with one item
+- [x] Fix showing multiple formations with one item
 - [x] Fix enemies not moving through each other
 - [x] Make properties window useful
 - [ ] Making the second battle difficult without intel
+- [x] Add battle and deploy view instructions to briefing
 
 # 12/8 Looking at resizing options
 

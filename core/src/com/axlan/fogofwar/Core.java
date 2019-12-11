@@ -1,5 +1,6 @@
 package com.axlan.fogofwar;
 
+import com.axlan.fogofwar.models.City;
 import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.fogofwar.models.WorldData;
 import com.axlan.fogofwar.screens.*;
@@ -95,6 +96,10 @@ public class Core extends Game {
         LoadedResources.getGameStateManager().gameState.scene = SceneLabel.PRE_BATTLE_BRIEF;
         deployDone = false;
         break;
+      } else if (city.stationedEnemyTroops > 0) {
+        LoadedResources.getGameStateManager().gameState.controlledCities.put(city.name, City.Controller.ENEMY);
+      } else if (city.stationedFriendlyTroops > 0) {
+        LoadedResources.getGameStateManager().gameState.controlledCities.put(city.name, City.Controller.PLAYER);
       }
     }
     if (deployDone) {

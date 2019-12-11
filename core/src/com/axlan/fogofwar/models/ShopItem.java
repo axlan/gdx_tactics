@@ -23,7 +23,8 @@ public class ShopItem {
    */
   public final String description;
   /**
-   * Pieces of intel that buying the item will reveal
+   * Pieces of intel that buying the item will reveal.
+   * If multiple effects reveal units, each one applies to a different formation
    */
   public final List<Intel> effects;
 
@@ -51,7 +52,7 @@ public class ShopItem {
   public static class Intel {
 
     // TODO-P2 Add reported and actual accuracy values, mis-identification, false positive, etc.
-    // TODO-P2 Allow items to persist between levels.
+    // TODO-P2 Add ability to reveal units through fog of war
     /**
      * How many units in the formation should be reveled
      */

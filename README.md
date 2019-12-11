@@ -24,7 +24,7 @@ Currently working towards a demo that fleshes out most of the features of the en
 - [x] Basic campaign menu to connect individual battles
 - [x] Extend save/load to work for campaign or battles
 - [x] Add fog of war to battle screen
-- [ ] Make property window in battle have all relevant information
+- [x] Make property window in battle have all relevant information
 - [x] Add win and loss mechanic to give the game a goal
 - [x] Basic battle map functionality
 - [x] Basic shared UI functionality
