@@ -120,8 +120,9 @@ public class BriefingView extends StageBasedScreen {
     rootTable.row();
     rootTable.add(this.dialogue).expand().fill().colspan(2);
     rootTable.row();
-    rootTable.add(nextButton).fill();
     rootTable.add(padding).expandX().fill();
+    rootTable.add(nextButton).fill();
+
 
     return rootTable;
   }

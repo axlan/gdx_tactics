@@ -5,6 +5,7 @@ import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
@@ -30,6 +31,7 @@ public final class LoadedResources {
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
   private static GameStateManager gameStateManager;
+  private static FontManager fontManager;
 
   /**
    * Get the class for handling the game state and saving / loading
@@ -61,16 +63,25 @@ public final class LoadedResources {
     JsonLoader.writeToJsonFile(EDITABLE_SETTINGS_FILE, editableSettings);
   }
 
-  /** Get the SpriteLookup used to generate sprites */
+  /**
+   * Get the SpriteLookup used to generate sprites
+   */
   public static SpriteLookup getSpriteLookup() {
     return spriteLookup;
+  }
+
+  /**
+   * Get a loaded font by name
+   */
+  public static BitmapFont getFont(String fontName) {
+    return fontManager.fontTable.get(fontName);
   }
 
   /**
    * Load an AnimatedSprite by name and pose using default setting for frameDuration and reverse
    *
    * @param sprite name of sprite
-   * @param pose pose of sprite
+   * @param pose   pose of sprite
    * @return Corresponding AnimatedSprite
    */
   public static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose) {
@@ -89,6 +100,7 @@ public final class LoadedResources {
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
+    fontManager = new FontManager();
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
         Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));

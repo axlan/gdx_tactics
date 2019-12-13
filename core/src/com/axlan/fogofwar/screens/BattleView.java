@@ -341,6 +341,7 @@ public class BattleView extends TiledScreen {
     Vector2 screenPos = tileToScreen(unitPos);
     // TODO-P2 Make dialogue less likely to block relevant map space
     actionDialogue.setPosition(screenPos.x, screenPos.y);
+    actionDialogue.pack();
     stage.addActor(actionDialogue);
     state = BattleViewState.CHOOSE_ACTION;
   }
@@ -622,6 +623,12 @@ public class BattleView extends TiledScreen {
   @SuppressWarnings("unused")
   private int getDistance(List<TilePoint> points, FieldedUnit unit) {
     return points.size() - 1;
+  }
+
+  @Override
+  public boolean touchDragged(int screenX, int screenY, int pointer) {
+    super.touchDragged(screenX, screenY, pointer);
+    return mouseMoved(screenX, screenY);
   }
 
   @Override

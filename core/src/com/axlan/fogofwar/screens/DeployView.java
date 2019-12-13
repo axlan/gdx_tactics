@@ -125,7 +125,9 @@ public class DeployView extends TiledScreen {
       List<TilePoint> possibleSpawns = new ArrayList<>(formation.spawnPoints);
       // Remove spawn points already occupied by other formations
       possibleSpawns = possibleSpawns.stream().filter((s) -> !selectedSpawns.contains(s)).collect(toList());
-      assert possibleSpawns.size() > 0;
+      if (possibleSpawns.size() == 0) {
+        break;
+      }
       int selection = rand.nextInt(possibleSpawns.size());
       TilePoint selectedPoint = possibleSpawns.get(selection);
       enemySpawnSelections[i] = formation.spawnPoints.indexOf(selectedPoint);
@@ -178,7 +180,8 @@ public class DeployView extends TiledScreen {
               }
             }
           });
-      table.add(button).size(32, 32).left();
+      // TODO-P1 Set size based on other elements or screen width
+      table.add(button).size(128, 128).left();
       remainingLabels[i] = new VisLabel();
       table.add(remainingLabels[i]).left().expandX();
       table.row();
@@ -296,7 +299,7 @@ public class DeployView extends TiledScreen {
       final UnitAllotment unit = levelData.playerUnits.get(i);
       int remaining = remainingUnits(unit.type);
       totalRemaining += remaining;
-      remainingLabels[i].setText(String.format("%s: %d/%d", unit.type, remaining, unit.count));
+      remainingLabels[i].setText(String.format(Locale.getDefault(), "%s: %d/%d", unit.type, remaining, unit.count));
     }
     doneButton.setDisabled(totalRemaining > 0);
   }
