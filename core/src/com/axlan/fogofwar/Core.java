@@ -7,7 +7,6 @@ import com.axlan.fogofwar.screens.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.kotcrab.vis.ui.VisUI;
 
 import java.util.function.Consumer;
 
@@ -213,7 +212,6 @@ public class Core extends Game {
   @Override
   public void create() {
 
-    VisUI.load();
     // TODO-P2 load custom skin
     LoadedResources.initializeGlobal(this::resumeSceneForLoad);
     // Set to callback to be able to show the settings menu from other screens

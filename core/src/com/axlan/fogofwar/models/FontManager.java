@@ -3,10 +3,6 @@ package com.axlan.fogofwar.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisSelectBox;
-import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,13 +31,6 @@ public class FontManager {
 
     fontTable = Collections.unmodifiableMap(tmpFontTable);
 
-    BitmapFont defaultFont = fontTable.get("Ubuntu-Regular-medium");
-    Label.LabelStyle fontStyle = new VisLabel().getStyle();
-    fontStyle.font = defaultFont;
-    VisTextButton.TextButtonStyle buttonStyle = new VisTextButton("").getStyle();
-    buttonStyle.font = defaultFont;
-    VisSelectBox.SelectBoxStyle selectStyle = new VisSelectBox<String>().getStyle();
-    selectStyle.font = defaultFont;
   }
 
   private BitmapFont createFont(String fileName, double baseSize) {

@@ -1,3 +1,11 @@
+# 12/8 Making graphics scale for android and improving UI
+
+First I made a font manager to try to centralize loading and scaling fonts.
+
+I went back to figuring out how skins worked and hit a bit of a road block combining skins with the freetype font library.
+
+Eventually I found https://stackoverflow.com/questions/24856201/putting-freetypefont-into-libgdx-skin where the asset manager solution actually worked.
+
 # 12/8 Making a playable tutorial
 
 Working on adding the last few pieces of functionality to actually make the tutorial playable.

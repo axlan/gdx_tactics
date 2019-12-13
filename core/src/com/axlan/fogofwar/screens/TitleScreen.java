@@ -25,11 +25,11 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
  */
 public class TitleScreen extends StageBasedScreen {
 
-  private Consumer<TitleSelection> observer;
+  private final Consumer<TitleSelection> observer;
   /**
    * Menubar with submenu to handle loading
    */
-  private GameMenuBar menuBar;
+  private final GameMenuBar menuBar;
 
   public TitleScreen(Consumer<TitleSelection> observer, GameMenuBar menuBar) {
     this.observer = observer;
@@ -50,13 +50,15 @@ public class TitleScreen extends StageBasedScreen {
     BitmapFont titleFont = LoadedResources.getFont("BlackOpsOne-Regular-large");
     LabelStyle titleStyle = new LabelStyle(titleFont, Color.GRAY);
     VisLabel title = new VisLabel("Fog of War", titleStyle);
-    root.add(title);
+    root.add(title).colspan(3);
     root.row();
 
     Map<TitleSelection, VisTextButton> buttons = enumToButtons(TitleSelection.values());
     for (final TitleSelection val : buttons.keySet()) {
       final VisTextButton button = buttons.get(val);
-      root.add(button);
+      root.add().expandX();
+      root.add(button).fill().uniform().pad(3);
+      root.add().expandX();
       if (val == TitleSelection.LOAD_GAME) {
         button.addListener(
             new ChangeListener() {
@@ -86,4 +88,5 @@ public class TitleScreen extends StageBasedScreen {
     SETTINGS,
     QUIT
   }
+
 }

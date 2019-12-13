@@ -5,9 +5,14 @@ import com.axlan.gdxtactics.AnimatedSprite;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.kotcrab.vis.ui.VisUI;
 
 import java.util.Collections;
 import java.util.Map;
@@ -101,6 +106,15 @@ public final class LoadedResources {
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
     fontManager = new FontManager();
+    //TODO-P2 use asset manager more widely, and actually monitor loading with progress bar or something
+    AssetManager assetManager = new AssetManager();
+    ObjectMap<String, Object> fontMap = new ObjectMap<>();
+    fontMap.put("default-font", fontManager.fontTable.get("Ubuntu-Regular-medium"));
+    SkinLoader.SkinParameter parameter = new SkinLoader.SkinParameter(fontMap);
+    assetManager.load("skins/basic/uiskin.json", Skin.class, parameter);
+    assetManager.finishLoading();
+    VisUI.load(assetManager.get("skins/basic/uiskin.json", Skin.class));
+
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
         Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
