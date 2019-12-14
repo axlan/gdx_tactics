@@ -6,6 +6,10 @@ I went back to figuring out how skins worked and hit a bit of a road block combi
 
 Eventually I found https://stackoverflow.com/questions/24856201/putting-freetypefont-into-libgdx-skin where the asset manager solution actually worked.
 
+I began messing with Skin Composer, but hit some issues where the VisUI skin wasn't cleaning importing/exporting.
+
+I created a project based on an import of the default skin, and to get it to work, I needed to move `com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle` to an earlier line in the file.
+
 # 12/8 Making a playable tutorial
 
 Working on adding the last few pieces of functionality to actually make the tutorial playable.
