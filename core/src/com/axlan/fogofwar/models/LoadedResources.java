@@ -111,9 +111,9 @@ public final class LoadedResources {
     ObjectMap<String, Object> fontMap = new ObjectMap<>();
     fontMap.put("default-font", fontManager.fontTable.get("Ubuntu-Regular-medium"));
     SkinLoader.SkinParameter parameter = new SkinLoader.SkinParameter(fontMap);
-    assetManager.load("skins/basic/uiskin.json", Skin.class, parameter);
+    assetManager.load("skins/custom/custom.json", Skin.class, parameter);
     assetManager.finishLoading();
-    VisUI.load(assetManager.get("skins/basic/uiskin.json", Skin.class));
+    VisUI.load(assetManager.get("skins/custom/custom.json", Skin.class));
 
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
