@@ -98,11 +98,11 @@ public class OverWorldMap extends TiledScreen {
     loadCitiesFromMap();
     //TODO-P2 lay this out so it doesn't cover the map and doesn't need hardcoded width
     cityWindow = new CityWindow();
-    root.add(cityWindow).align(Align.left).width(200);
+    root.add(cityWindow).align(Align.left);
     root.add();
     movementsWindow = new MovementsWindow(movements, () -> selectCity(lastSelected));
     movementsWindow.setPosition(Gdx.graphics.getWidth(), 0);
-    root.add(movementsWindow).align(Align.right).width(250).height(400);
+    root.add(movementsWindow).align(Align.right);
   }
 
   /** Load city information from map file */

@@ -2,16 +2,14 @@ package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.screens.SceneLabel;
 import com.axlan.gdxtactics.AnimatedSprite;
+import com.axlan.gdxtactics.FreeTypeFontScalingSkin;
 import com.axlan.gdxtactics.JsonLoader;
 import com.axlan.gdxtactics.SpriteLookup;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.kotcrab.vis.ui.VisUI;
 
 import java.util.Collections;
@@ -36,7 +34,6 @@ public final class LoadedResources {
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
   private static GameStateManager gameStateManager;
-  private static FontManager fontManager;
 
   /**
    * Get the class for handling the game state and saving / loading
@@ -76,13 +73,6 @@ public final class LoadedResources {
   }
 
   /**
-   * Get a loaded font by name
-   */
-  public static BitmapFont getFont(String fontName) {
-    return fontManager.fontTable.get(fontName);
-  }
-
-  /**
    * Load an AnimatedSprite by name and pose using default setting for frameDuration and reverse
    *
    * @param sprite name of sprite
@@ -105,16 +95,11 @@ public final class LoadedResources {
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
-    fontManager = new FontManager();
     //TODO-P2 use asset manager more widely, and actually monitor loading with progress bar or something
-    AssetManager assetManager = new AssetManager();
-    ObjectMap<String, Object> fontMap = new ObjectMap<>();
-    fontMap.put("default-font", fontManager.fontTable.get("Ubuntu-Regular-medium"));
-    SkinLoader.SkinParameter parameter = new SkinLoader.SkinParameter(fontMap);
-    assetManager.load("skins/custom/custom.json", Skin.class, parameter);
-    assetManager.finishLoading();
-    VisUI.load(assetManager.get("skins/custom/custom.json", Skin.class));
 
+    FreeTypeFontScalingSkin.fontScaling = ((double) Gdx.graphics.getWidth()) / 2880.0;
+    Skin skin = new FreeTypeFontScalingSkin(Gdx.files.internal("skins/custom/custom.json"));
+    VisUI.load(skin);
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
         Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));

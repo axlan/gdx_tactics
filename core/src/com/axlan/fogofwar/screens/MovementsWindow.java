@@ -41,6 +41,7 @@ class MovementsWindow extends VisWindow {
     this.movements = movements;
     this.setWidth(250);
     this.add(layoutWindow());
+    pack();
   }
 
   private VisTable layoutWindow() {
@@ -97,7 +98,6 @@ class MovementsWindow extends VisWindow {
         updateOthers.run();
       }
     });
-
     return root;
   }
 
@@ -112,6 +112,7 @@ class MovementsWindow extends VisWindow {
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
     Optional<WorldData.CityData> cityDataOption = data.cities.stream().filter((a) -> a.name.equals(name)).findAny();
     if (!cityDataOption.isPresent()) {
+      pack();
       return;
     }
     WorldData.CityData cityData = cityDataOption.get();
@@ -125,12 +126,14 @@ class MovementsWindow extends VisWindow {
       moveBtn.setDisabled(true);
       amountBox.setItems();
       toBox.setItems();
+      pack();
       return;
     }
     moveBtn.setDisabled(false);
     //TODO-P1 when the toBox updates, adjust the range to limit by the max allowed in a city
     amountBox.setItems(getIntRange(1, remaining + 1, 1));
     toBox.setItems(adjacent.toArray(new String[0]));
+    pack();
   }
 
 }

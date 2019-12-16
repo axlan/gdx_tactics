@@ -1,3 +1,9 @@
+# 12/ 14 Still fighting with skinning tools
+
+I hit a lot of obstacles as mentioned and they've really slowed down my effort. I managed to get a skin composer project to work after checking the "Declare after UI classes" option.
+
+I raised some issues on the skin composer Github, but I think I'm in a better place for updating the layout. For now I'm not going to worry about resizing everything dynamically, stuff will just get set at startup.
+
 # 12/8 Making graphics scale for android and improving UI
 
 First I made a font manager to try to centralize loading and scaling fonts.

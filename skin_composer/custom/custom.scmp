@@ -1792,6 +1792,108 @@ atlasData: {
 			customized: false
 			tenPatchData: null
 		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/pix-button-disable.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: pix-button-disable
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/pix-button-over.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: pix-button-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/pix-button-over-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: pix-button-over-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/pix-select-box.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: pix-select-box
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/white.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: black
+			name: field
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/pix-list.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: pix-list
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
 	]
 	fontDrawables: [
 		{
@@ -1945,7 +2047,66 @@ jsonData: {
 			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/font-small.fnt
 		}
 	]
-	freeTypeFonts: []
+	freeTypeFonts: [
+		{
+			class: com.ray3k.skincomposer.data.FreeTypeFontData
+			name: BlackOpsOne-Regular
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/BlackOpsOne-Regular.ttf
+			previewTTF: IBMPlexSerif-Medium
+			useCustomSerializer: true
+			size: 400
+			mono: false
+			hinting: AutoMedium
+			color: grey
+			gamma: 1.8
+			renderCount: 2
+			borderWidth: 0
+			borderColor: null
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			shadowColor: null
+			spaceX: 0
+			spaceY: 0
+			characters: ""
+			kerning: true
+			flip: false
+			genMipMaps: false
+			minFilter: Nearest
+			magFilter: Nearest
+			incremental: false
+		}
+		{
+			class: com.ray3k.skincomposer.data.FreeTypeFontData
+			name: PixelFJVerdana12pt
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/PixelFJVerdana12pt.ttf
+			previewTTF: IBMPlexSerif-Medium
+			useCustomSerializer: true
+			size: 50
+			mono: false
+			hinting: AutoMedium
+			color: white
+			gamma: 1.8
+			renderCount: 2
+			borderWidth: 0
+			borderColor: null
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			shadowColor: null
+			spaceX: 0
+			spaceY: 0
+			characters: ""
+			kerning: true
+			flip: false
+			genMipMaps: false
+			minFilter: Nearest
+			magFilter: Nearest
+			incremental: false
+		}
+	]
 	classStyleMap: {
 		com.badlogic.gdx.scenes.scene2d.ui.Button: [
 			{
@@ -3831,7 +3992,7 @@ jsonData: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: font
 						optional: false
-						value: default-font
+						value: PixelFJVerdana12pt
 					}
 					fontColor: {
 						class: com.ray3k.skincomposer.data.StyleProperty
@@ -3921,7 +4082,7 @@ jsonData: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: font
 						optional: false
-						value: null
+						value: BlackOpsOne-Regular
 					}
 					fontColor: {
 						class: com.ray3k.skincomposer.data.StyleProperty
@@ -3975,7 +4136,7 @@ jsonData: {
 		com.badlogic.gdx.scenes.scene2d.ui.List: [
 			{
 				class: com.ray3k.skincomposer.data.StyleData
-				name: default
+				name: vis-default
 				clazz: com.badlogic.gdx.scenes.scene2d.ui.List
 				properties: {
 					font: {
@@ -4031,6 +4192,122 @@ jsonData: {
 				deletable: false
 				parent: null
 			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: pixel
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.List
+				properties: {
+					font: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: PixelFJVerdana12pt
+					}
+					fontColorSelected: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColorSelected
+						optional: false
+						value: white
+					}
+					fontColorUnselected: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColorUnselected
+						optional: false
+						value: vis-blue
+					}
+					selection: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: selection
+						optional: false
+						value: field
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: null
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: null
+					}
+					background: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: pix-list
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+                class: com.ray3k.skincomposer.data.StyleData
+                name: default
+                clazz: com.badlogic.gdx.scenes.scene2d.ui.List
+                properties: {
+                    font: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.graphics.g2d.BitmapFont
+                        name: font
+                        optional: false
+                        value: PixelFJVerdana12pt
+                    }
+                    fontColorSelected: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.graphics.Color
+                        name: fontColorSelected
+                        optional: false
+                        value: white
+                    }
+                    fontColorUnselected: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.graphics.Color
+                        name: fontColorUnselected
+                        optional: false
+                        value: vis-blue
+                    }
+                    selection: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+                        name: selection
+                        optional: false
+                        value: field
+                    }
+                    down: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+                        name: down
+                        optional: true
+                        value: null
+                    }
+                    over: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+                        name: over
+                        optional: true
+                        value: null
+                    }
+                    background: {
+                        class: com.ray3k.skincomposer.data.StyleProperty
+                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+                        name: background
+                        optional: true
+                        value: pix-list
+                    }
+                }
+                deletable: true
+                parent: null
+            }
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ProgressBar: [
 			{
@@ -4322,7 +4599,7 @@ jsonData: {
 		com.badlogic.gdx.scenes.scene2d.ui.SelectBox: [
 			{
 				class: com.ray3k.skincomposer.data.StyleData
-				name: default
+				name: vis-default
 				clazz: com.badlogic.gdx.scenes.scene2d.ui.SelectBox
 				properties: {
 					font: {
@@ -4390,6 +4667,150 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: pixel
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.SelectBox
+				properties: {
+					font: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: PixelFJVerdana12pt
+					}
+					fontColor: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: false
+						value: red
+					}
+					disabledFontColor: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: disabledFontColor
+						optional: true
+						value: null
+					}
+					background: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: pix-select-box
+					}
+					scrollStyle: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle
+						name: scrollStyle
+						optional: false
+						value: default
+					}
+					listStyle: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle
+						name: listStyle
+						optional: false
+						value: default
+					}
+					backgroundOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundOver
+						optional: true
+						value: null
+					}
+					backgroundOpen: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundOpen
+						optional: true
+						value: null
+					}
+					backgroundDisabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundDisabled
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: default
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.SelectBox
+				properties: {
+					font: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: PixelFJVerdana12pt
+					}
+					fontColor: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: false
+						value: red
+					}
+					disabledFontColor: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: disabledFontColor
+						optional: true
+						value: null
+					}
+					background: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: pix-select-box
+					}
+					scrollStyle: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle
+						name: scrollStyle
+						optional: false
+						value: default
+					}
+					listStyle: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle
+						name: listStyle
+						optional: false
+						value: default
+					}
+					backgroundOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundOver
+						optional: true
+						value: null
+					}
+					backgroundOpen: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundOpen
+						optional: true
+						value: null
+					}
+					backgroundDisabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: backgroundDisabled
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
 				parent: null
 			}
 		]
@@ -5945,43 +6366,33 @@ jsonData: {
 					name: default
 					properties: [
 						{
-							name: focusBorder
-							type: TEXT
-							value: border
-						}
-						{
 							name: down
-							type: TEXT
-							value: button-down
+							type: DRAWABLE
+							value: pix-button-over-pressed
 						}
 						{
 							name: up
-							type: TEXT
-							value: button
-						}
-						{
-							name: over
-							type: TEXT
-							value: button-over
+							type: DRAWABLE
+							value: pix-button
 						}
 						{
 							name: disabled
-							type: TEXT
-							value: button
+							type: DRAWABLE
+							value: pix-button-disable
 						}
 						{
 							name: font
 							type: TEXT
-							value: default-font
+							value: PixelFJVerdana12pt
 						}
 						{
 							name: fontColor
-							type: TEXT
+							type: COLOR
 							value: white
 						}
 						{
 							name: disabledFontColor
-							type: TEXT
+							type: COLOR
 							value: grey
 						}
 						{
@@ -5989,17 +6400,17 @@ jsonData: {
 							type: TEXT
 							value: null
 						}
+						{
+							name: over
+							type: DRAWABLE
+							value: pix-button-over
+						}
 					]
-					deletable: false
+					deletable: true
 				}
 				{
 					name: toggle
 					properties: [
-						{
-							name: focusBorder
-							type: TEXT
-							value: border
-						}
 						{
 							name: checked
 							type: TEXT
@@ -6007,12 +6418,12 @@ jsonData: {
 						}
 						{
 							name: down
-							type: TEXT
+							type: DRAWABLE
 							value: button-down
 						}
 						{
 							name: up
-							type: TEXT
+							type: DRAWABLE
 							value: button
 						}
 						{
@@ -6022,23 +6433,23 @@ jsonData: {
 						}
 						{
 							name: fontColor
-							type: TEXT
+							type: COLOR
 							value: white
 						}
 						{
-							name: over
-							type: TEXT
-							value: button-over
-						}
-						{
 							name: disabled
-							type: TEXT
+							type: DRAWABLE
 							value: button
 						}
 						{
 							name: disabledFontColor
-							type: TEXT
+							type: COLOR
 							value: grey
+						}
+						{
+							name: over
+							type: DRAWABLE
+							value: null
 						}
 					]
 					deletable: true
@@ -6047,28 +6458,18 @@ jsonData: {
 					name: blue
 					properties: [
 						{
-							name: focusBorder
-							type: TEXT
-							value: border-dark-blue
-						}
-						{
 							name: down
-							type: TEXT
+							type: DRAWABLE
 							value: button-blue-down
 						}
 						{
 							name: up
-							type: TEXT
+							type: DRAWABLE
 							value: button-blue
 						}
 						{
-							name: over
-							type: TEXT
-							value: button-blue-over
-						}
-						{
 							name: disabled
-							type: TEXT
+							type: DRAWABLE
 							value: button
 						}
 						{
@@ -6078,13 +6479,18 @@ jsonData: {
 						}
 						{
 							name: fontColor
-							type: TEXT
+							type: COLOR
 							value: white
 						}
 						{
 							name: disabledFontColor
-							type: TEXT
+							type: COLOR
 							value: grey
+						}
+						{
+							name: over
+							type: DRAWABLE
+							value: null
 						}
 					]
 					deletable: true
@@ -6093,9 +6499,106 @@ jsonData: {
 					name: menu-bar
 					properties: [
 						{
-							name: over
+							name: font
 							type: TEXT
+							value: default-font
+						}
+						{
+							name: fontColor
+							type: COLOR
+							value: white
+						}
+						{
+							name: down
+							type: DRAWABLE
 							value: button-down
+						}
+						{
+							name: up
+							type: DRAWABLE
+							value: button
+						}
+						{
+							name: disabled
+							type: DRAWABLE
+							value: button
+						}
+						{
+							name: disabledFontColor
+							type: COLOR
+							value: grey
+						}
+						{
+							name: over
+							type: DRAWABLE
+							value: null
+						}
+					]
+					deletable: true
+				}
+				{
+					name: pixel
+					properties: [
+						{
+							name: down
+							type: DRAWABLE
+							value: pix-button-pressed
+						}
+						{
+							name: up
+							type: DRAWABLE
+							value: pix-button
+						}
+						{
+							name: disabled
+							type: DRAWABLE
+							value: pix-button-disable
+						}
+						{
+							name: font
+							type: TEXT
+							value: PixelFJVerdana12pt
+						}
+						{
+							name: fontColor
+							type: COLOR
+							value: white
+						}
+						{
+							name: disabledFontColor
+							type: COLOR
+							value: grey
+						}
+						{
+							name: checked
+							type: TEXT
+							value: null
+						}
+						{
+							name: over
+							type: DRAWABLE
+							value: null
+						}
+					]
+					deletable: true
+				}
+				{
+					name: vis-default
+					properties: [
+						{
+							name: down
+							type: DRAWABLE
+							value: button-down
+						}
+						{
+							name: up
+							type: DRAWABLE
+							value: button
+						}
+						{
+							name: disabled
+							type: DRAWABLE
+							value: button
 						}
 						{
 							name: font
@@ -6104,28 +6607,23 @@ jsonData: {
 						}
 						{
 							name: fontColor
-							type: TEXT
+							type: COLOR
 							value: white
 						}
 						{
-							name: down
-							type: TEXT
-							value: button-down
-						}
-						{
-							name: up
-							type: TEXT
-							value: button
-						}
-						{
-							name: disabled
-							type: TEXT
-							value: button
-						}
-						{
 							name: disabledFontColor
-							type: TEXT
+							type: COLOR
 							value: grey
+						}
+						{
+							name: checked
+							type: TEXT
+							value: null
+						}
+						{
+							name: over
+							type: DRAWABLE
+							value: null
 						}
 					]
 					deletable: true
@@ -6135,28 +6633,18 @@ jsonData: {
 				name: template
 				properties: [
 					{
-						name: focusBorder
-						type: TEXT
-						value: null
-					}
-					{
 						name: down
-						type: TEXT
+						type: DRAWABLE
 						value: null
 					}
 					{
 						name: up
-						type: TEXT
-						value: null
-					}
-					{
-						name: over
-						type: TEXT
+						type: DRAWABLE
 						value: null
 					}
 					{
 						name: disabled
-						type: TEXT
+						type: DRAWABLE
 						value: null
 					}
 					{
@@ -6166,17 +6654,22 @@ jsonData: {
 					}
 					{
 						name: fontColor
-						type: TEXT
+						type: COLOR
 						value: null
 					}
 					{
 						name: disabledFontColor
-						type: TEXT
+						type: COLOR
 						value: null
 					}
 					{
 						name: checked
 						type: TEXT
+						value: null
+					}
+					{
+						name: over
+						type: DRAWABLE
 						value: null
 					}
 				]

@@ -1,14 +1,10 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.GameMenuBar;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kotcrab.vis.ui.widget.VisLabel;
@@ -47,9 +43,7 @@ public class TitleScreen extends StageBasedScreen {
 
     // TODO-P3 add better font
     // TODO-P3 add font to skin
-    BitmapFont titleFont = LoadedResources.getFont("BlackOpsOne-Regular-large");
-    LabelStyle titleStyle = new LabelStyle(titleFont, Color.GRAY);
-    VisLabel title = new VisLabel("Fog of War", titleStyle);
+    VisLabel title = new VisLabel("Fog of War", "title");
     root.add(title).colspan(3);
     root.row();
 
