@@ -9,6 +9,7 @@ import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.kotcrab.vis.ui.VisUI;
 
@@ -96,7 +97,7 @@ public final class LoadedResources {
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
     //TODO-P2 use asset manager more widely, and actually monitor loading with progress bar or something
-
+    FreeTypeFontGenerator.setMaxTextureSize(4096);
     FreeTypeFontScalingSkin.fontScaling = ((double) Gdx.graphics.getWidth()) / 2880.0;
     Skin skin = new FreeTypeFontScalingSkin(Gdx.files.internal("skins/custom/custom.json"));
     VisUI.load(skin);

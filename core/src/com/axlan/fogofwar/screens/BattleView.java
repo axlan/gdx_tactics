@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
-// TODO-P1 Add danger and enemy movement when looking at enemy tiles
+// TODO-P1 Make touch controls more intuitive
 // TODO-P2 Add overlay when unit is selected attack range
 // TODO-P2 Add retreat/reinforcement mechanism
 // TODO-P3 Add end turn button / Give option to end turn when no active units left.
