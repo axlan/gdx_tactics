@@ -12,7 +12,6 @@ import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisDialog;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -265,8 +265,7 @@ public class BattleView extends TiledScreen {
       cityData.stationedEnemyTroops = gameState.battleState.enemyUnits.size();
       cityData.stationedFriendlyTroops = gameState.battleState.playerUnits.size();
 
-      BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
-      Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, endingColor);
+      Label.LabelStyle titleStyle = new Label.LabelStyle(VisUI.getSkin().getFont("BlackOpsOne-Regular"), endingColor);
       VisLabel victoryLabel = new VisLabel(endingText, titleStyle);
       //noinspection IntegerDivisionInFloatingPointContext
       victoryLabel.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);

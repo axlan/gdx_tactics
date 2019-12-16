@@ -9,7 +9,6 @@ import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -23,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -178,7 +178,7 @@ public class OverWorldMap extends TiledScreen {
         // TODO-P2 clean up font. consider using
         // https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
         Label.LabelStyle style = new Label.LabelStyle(cityLabel.getStyle());
-        style.font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
+        style.font = VisUI.getSkin().getFont("Ubuntu-Regular-Outlined");
         switch (cityData.controller) {
           case PLAYER:
             style.fontColor = Color.GREEN;

@@ -2106,6 +2106,35 @@ jsonData: {
 			magFilter: Nearest
 			incremental: false
 		}
+		{
+			class: com.ray3k.skincomposer.data.FreeTypeFontData
+			name: Ubuntu-Regular-Outlined
+			file: C:/Users/feros/GitHub/gdx_tactics/skin_composer/custom/custom_data/Ubuntu-Regular.ttf
+			previewTTF: IBMPlexSerif-Medium
+			useCustomSerializer: true
+			size: 80
+			mono: false
+			hinting: AutoMedium
+			color: white
+			gamma: 1.8
+			renderCount: 2
+			borderWidth: 2
+			borderColor: black
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			shadowColor: null
+			spaceX: 0
+			spaceY: 0
+			characters: ""
+			kerning: true
+			flip: false
+			genMipMaps: false
+			minFilter: Nearest
+			magFilter: Nearest
+			incremental: false
+		}
 	]
 	classStyleMap: {
 		com.badlogic.gdx.scenes.scene2d.ui.Button: [
@@ -4251,63 +4280,63 @@ jsonData: {
 				parent: null
 			}
 			{
-                class: com.ray3k.skincomposer.data.StyleData
-                name: default
-                clazz: com.badlogic.gdx.scenes.scene2d.ui.List
-                properties: {
-                    font: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.graphics.g2d.BitmapFont
-                        name: font
-                        optional: false
-                        value: PixelFJVerdana12pt
-                    }
-                    fontColorSelected: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.graphics.Color
-                        name: fontColorSelected
-                        optional: false
-                        value: white
-                    }
-                    fontColorUnselected: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.graphics.Color
-                        name: fontColorUnselected
-                        optional: false
-                        value: vis-blue
-                    }
-                    selection: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-                        name: selection
-                        optional: false
-                        value: field
-                    }
-                    down: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-                        name: down
-                        optional: true
-                        value: null
-                    }
-                    over: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-                        name: over
-                        optional: true
-                        value: null
-                    }
-                    background: {
-                        class: com.ray3k.skincomposer.data.StyleProperty
-                        type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-                        name: background
-                        optional: true
-                        value: pix-list
-                    }
-                }
-                deletable: true
-                parent: null
-            }
+				class: com.ray3k.skincomposer.data.StyleData
+				name: default
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.List
+				properties: {
+					font: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: PixelFJVerdana12pt
+					}
+					fontColorSelected: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColorSelected
+						optional: false
+						value: white
+					}
+					fontColorUnselected: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColorUnselected
+						optional: false
+						value: vis-blue
+					}
+					selection: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: selection
+						optional: false
+						value: field
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: null
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: null
+					}
+					background: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: pix-list
+					}
+				}
+				deletable: true
+				parent: null
+			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ProgressBar: [
 			{
