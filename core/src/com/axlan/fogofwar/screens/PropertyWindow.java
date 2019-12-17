@@ -3,6 +3,7 @@ package com.axlan.fogofwar.screens;
 import com.axlan.fogofwar.models.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.axlan.gdxtactics.TilePoint;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kotcrab.vis.ui.widget.*;
 
@@ -46,18 +47,17 @@ class PropertyWindow extends VisWindow {
       VisTable unitPropertiesTable = new VisTable();
       VisSplitPane splitPane = new VisSplitPane(unitPropertiesTable, tilePropertiesTable, true);
       splitPane.setFillParent(true);
-      unitPropertiesTable.add(new VisLabel("Unit Properties")).left();
+      unitPropertiesTable.add(new VisLabel("Unit Properties")).padTop(getTitleLabel().getHeight() * 3).left();
       unitPropertiesTable.row();
       // TODO-P3 Clean up drawable generation
       TextureRegionDrawable unitTexture =
           LoadedResources.getSpriteLookup()
               .getTextureRegionDrawable(unit.getStats().type, Poses.IDLE);
-      unitPropertiesTable.add(new VisImage(unitTexture)).size(32, 32).row();
+      int buttonSize = Gdx.graphics.getWidth() / LoadedResources.getReadOnlySettings().tilesPerScreenWidth;
+      unitPropertiesTable.add(new VisImage(unitTexture)).size(buttonSize, buttonSize).row();
       unitPropertiesTable.add(new VisLabel("HP: " + unit.currentHealth + "/" + unit.getStats().maxHealth)).row();
-      unitPropertiesTable.add(new VisLabel("Attack: " + unit.getStats().attack));
-      unitPropertiesTable.padTop(20);
-      unitPropertiesTable.padBottom(20);
-      splitPane.pack();
+      unitPropertiesTable.add(new VisLabel("Attack: " + unit.getStats().attack)).padBottom(getTitleLabel().getHeight() * 2);
+
       this.add(splitPane);
     } else {
       this.add(tilePropertiesTable);

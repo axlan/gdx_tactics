@@ -24,10 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -127,7 +124,7 @@ public class BattleView extends TiledScreen {
    */
   private EnemyMoveAction activeEnemyMove;
 
-  public BattleView(Runnable completionObserver, GameMenuBar gameMenuBar) {
+  public BattleView(Runnable completionObserver) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
@@ -145,6 +142,9 @@ public class BattleView extends TiledScreen {
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
+
+    MenuBar gameMenuBar = new MenuBar();
+    gameMenuBar.addMenu(LoadedResources.getOptionsMenu());
     root.add(gameMenuBar.getTable()).expandX().fillX().row();
     root.add().expand().fill();
 
@@ -497,6 +497,7 @@ public class BattleView extends TiledScreen {
   @SuppressWarnings("DuplicateBranchesInSwitch")
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    mouseMoved(screenX, screenY);
     TilePoint clickedTile = screenToTile(new Vector2(screenX, screenY));
     switch (state) {
       case IDLE:

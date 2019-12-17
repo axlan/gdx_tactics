@@ -4,8 +4,13 @@ import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.axlan.gdxtactics.TilePoint;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisSelectBox;
+import com.kotcrab.vis.ui.widget.VisTable;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
 public class SettingsScreen extends StageBasedScreen {
 
@@ -54,7 +59,7 @@ public class SettingsScreen extends StageBasedScreen {
     root.row();
 
     root.add(new VisLabel("Full Screen"));
-    final VisCheckBox fullScreenBox = new VisCheckBox("");
+    final CheckBox fullScreenBox = new CheckBox("", VisUI.getSkin().get(CheckBox.CheckBoxStyle.class));
     fullScreenBox.addListener(
         new ChangeListener() {
           @Override

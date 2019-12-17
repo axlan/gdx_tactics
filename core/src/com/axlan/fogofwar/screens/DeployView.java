@@ -180,8 +180,8 @@ public class DeployView extends TiledScreen {
               }
             }
           });
-      // TODO-P1 Set size based on other elements or screen width
-      table.add(button).size(128, 128).left();
+      int buttonSize = 2 * Gdx.graphics.getWidth() / LoadedResources.getReadOnlySettings().tilesPerScreenWidth;
+      table.add(button).size(buttonSize, buttonSize).left();
       remainingLabels[i] = new VisLabel();
       table.add(remainingLabels[i]).left().expandX();
       table.row();

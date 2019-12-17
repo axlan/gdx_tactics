@@ -1,6 +1,6 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.gdxtactics.GameMenuBar;
+import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,14 +22,9 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
 public class TitleScreen extends StageBasedScreen {
 
   private final Consumer<TitleSelection> observer;
-  /**
-   * Menubar with submenu to handle loading
-   */
-  private final GameMenuBar menuBar;
 
-  public TitleScreen(Consumer<TitleSelection> observer, GameMenuBar menuBar) {
+  public TitleScreen(Consumer<TitleSelection> observer) {
     this.observer = observer;
-    this.menuBar = menuBar;
     this.stage.addActor(this.makeTitleScreen());
   }
 
@@ -58,7 +53,7 @@ public class TitleScreen extends StageBasedScreen {
             new ChangeListener() {
               @Override
               public void changed(ChangeEvent event, Actor actor) {
-                menuBar.getLoadMenu().showMenu(stage, button.getX(), button.getY());
+                LoadedResources.getOptionsMenu().getLoadMenu().showMenu(stage, button.getX(), button.getY());
               }
             });
       } else {

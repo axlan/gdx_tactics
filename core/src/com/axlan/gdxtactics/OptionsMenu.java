@@ -4,14 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.kotcrab.vis.ui.widget.Menu;
-import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
  * Class to provide in game menu options like saving and loading
  */
-public class GameMenuBar extends MenuBar {
+public class OptionsMenu extends Menu {
 
   /**
    * Callback to replace the current screen with the settings menu
@@ -78,26 +77,25 @@ public class GameMenuBar extends MenuBar {
     }
   }
 
-  public GameMenuBar(Runnable showSettings, GameStateManagerBase<?> gameStateManager) {
-    super();
+  public OptionsMenu(Runnable showSettings, GameStateManagerBase<?> gameStateManager) {
+    super("Options");
     this.showSettings = showSettings;
     this.gameStateManager = gameStateManager;
-    this.addMenu(makeOptionsMenu());
+    makeOptionsMenu();
     updateDataButtons();
   }
 
-  private Menu makeOptionsMenu() {
-    Menu optionsMenu = new Menu("Options");
+  private void makeOptionsMenu() {
 
     MenuItem saveItem = new MenuItem("Save");
     saveSubMenu = new PopupMenu();
     saveItem.setSubMenu(saveSubMenu);
-    optionsMenu.addItem(saveItem);
+    addItem(saveItem);
 
     MenuItem loadItem = new MenuItem("Load");
     loadSubMenu = new PopupMenu();
     loadItem.setSubMenu(loadSubMenu);
-    optionsMenu.addItem(loadItem);
+    addItem(loadItem);
 
     if (showSettings != null) {
       MenuItem settingsItem = new MenuItem("Settings");
@@ -108,7 +106,7 @@ public class GameMenuBar extends MenuBar {
               showSettings.run();
             }
           });
-      optionsMenu.addItem(settingsItem);
+      addItem(settingsItem);
     }
     MenuItem quitItem = new MenuItem("Quit");
     quitItem.addListener(
@@ -118,7 +116,6 @@ public class GameMenuBar extends MenuBar {
             Gdx.app.exit();
           }
         });
-    optionsMenu.addItem(quitItem);
-    return optionsMenu;
+    addItem(quitItem);
   }
 }

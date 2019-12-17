@@ -8,8 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 
+/**
+ * An implementation of Skin with a special loader to handle FreeTypeFonts as serialized by Skin Composer
+ */
 public class FreeTypeFontScalingSkin extends Skin {
 
+  /**
+   * Setting this will cause the size chosen for each font to be scaled from the values specified in the skin
+   */
   public static double fontScaling = 1;
 
   public FreeTypeFontScalingSkin(FileHandle skinFile) {

@@ -1,4 +1,8 @@
-# 12/ 14 Still fighting with skinning tools
+# 12/17 Finished all initial tasks
+
+UI is still pretty ugly and there's a lot of things to improve, but basics all work on PC and Android.
+
+# 12/14 Still fighting with skinning tools
 
 I hit a lot of obstacles as mentioned and they've really slowed down my effort. I managed to get a skin composer project to work after checking the "Declare after UI classes" option.
 

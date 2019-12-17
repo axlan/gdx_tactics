@@ -24,8 +24,6 @@ import java.util.function.Consumer;
  */
 public class Core extends Game {
 
-  private FogGameMenuBar menuBar;
-
   private final String forceLoadSaveFile;
 
   public Core() {
@@ -66,7 +64,7 @@ public class Core extends Game {
               break;
           }
         };
-    TitleScreen titleScreen = new TitleScreen(observer, menuBar);
+    TitleScreen titleScreen = new TitleScreen(observer);
     this.setScreen(titleScreen);
   }
 
@@ -122,7 +120,7 @@ public class Core extends Game {
   private void showCampaignMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.CAMPAIGN_MAP;
     Runnable observer = this::manageBattles;
-    OverWorldMap overWorldMap = new OverWorldMap(observer, menuBar);
+    OverWorldMap overWorldMap = new OverWorldMap(observer);
     this.setScreen(overWorldMap);
   }
 
@@ -183,7 +181,7 @@ public class Core extends Game {
   private void showBattleMap() {
     LoadedResources.getGameStateManager().gameState.scene = SceneLabel.BATTLE_MAP;
     Runnable observer = this::manageBattles;
-    this.setScreen(new BattleView(observer, menuBar));
+    this.setScreen(new BattleView(observer));
   }
 
   /**
@@ -213,12 +211,7 @@ public class Core extends Game {
   public void create() {
 
     // TODO-P2 load custom skin
-    LoadedResources.initializeGlobal(this::resumeSceneForLoad);
-    // Set to callback to be able to show the settings menu from other screens
-    Runnable menuSettingsCallback = this::showSettings;
-    // Set to callback to be able to show the settings menu from other screens
-    Runnable menuShopCallback = this::showStore;
-    menuBar = new FogGameMenuBar(menuSettingsCallback, menuShopCallback);
+    LoadedResources.initializeGlobal(this::resumeSceneForLoad, this::showSettings, this::showStore);
     if (forceLoadSaveFile == null) {
       this.showTitle();
     } else {
