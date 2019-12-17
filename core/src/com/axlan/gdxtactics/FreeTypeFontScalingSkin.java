@@ -30,6 +30,7 @@ public class FreeTypeFontScalingSkin extends Skin {
 
     json.setSerializer(FreeTypeFontGenerator.class, new Json.ReadOnlySerializer<FreeTypeFontGenerator>() {
       @Override
+      @SuppressWarnings("rawtypes")
       public FreeTypeFontGenerator read(Json json,
                                         JsonValue jsonData, Class type) {
         String path = json.readValue("font", String.class, jsonData);
