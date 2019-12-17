@@ -1,3 +1,25 @@
+# 12/17 Finished all initial tasks
+
+UI is still pretty ugly and there's a lot of things to improve, but basics all work on PC and Android.
+
+# 12/14 Still fighting with skinning tools
+
+I hit a lot of obstacles as mentioned and they've really slowed down my effort. I managed to get a skin composer project to work after checking the "Declare after UI classes" option.
+
+I raised some issues on the skin composer Github, but I think I'm in a better place for updating the layout. For now I'm not going to worry about resizing everything dynamically, stuff will just get set at startup.
+
+# 12/8 Making graphics scale for android and improving UI
+
+First I made a font manager to try to centralize loading and scaling fonts.
+
+I went back to figuring out how skins worked and hit a bit of a road block combining skins with the freetype font library.
+
+Eventually I found https://stackoverflow.com/questions/24856201/putting-freetypefont-into-libgdx-skin where the asset manager solution actually worked.
+
+I began messing with Skin Composer, but hit some issues where the VisUI skin wasn't cleaning importing/exporting.
+
+I created a project based on an import of the default skin, and to get it to work, I needed to move `com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle` to an earlier line in the file.
+
 # 12/8 Making a playable tutorial
 
 Working on adding the last few pieces of functionality to actually make the tutorial playable.

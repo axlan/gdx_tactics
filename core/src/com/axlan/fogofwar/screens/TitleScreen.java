@@ -1,13 +1,10 @@
 package com.axlan.fogofwar.screens;
 
-import com.axlan.gdxtactics.GameMenuBar;
+import com.axlan.fogofwar.models.LoadedResources;
 import com.axlan.gdxtactics.StageBasedScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kotcrab.vis.ui.widget.VisLabel;
@@ -24,15 +21,10 @@ import static com.axlan.gdxtactics.Utilities.enumToButtons;
  */
 public class TitleScreen extends StageBasedScreen {
 
-  private Consumer<TitleSelection> observer;
-  /**
-   * Menubar with submenu to handle loading
-   */
-  private GameMenuBar menuBar;
+  private final Consumer<TitleSelection> observer;
 
-  public TitleScreen(Consumer<TitleSelection> observer, GameMenuBar menuBar) {
+  public TitleScreen(Consumer<TitleSelection> observer) {
     this.observer = observer;
-    this.menuBar = menuBar;
     this.stage.addActor(this.makeTitleScreen());
   }
 
@@ -46,22 +38,22 @@ public class TitleScreen extends StageBasedScreen {
 
     // TODO-P3 add better font
     // TODO-P3 add font to skin
-    BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
-    LabelStyle titleStyle = new LabelStyle(titleFont, Color.GRAY);
-    VisLabel title = new VisLabel("Fog of War", titleStyle);
-    root.add(title);
+    VisLabel title = new VisLabel("Fog of War", "title");
+    root.add(title).colspan(3);
     root.row();
 
     Map<TitleSelection, VisTextButton> buttons = enumToButtons(TitleSelection.values());
     for (final TitleSelection val : buttons.keySet()) {
       final VisTextButton button = buttons.get(val);
-      root.add(button);
+      root.add().expandX();
+      root.add(button).fill().uniform().pad(3);
+      root.add().expandX();
       if (val == TitleSelection.LOAD_GAME) {
         button.addListener(
             new ChangeListener() {
               @Override
               public void changed(ChangeEvent event, Actor actor) {
-                menuBar.getLoadMenu().showMenu(stage, button.getX(), button.getY());
+                LoadedResources.getOptionsMenu().getLoadMenu().showMenu(stage, button.getX(), button.getY());
               }
             });
       } else {
@@ -85,4 +77,5 @@ public class TitleScreen extends StageBasedScreen {
     SETTINGS,
     QUIT
   }
+
 }

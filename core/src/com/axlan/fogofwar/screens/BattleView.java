@@ -12,7 +12,6 @@ import com.axlan.gdxtactics.SpriteLookup.Poses;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,10 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.kotcrab.vis.ui.widget.VisDialog;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +32,7 @@ import java.util.stream.Collectors;
 import static com.axlan.gdxtactics.Utilities.getTransparentColor;
 import static com.axlan.gdxtactics.Utilities.listGetTail;
 
-// TODO-P1 Add danger and enemy movement when looking at enemy tiles
+// TODO-P1 Make touch controls more intuitive
 // TODO-P2 Add overlay when unit is selected attack range
 // TODO-P2 Add retreat/reinforcement mechanism
 // TODO-P3 Add end turn button / Give option to end turn when no active units left.
@@ -127,7 +124,7 @@ public class BattleView extends TiledScreen {
    */
   private EnemyMoveAction activeEnemyMove;
 
-  public BattleView(Runnable completionObserver, GameMenuBar gameMenuBar) {
+  public BattleView(Runnable completionObserver) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getLevelData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
@@ -145,6 +142,9 @@ public class BattleView extends TiledScreen {
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
+
+    MenuBar gameMenuBar = new MenuBar();
+    gameMenuBar.addMenu(LoadedResources.getOptionsMenu());
     root.add(gameMenuBar.getTable()).expandX().fillX().row();
     root.add().expand().fill();
 
@@ -265,8 +265,7 @@ public class BattleView extends TiledScreen {
       cityData.stationedEnemyTroops = gameState.battleState.enemyUnits.size();
       cityData.stationedFriendlyTroops = gameState.battleState.playerUnits.size();
 
-      BitmapFont titleFont = new BitmapFont(Gdx.files.internal("fonts/clouds_big.fnt"));
-      Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, endingColor);
+      Label.LabelStyle titleStyle = new Label.LabelStyle(VisUI.getSkin().getFont("BlackOpsOne-Regular"), endingColor);
       VisLabel victoryLabel = new VisLabel(endingText, titleStyle);
       //noinspection IntegerDivisionInFloatingPointContext
       victoryLabel.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
@@ -341,6 +340,7 @@ public class BattleView extends TiledScreen {
     Vector2 screenPos = tileToScreen(unitPos);
     // TODO-P2 Make dialogue less likely to block relevant map space
     actionDialogue.setPosition(screenPos.x, screenPos.y);
+    actionDialogue.pack();
     stage.addActor(actionDialogue);
     state = BattleViewState.CHOOSE_ACTION;
   }
@@ -497,6 +497,7 @@ public class BattleView extends TiledScreen {
   @SuppressWarnings("DuplicateBranchesInSwitch")
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    mouseMoved(screenX, screenY);
     TilePoint clickedTile = screenToTile(new Vector2(screenX, screenY));
     switch (state) {
       case IDLE:
@@ -622,6 +623,12 @@ public class BattleView extends TiledScreen {
   @SuppressWarnings("unused")
   private int getDistance(List<TilePoint> points, FieldedUnit unit) {
     return points.size() - 1;
+  }
+
+  @Override
+  public boolean touchDragged(int screenX, int screenY, int pointer) {
+    super.touchDragged(screenX, screenY, pointer);
+    return mouseMoved(screenX, screenY);
   }
 
   @Override

@@ -7,9 +7,7 @@ import com.axlan.fogofwar.models.WorldData;
 import com.axlan.gdxtactics.PathVisualizer;
 import com.axlan.gdxtactics.TilePoint;
 import com.axlan.gdxtactics.TiledScreen;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -23,10 +21,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.Menu;
 import com.kotcrab.vis.ui.widget.MenuBar;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
-import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.*;
 
@@ -61,7 +60,7 @@ public class OverWorldMap extends TiledScreen {
 
   private boolean init = true;
 
-  public OverWorldMap(Runnable completionObserver, MenuBar gameMenuBar) {
+  public OverWorldMap(Runnable completionObserver) {
     super(
         "maps/" + LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData().mapName + ".tmx",
         LoadedResources.getReadOnlySettings().tilesPerScreenWidth,
@@ -71,10 +70,12 @@ public class OverWorldMap extends TiledScreen {
     final VisTable root = new VisTable();
     root.setFillParent(true);
     stage.addActor(root);
-    root.add(gameMenuBar.getTable()).expandX().colspan(3).fillX().row();
 
-    VisTextButton deployBtn = new VisTextButton("Deploy");
-    deployBtn.addListener(new ChangeListener() {
+    MenuBar gameMenuBar = new MenuBar();
+    gameMenuBar.addMenu(LoadedResources.getOptionsMenu());
+    gameMenuBar.addMenu(LoadedResources.getShopMenu());
+    Menu deployMenu = new Menu("Deploy");
+    deployMenu.openButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
@@ -90,19 +91,18 @@ public class OverWorldMap extends TiledScreen {
         completionObserver.run();
       }
     });
-
-    root.add().expand().colspan(2).fill();
-    root.add(deployBtn).align(Align.topRight);
-    root.row();
+    gameMenuBar.addMenu(deployMenu);
+    root.add(gameMenuBar.getTable()).growX().colspan(2).row();
     loadPathsFromMap();
     loadCitiesFromMap();
     //TODO-P2 lay this out so it doesn't cover the map and doesn't need hardcoded width
     cityWindow = new CityWindow();
-    root.add(cityWindow).align(Align.left).width(200);
-    root.add();
     movementsWindow = new MovementsWindow(movements, () -> selectCity(lastSelected));
-    movementsWindow.setPosition(Gdx.graphics.getWidth(), 0);
-    root.add(movementsWindow).align(Align.right).width(250).height(400);
+
+    root.add(cityWindow).fill().uniformX();
+    root.add().row();
+    root.add(movementsWindow).fill().uniformX();
+    root.add().grow().row();
   }
 
   /** Load city information from map file */
@@ -178,7 +178,7 @@ public class OverWorldMap extends TiledScreen {
         // TODO-P2 clean up font. consider using
         // https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
         Label.LabelStyle style = new Label.LabelStyle(cityLabel.getStyle());
-        style.font = new BitmapFont(Gdx.files.internal("fonts/ariel_outlined.fnt"));
+        style.font = VisUI.getSkin().getFont("Ubuntu-Regular-Outlined");
         switch (cityData.controller) {
           case PLAYER:
             style.fontColor = Color.GREEN;

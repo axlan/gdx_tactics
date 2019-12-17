@@ -1,12 +1,18 @@
 package com.axlan.fogofwar.models;
 
 import com.axlan.fogofwar.screens.SceneLabel;
-import com.axlan.gdxtactics.AnimatedSprite;
-import com.axlan.gdxtactics.JsonLoader;
-import com.axlan.gdxtactics.SpriteLookup;
+import com.axlan.gdxtactics.*;
 import com.axlan.gdxtactics.SpriteLookup.Poses;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.Menu;
+import com.kotcrab.vis.ui.widget.MenuItem;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,6 +36,26 @@ public final class LoadedResources {
   private static SpriteLookup spriteLookup;
   private static Map<String, UnitStats> unitStats;
   private static GameStateManager gameStateManager;
+  private static Runnable showSettings;
+  private static Runnable showShop;
+
+  public static OptionsMenu getOptionsMenu() {
+    return new OptionsMenu(showSettings, gameStateManager);
+  }
+
+  public static Menu getShopMenu() {
+    Menu shopMenu = new Menu("Intel Shop");
+    MenuItem shopItem = new MenuItem("Open Shop");
+    shopMenu.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            showShop.run();
+          }
+        });
+    shopMenu.addItem(shopItem);
+    return shopMenu;
+  }
 
   /**
    * Get the class for handling the game state and saving / loading
@@ -61,7 +87,9 @@ public final class LoadedResources {
     JsonLoader.writeToJsonFile(EDITABLE_SETTINGS_FILE, editableSettings);
   }
 
-  /** Get the SpriteLookup used to generate sprites */
+  /**
+   * Get the SpriteLookup used to generate sprites
+   */
   public static SpriteLookup getSpriteLookup() {
     return spriteLookup;
   }
@@ -70,7 +98,7 @@ public final class LoadedResources {
    * Load an AnimatedSprite by name and pose using default setting for frameDuration and reverse
    *
    * @param sprite name of sprite
-   * @param pose pose of sprite
+   * @param pose   pose of sprite
    * @return Corresponding AnimatedSprite
    */
   public static AnimatedSprite<AtlasRegion> getAnimation(String sprite, Poses pose) {
@@ -78,21 +106,36 @@ public final class LoadedResources {
         sprite, pose, LoadedResources.getReadOnlySettings().sprites.frameDuration, true);
   }
 
-  /** Get the mapping of unit types to their corresponding stats. */
+  /**
+   * Get the mapping of unit types to their corresponding stats.
+   */
   static Map<String, UnitStats> getUnitStats() {
     return unitStats;
   }
 
-  /** Load the resources used across all levels */
-  public static void initializeGlobal(Consumer<SceneLabel> observer) {
+  /**
+   * Load the resources used across all levels
+   *
+   * @param saveLoadObserver observer to call when a new save is loaded
+   */
+  public static void initializeGlobal(Consumer<SceneLabel> saveLoadObserver, Runnable showSettings, Runnable showShop) {
+
     EditableSettings.setDefaults(DEFAULT_SETTINGS_FILE);
     editableSettings = EditableSettings.loadFromJson(EDITABLE_SETTINGS_FILE);
     editableSettings.apply();
     readOnlySettings = ReadOnlySettings.loadFromJson(READ_ONLY_SETTINGS_FILE);
+    //TODO-P2 use asset manager more widely, and actually monitor loading with progress bar or something
+    FreeTypeFontGenerator.setMaxTextureSize(4096);
+    FreeTypeFontScalingSkin.fontScaling = ((double) Gdx.graphics.getWidth()) / 2880.0;
+    Skin skin = new FreeTypeFontScalingSkin(Gdx.files.internal("skins/custom/custom.json"));
+    VisUI.load(skin);
     spriteLookup = new SpriteLookup(new TextureAtlas(readOnlySettings.sprites.atlasFile));
     unitStats =
         Collections.unmodifiableMap(UnitStats.loadFromJson(readOnlySettings.unitStatsDataFile));
-    gameStateManager = new GameStateManager(observer);
+    gameStateManager = new GameStateManager(saveLoadObserver);
+
+    LoadedResources.showSettings = showSettings;
+    LoadedResources.showShop = showShop;
   }
 
 }

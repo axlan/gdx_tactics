@@ -133,8 +133,9 @@ public class TutorialCampaign implements CampaignBase {
       pages.add(new BriefingData.BriefPage("Commander", dialogue));
       dialogue = "Clicking on a city shows you the troops currently stationed there.\n" +
           "The + and - indicate the troops you've commanded to move in and out of the city.\n" +
-          "Use the other window to order troops to move from the selected city to a city connected to it.\n" +
-          "You can then click on a listed troop movement to cancel it.\n" +
+          "Use the other window to order troops to move from the selected city to a city connected to it.\n";
+      pages.add(new BriefingData.BriefPage("Commander", dialogue));
+      dialogue = "You can then click on a listed troop movement to cancel it.\n" +
           "If there are both allied and enemy troops in a city it will be marked as contested.\n" +
           "After hitting the deploy button, battles will take place to determine the new controller of each contested city.\n";
       pages.add(new BriefingData.BriefPage("Commander", dialogue));

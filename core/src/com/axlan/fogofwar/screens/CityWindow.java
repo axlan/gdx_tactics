@@ -32,6 +32,7 @@ class CityWindow extends VisWindow {
     super("City Properties");
     this.setWidth(200);
     this.add(layoutWindow());
+    pack();
   }
 
   private VisTable layoutWindow() {
@@ -70,6 +71,7 @@ class CityWindow extends VisWindow {
     WorldData data = LoadedResources.getGameStateManager().gameState.campaign.getOverWorldData();
     Optional<WorldData.CityData> cityDataOption = data.cities.stream().filter((a) -> a.name.equals(name)).findAny();
     if (!cityDataOption.isPresent()) {
+      pack();
       return;
     }
     WorldData.CityData cityData = cityDataOption.get();
@@ -103,5 +105,6 @@ class CityWindow extends VisWindow {
       setContestedColor(Color.GREEN);
       contestedLabel.setText("Control of city uncontested");
     }
+    pack();
   }
 }

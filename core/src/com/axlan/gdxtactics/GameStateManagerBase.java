@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public abstract class GameStateManagerBase<T> {
   static final String EMPTY_LABEL = "Empty";
-  private static final int NUM_SLOTS = 10;
+  private static final int NUM_SLOTS = 5;
   private static final String SAVE_PREF_NAME = "save_slots";
   private static final String SAVE_SLOT_NAME = "slot_";
   private static final String SAVE_SLOT_TIME_NAME = "slot_time_";

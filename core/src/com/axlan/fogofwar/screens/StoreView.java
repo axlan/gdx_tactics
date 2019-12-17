@@ -32,6 +32,7 @@ public class StoreView extends StageBasedScreen {
 
   public StoreView(Runnable observer) {
     this.observer = observer;
+    this.description.setWrap(true);
     this.stage.addActor(this.makeStoreView());
     setData(
         LoadedResources.getGameStateManager().gameState.campaign.getItems(),
