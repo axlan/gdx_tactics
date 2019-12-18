@@ -1,7 +1,12 @@
 # gdx_tactics
 
-
 [![Actions Status](https://github.com/axlan/gdx_tactics/workflows/Desktop%20Build/badge.svg)](https://github.com/axlan/gdx_tactics/actions)
+
+[![Battle Screenshot](docs/images/fog_battle.png)](http://www.robopenguins.com/fog-of-war-game/)
+
+  * See the game in action: https://www.youtube.com/watch?v=40V8IQZcXz8
+  * See http://www.robopenguins.com/fog-of-war-game/ for a writeup of the high level design
+  * [Dev Journal](DEV_JOURNAL.md) capturing a timeline of what I worked on. Includes roadblocks I hit and resources I found.
 
 # Summary
 
@@ -15,20 +20,20 @@ While battles focus on a single battlefield, meta decisions need to be made abou
 
 # Status
 
-Currently working towards a demo that fleshes out most of the features of the engine.
+Finished an alpha demo of the games basic functionality.
 
-## Todo
-- [x] Pretty up UI with custom skin
-- [x] Make text readable in Android
-- [x] Make basic functional EnemyAi
-- [x] Basic campaign menu to connect individual battles
-- [x] Extend save/load to work for campaign or battles
-- [x] Add fog of war to battle screen
-- [x] Make property window in battle have all relevant information
-- [x] Add win and loss mechanic to give the game a goal
-- [x] Basic battle map functionality
-- [x] Basic shared UI functionality
-- [x] Menu for deploying troops
-- [x] Menu for buying resources
-- [x] Configuration for specifying units and maps
-- [x] Packing and animating sprites
+I implemented these high-level features:
+  * Tactical map to engage in battle
+  * Campaign menu to connect individual battles
+  * Add win and loss mechanic to give the game a goal
+  * Dialogue screen for story and instructions
+  * Menu for deploying troops
+  * Menu for buying resources
+  * Basic functional enemy Ai
+  * Playable in Android
+  * UI with custom skin
+  * Save/load to work for campaign or battles
+  * Configuration for specifying units and maps
+  * Packing and animating sprites
+
+Development is done for now unless I find folks interested in contributing.
